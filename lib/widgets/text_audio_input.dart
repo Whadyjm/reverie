@@ -48,6 +48,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
                 Expanded(
                   child: TextField(
                     style: TextStyle(
+                      fontFamily: 'roboto',
                       color: Colors.grey.shade700,
                       fontWeight: FontWeight.w500,
                     ),
@@ -55,9 +56,9 @@ class _TextAudioInputState extends State<TextAudioInput> {
                     decoration: InputDecoration(
                       hintStyle: TextStyle(
                         letterSpacing: 1.2,
-                        fontFamily: 'instrumental',
+                        fontFamily: 'roboto',
                         color: Colors.grey.shade400,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                       hintText: '¿Qué soñaste hoy?',
                       border: InputBorder.none,
@@ -85,6 +86,9 @@ class _TextAudioInputState extends State<TextAudioInput> {
                           ),
                         ),
                       );
+                    } finally {
+                      _dreamController.clear();
+                      FocusScope.of(context).unfocus();
                     }
                   },
                   icon: ShaderMask(

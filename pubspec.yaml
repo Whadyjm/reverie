@@ -39,6 +39,7 @@ dependencies:
   easy_date_timeline: ^2.0.9
   provider: ^6.1.5
   glass_kit: ^4.0.1
+  smooth_gradient: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +89,10 @@ flutter:
     - family: instrumental
       fonts:
         - asset: fonts/InstrumentSerif-Regular.ttf
+          weight: 800
+    - family: roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
           weight: 800
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

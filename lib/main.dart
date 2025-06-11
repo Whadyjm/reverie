@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/provider/calendar_provider.dart';
+import 'package:pillow/provider/dream_provider.dart';
 import 'package:pillow/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 
