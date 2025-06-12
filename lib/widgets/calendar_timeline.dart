@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pillow/provider/calendar_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-
-import '../provider/dream_provider.dart';
+import '../provider/button_provider.dart';
 
 class CalendarTimeline extends StatefulWidget {
   CalendarTimeline({super.key});
@@ -19,25 +18,33 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<int> fetchDreamCountByDate(DateTime date) async {
-    final querySnapshot =
-        await firestore
-            .collection('dreams')
-            .where(
-              'timestamp',
-              isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
-            )
-            .where(
-              'timestamp',
-              isLessThan: DateTime(date.year, date.month, date.day + 1),
-            )
-            .get();
-    return querySnapshot.docs.length;
+
+    try {
+      final querySnapshot =
+      await firestore
+          .collection('dreams')
+          .where(
+        'timestamp',
+        isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
+      )
+          .where(
+        'timestamp',
+        isLessThan: DateTime(date.year, date.month, date.day + 1),
+      )
+          .get();
+      return querySnapshot.docs.length;
+    } catch (e) {
+      return 0;
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
     final _selectedDate = Provider.of<CalendarProvider>(context);
     final selectedDate = _selectedDate.selectedDate;
+    final btnProvider =
+        Provider.of<ButtonProvider>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
@@ -60,7 +67,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade300,
+                      color: btnProvider.isButtonEnabled ? Colors.black54:Colors.grey.shade300,
                       blurRadius: 5,
                       offset: Offset(0, 2),
                     ),
@@ -78,7 +85,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                             end: Alignment.bottomRight,
                           )
                           : null,
-                  color: isSelected ? null : Colors.white,
+                  color: isSelected ? null : btnProvider.isButtonEnabled? Colors.white70:Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -113,10 +120,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     FutureBuilder<int>(
                       future: fetchDreamCountByDate(date),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return SizedBox.shrink();
-                        } else if (snapshot.hasError) {
+                        if (snapshot.hasError) {
                           return Text(
                             'Error',
                             style: TextStyle(

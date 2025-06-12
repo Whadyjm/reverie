@@ -38,8 +38,7 @@ dependencies:
   cloud_firestore: ^5.6.8
   easy_date_timeline: ^2.0.9
   provider: ^6.1.5
-  glass_kit: ^4.0.1
-  smooth_gradient: ^0.1.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

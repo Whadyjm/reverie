@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pillow/provider/button_provider.dart';
 import 'package:pillow/provider/calendar_provider.dart';
 import 'package:pillow/provider/dream_provider.dart';
 import 'package:pillow/screens/home_screen.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => CalendarProvider()),
+        ChangeNotifierProvider(create: (context) => ButtonProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

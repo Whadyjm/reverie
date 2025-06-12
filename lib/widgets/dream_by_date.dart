@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import '../provider/dream_provider.dart';
 
@@ -19,6 +20,7 @@ class _DreamByDateState extends State<DreamByDate> {
   @override
   Widget build(BuildContext context) {
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
+    final btnProvider = Provider.of<ButtonProvider>(context);
 
     return Expanded(
       child: StreamBuilder<QuerySnapshot>(
@@ -60,11 +62,11 @@ class _DreamByDateState extends State<DreamByDate> {
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Text(
-                          'Sin sueños... por ahora',
+                          '¿Qué soñaste hoy?',
                           style: TextStyle(
                             fontFamily: 'instrumental',
                             fontSize: 40,
-                            color: Colors.grey.shade700,
+                            color: btnProvider.isButtonEnabled ? Colors.white:Colors.grey.shade700,
                           ),
                         ),
                       ),
@@ -89,7 +91,7 @@ class _DreamByDateState extends State<DreamByDate> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.shade300,
+                            color: btnProvider.isButtonEnabled? Colors.black87:Colors.grey.shade300,
                             blurRadius: 4,
                             offset: Offset(2,1),
                           ),
@@ -115,7 +117,7 @@ class _DreamByDateState extends State<DreamByDate> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                             ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
-                          fontSize: 20,
+                          fontSize: 15,
                         ),
                       ),
                     ),

@@ -47,6 +47,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
               children: [
                 Expanded(
                   child: TextField(
+                    textCapitalization: TextCapitalization.words,
                     style: TextStyle(
                       fontFamily: 'roboto',
                       color: Colors.grey.shade700,
@@ -60,7 +61,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
                         color: Colors.grey.shade400,
                         fontWeight: FontWeight.w500,
                       ),
-                      hintText: '¿Qué soñaste hoy?',
+                      hintText: 'Anoche soñé con...',
                       border: InputBorder.none,
                     ),
                   ),
