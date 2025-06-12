@@ -16,7 +16,6 @@ class FirebaseService {
           selectedDate.day,
         ),
       });
-      controller.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

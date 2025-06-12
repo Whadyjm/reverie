@@ -25,7 +25,7 @@ class DreamDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Título generado por IA',
+            dream['title'],
             style: TextStyle(
               color:
                   btnProvider.isButtonEnabled

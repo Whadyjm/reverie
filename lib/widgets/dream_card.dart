@@ -42,14 +42,17 @@ class DreamCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(
-                    'Título generado por IA',
-                    style: RobotoTextStyle.subtitleStyle(Colors.grey.shade600),
-                  ),
-                ],
-              ),
+Row(
+  children: [
+    Flexible(
+      child: Text(
+        dream['title'],
+        style: RobotoTextStyle.subtitleStyle(Colors.grey.shade600),
+        overflow: TextOverflow.ellipsis,
+      ),
+    ),
+  ],
+),
               Text(
                 dream['text'],
                 maxLines: 3,

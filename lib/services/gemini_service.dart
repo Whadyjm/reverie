@@ -12,20 +12,26 @@ class GeminiService {
      url,
      headers: {'Content-Type': 'application/json'},
      body: jsonEncode({
-       'prompt': {
-         'text': 'Generate a short title (no more than 10 words) for the following: $dreamText',
-       },
-       'temperature': 0.7,
-       'maxOutputTokens': 50,
+       "contents": [
+         {
+           "parts": [
+             {
+               "text":
+               "Genera un título corto (no mas de 10 palabras) para el siguiente sueño: $dreamText, responde SOLO con el titulo, ningun otro texto antes o despues.",
+             },
+           ],
+         },
+       ],
      }),
    );
 
+   print('Response status: ${response.statusCode}');
+   print('Response body: ${response.body}');
    if (response.statusCode == 200) {
      final data = jsonDecode(response.body);
-     return data['candidates'][0]['output'] ?? 'No title generated';
+     return data['candidates'][0]['content']['parts'][0]['text'].trim();
    } else {
      throw Exception('Failed to generate title: ${response.body}');
    }
  }
-
-  }
+}
