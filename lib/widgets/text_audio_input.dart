@@ -81,7 +81,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
                         context,
                         _dreamController,
                         _selectedDate,
-                        title,
+                        title
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(

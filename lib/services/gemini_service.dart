@@ -16,7 +16,11 @@ class GeminiService {
             "parts": [
               {
                 "text":
-                    "Genera un título corto (puedes usar el humor si lo consideras necesario, evita usar dos puntos, pero que el titulo no parezca de pelicula, no mas de 10 palabras) para el siguiente sueño: $dreamText, responde SOLO con el titulo, ningun otro texto antes o despues.",
+                "Genera un título corto (puedes usar el humor si lo consideras necesario, evita usar dos puntos, pero que el titulo no parezca de pelicula, no mas de 10 palabras) para el siguiente sueño: $dreamText, responde SOLO con el titulo, ningun otro texto antes o despues.",
+              },
+              {
+                "text":
+                "Clasifica el siguiente sueño $dreamText, como uno de los siguientes tipos: sueño convencional, pesadilla o sueño lúcido. Responde SOLO con la etiqueta correspondiente, ningún otro texto antes o después.",
               },
             ],
           },
