@@ -45,7 +45,7 @@ class RobotoTextStyle {
   static TextStyle subtitleStyle(Color textColor) => TextStyle(
     fontFamily: 'roboto',
     color: textColor,
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: FontWeight.w700,
   );
 

@@ -16,6 +16,30 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String apiKey = '';
+
+  @override
+  void initState() {
+    getAPIKeyFromFirestore();
+    super.initState();
+  }
+
+  Future<void> getAPIKeyFromFirestore() async {
+    try {
+      final doc =
+      await firestore.collection('apiKey').doc('apiKey').get();
+      if (doc.exists) {
+        setState(() {
+          apiKey = doc.data()?['apiKey'] ?? '';
+        });
+        print(apiKey);
+      } else {
+        print('Document does not exist.');
+      }
+    } catch (e) {
+      print('Error fetching API key: $e');
+    }
+  }
 
 
   @override
@@ -87,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [CalendarTimeline(), DreamByDate(), TextAudioInput()],
+          children: [CalendarTimeline(), DreamByDate(), TextAudioInput(apiKey: apiKey,)],
         ),
       ),
     );

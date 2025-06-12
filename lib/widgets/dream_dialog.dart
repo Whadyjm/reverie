@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:pillow/style/text_style.dart';
 
 import '../provider/button_provider.dart';
 
@@ -26,15 +27,7 @@ class DreamDialog extends StatelessWidget {
         children: [
           Text(
             dream['title'],
-            style: TextStyle(
-              color:
-                  btnProvider.isButtonEnabled
-                      ? Colors.white
-                      : Colors.grey.shade800,
-              fontFamily: 'roboto',
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: AppTextStyle.subtitleStyle(btnProvider.isButtonEnabled ? Colors.white:Colors.grey.shade700)
           ),
           const Divider(),
         ],

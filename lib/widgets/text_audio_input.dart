@@ -12,8 +12,9 @@ import '../provider/calendar_provider.dart';
 import '../services/gemini_service.dart';
 
 class TextAudioInput extends StatefulWidget {
-  const TextAudioInput({super.key});
+  const TextAudioInput({super.key, required this.apiKey});
 
+  final String apiKey;
   @override
   State<TextAudioInput> createState() => _TextAudioInputState();
 }
@@ -21,6 +22,7 @@ class TextAudioInput extends StatefulWidget {
 class _TextAudioInputState extends State<TextAudioInput> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final TextEditingController _dreamController = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +70,12 @@ class _TextAudioInputState extends State<TextAudioInput> {
                       return;
                     }
                     try {
+                      setState(() {
+                        isLoading = true;
+                      });
+
                       final title = await GeminiService().generateTitle(
-                        _dreamController.text,
+                        _dreamController.text, widget.apiKey
                       );
                       FirebaseService().saveDream(
                         context,
@@ -81,9 +87,23 @@ class _TextAudioInputState extends State<TextAudioInput> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Error, intente de nuevo')),
                       );
+                    } finally {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      _dreamController.clear();
                     }
                   },
-                  icon: SaveDreamIcon(),
+                  icon: isLoading
+                      ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 6,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.purple.shade300),
+                    ),
+                  )
+                      : SaveDreamIcon(),
                 ),
               ],
             ),

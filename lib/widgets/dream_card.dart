@@ -17,10 +17,7 @@ class DreamCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -42,36 +39,41 @@ class DreamCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-Row(
-  children: [
-    Flexible(
-      child: Text(
-        dream['title'],
-        style: RobotoTextStyle.subtitleStyle(Colors.grey.shade600),
-        overflow: TextOverflow.ellipsis,
-      ),
-    ),
-  ],
-),
-              Text(
-                dream['text'],
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: 'roboto',
-                  fontWeight: FontWeight.w500,
-                  foreground:
-                      Paint()
-                        ..shader = LinearGradient(
-                          colors: [
-                            Colors.transparent.withAlpha(200),
-                            Colors.transparent.withAlpha(150),
-                            Colors.transparent.withAlpha(50),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
-                  fontSize: 15,
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      dream['title'],
+                      style: AppTextStyle.subtitleStyle(
+                        Colors.grey.shade600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 3),
+                child: Text(
+                  dream['text'],
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'roboto',
+                    fontWeight: FontWeight.w500,
+                    foreground:
+                        Paint()
+                          ..shader = LinearGradient(
+                            colors: [
+                              Colors.transparent.withAlpha(200),
+                              Colors.transparent.withAlpha(150),
+                              Colors.transparent.withAlpha(50),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
+                    fontSize: 15,
+                  ),
                 ),
               ),
             ],
