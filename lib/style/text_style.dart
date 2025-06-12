@@ -53,7 +53,7 @@ class RobotoTextStyle {
     fontFamily: 'roboto',
     color: textColor,
     fontSize: 15,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w400,
   );
 
   static TextStyle verySmallTextStyle(Color textColor) => TextStyle(

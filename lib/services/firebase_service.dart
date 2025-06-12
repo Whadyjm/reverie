@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 
 class FirebaseService {
 
-  void saveDream(context, controller, selectedDate) async {
+  void saveDream(context, controller, selectedDate, title) async {
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
       await firestore.collection('dreams').add({
+        'title': title,
         'text': controller.text.trim(),
         'timestamp': DateTime(
           selectedDate.year,
