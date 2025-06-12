@@ -47,7 +47,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
               children: [
                 Expanded(
                   child: TextField(
-                    textCapitalization: TextCapitalization.words,
+                    textCapitalization: TextCapitalization.sentences,
                     style: TextStyle(
                       fontFamily: 'roboto',
                       color: Colors.grey.shade700,

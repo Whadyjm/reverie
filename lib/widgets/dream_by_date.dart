@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import '../provider/dream_provider.dart';
+import 'dream_card.dart';
+import 'dream_dialog.dart';
+import 'dream_list_empty.dart';
 
 class DreamByDate extends StatefulWidget {
   const DreamByDate({super.key});
@@ -52,86 +56,22 @@ class _DreamByDateState extends State<DreamByDate> {
           int dreamCount = dreams.length;
 
           return dreams.isEmpty
-              ? Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: SingleChildScrollView(
-                  physics: NeverScrollableScrollPhysics(),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text(
-                          '¿Qué soñaste hoy?',
-                          style: TextStyle(
-                            fontFamily: 'instrumental',
-                            fontSize: 40,
-                            color: btnProvider.isButtonEnabled ? Colors.white:Colors.grey.shade700,
-                          ),
-                        ),
-                      ),
-                      Image.asset(
-                        height: 350,
-                        'assets/bed-side.png',
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ],
-                  ),
-                ),
-              )
+              ? DreamListEmpty(btnProvider: btnProvider)
               : ListView.builder(
                 itemCount: dreamCount, // Use the variable here
                 itemBuilder: (context, index) {
                   final dream = dreams[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: btnProvider.isButtonEnabled? Colors.black87:Colors.grey.shade300,
-                            blurRadius: 4,
-                            offset: Offset(2,1),
-                          ),
-                        ],
-                      ),
-                      padding: EdgeInsets.all(8),
-                      height: 100,
-                      width: 200,
-                      child: Text(
-                        dream['text'],
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'roboto',
-                          fontWeight: FontWeight.w500,
-                          foreground: Paint()
-                            ..shader = LinearGradient(
-                              colors: [
-                                Colors.transparent.withAlpha(200),
-                                Colors.transparent.withAlpha(150),
-                                Colors.transparent.withAlpha(50),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ); /*ListTile(
-                title: Text(
-                  dream['text'],
-                  style: TextStyle(
-                    fontFamily: 'roboto',
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade800,
-                    fontSize: 20,
-                  ),
-                ),
-              );*/
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DreamDialog(btnProvider: btnProvider, dream: dream);
+                        },
+                      );
+                    },
+                    child: DreamCard(btnProvider: btnProvider, dream: dream),
+                  );
                 },
               );
         },
@@ -139,3 +79,5 @@ class _DreamByDateState extends State<DreamByDate> {
     );
   }
 }
+
+
