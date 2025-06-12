@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pillow/services/firebase_service.dart';
+import 'package:pillow/widgets/audio_button.dart';
+import 'package:pillow/widgets/dream_textfield.dart';
+import 'package:pillow/widgets/save_dream_icon.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/calendar_provider.dart';
@@ -45,109 +49,19 @@ class _TextAudioInputState extends State<TextAudioInput> {
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: TextField(
-                    textCapitalization: TextCapitalization.sentences,
-                    style: TextStyle(
-                      fontFamily: 'roboto',
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    controller: _dreamController,
-                    decoration: InputDecoration(
-                      hintStyle: TextStyle(
-                        letterSpacing: 1.2,
-                        fontFamily: 'roboto',
-                        color: Colors.grey.shade400,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      hintText: 'Anoche soñé con...',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
+                DreamTextfield(dreamController: _dreamController),
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () async {
-                    try {
-                      await firestore.collection('dreams').add({
-                        'text': _dreamController.text.trim(),
-                        'timestamp': DateTime(
-                          _selectedDate.year,
-                          _selectedDate.month,
-                          _selectedDate.day,
-                        ),
-                      });
-                      _dreamController.clear();
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Error al enviar el sueño.',
-                          ),
-                        ),
-                      );
-                    } finally {
-                      _dreamController.clear();
-                      FocusScope.of(context).unfocus();
-                    }
+                    FirebaseService().saveDream(context, _dreamController, _selectedDate);
                   },
-                  icon: ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return LinearGradient(
-                        colors: [
-                          Colors.indigo.shade100,
-                          Colors.purple,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ).createShader(bounds);
-                    },
-                    child: const Icon(
-                      Icons.send_rounded,
-                      color: Colors.white,
-                    ),
-                  ),
+                  icon: SaveDreamIcon()
                 ),
               ],
             ),
           ),
         ),
-        Container(
-          height: 60,
-          width: 60,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0xFF000000).withAlpha(10),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: IconButton(
-            onPressed: () {},
-            icon: ShaderMask(
-              shaderCallback: (Rect bounds) {
-                return LinearGradient(
-                  colors: [
-                    Colors.purple.shade300,
-                    Colors.indigo.shade100,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(bounds);
-              },
-              child: const Icon(
-                Icons.mic_rounded,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-          ),
-        ),
+        AudioButton()
       ],
     );
   }

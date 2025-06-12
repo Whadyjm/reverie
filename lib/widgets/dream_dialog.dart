@@ -20,7 +20,7 @@ class DreamDialog extends StatelessWidget {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       backgroundColor:
-          btnProvider.isButtonEnabled ? Colors.black87 : Colors.white,
+          btnProvider.isButtonEnabled ? Colors.grey.shade900 : Colors.white,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -57,7 +57,7 @@ class DreamDialog extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Iconsax.arrow_left_2_copy),
+          icon: Icon(Iconsax.arrow_left_2_copy, color: btnProvider.isButtonEnabled ? Colors.white70:null,),
         ),
         const SizedBox(width: 15),
         OutlinedButton.icon(

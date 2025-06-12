@@ -17,6 +17,10 @@ class DreamCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -31,7 +35,6 @@ class DreamCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: EdgeInsets.all(8),
         height: 100,
         width: 200,
         child: SingleChildScrollView(
