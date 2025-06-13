@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/provider/button_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
@@ -21,6 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     getAPIKeyFromFirestore();
+    initializeButtonState();
     super.initState();
   }
 
@@ -38,6 +40,17 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     } catch (e) {
       print('Error fetching API key: $e');
+    }
+  }
+
+  Future<void> initializeButtonState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isButtonEnabled = prefs.getBool('isButtonEnabled') ?? false;
+    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    if (isButtonEnabled) {
+      btnProvider.enableButton();
+    } else {
+      btnProvider.disableButton();
     }
   }
 
@@ -66,14 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       : Colors.grey.shade800,
             ),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  final btnProvider = Provider.of<ButtonProvider>(context);
-
-                  return SwitchDarkMode(btnProvider);
-                },
-              );
+              settings(context);
             },
           ),
         ],
@@ -114,6 +120,17 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [CalendarTimeline(), DreamByDate(), TextAudioInput(apiKey: apiKey,)],
         ),
       ),
+    );
+  }
+
+  void settings(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final btnProvider = Provider.of<ButtonProvider>(context);
+
+        return SwitchDarkMode(btnProvider);
+      },
     );
   }
 
@@ -163,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Switch(
                     activeColor: Colors.purple.shade300,
                     value: btnProvider.isButtonEnabled,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       setState(() {
                         if (value) {
                           btnProvider.enableButton();
@@ -171,6 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           btnProvider.disableButton();
                         }
                       });
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('isButtonEnabled', value);
                     },
                   ),
                 ],
