@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final btnProvider = Provider.of<ButtonProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'Pillow',
           style: AppTextStyle.titleStyle(

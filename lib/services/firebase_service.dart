@@ -6,8 +6,9 @@ class FirebaseService {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
       await firestore.collection('dreams').add({
-        'title': title.split('\n').first,
-        'classification': title.split('\n').last.trim(),
+        'title': title.split('\n\n')[0],
+        'classification': title.split('\n\n')[1],
+        'analysis': title.split('\n\n').sublist(2).join('\n\n'),
         'text': controller.text.trim(),
         'timestamp': DateTime(
           selectedDate.year,

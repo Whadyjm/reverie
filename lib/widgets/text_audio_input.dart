@@ -99,7 +99,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      strokeWidth: 6,
+                      strokeWidth: 5,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.purple.shade300),
                     ),
                   )

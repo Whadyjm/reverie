@@ -36,7 +36,7 @@ class DreamListEmpty extends StatelessWidget {
             ),
             Image.asset(
               height: 350,
-              'assets/bed-side.png',
+              'assets/pilo_bed.png',
               fit: BoxFit.fitWidth,
             ),
           ],
