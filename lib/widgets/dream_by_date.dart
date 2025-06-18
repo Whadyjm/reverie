@@ -8,7 +8,7 @@ import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import '../provider/dream_provider.dart';
 import 'dream_card.dart';
-import 'dream_dialog.dart';
+import 'dream_bottom_sheet.dart';
 import 'dream_list_empty.dart';
 
 class DreamByDate extends StatefulWidget {
@@ -66,7 +66,7 @@ class _DreamByDateState extends State<DreamByDate> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return DreamDialog(btnProvider: btnProvider, dream: dream);
+                          return DreamBottomSheet(btnProvider: btnProvider, dream: dream);
                         },
                       );
                     },

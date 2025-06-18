@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -85,16 +86,48 @@ class DreamCard extends StatelessWidget {
               right: 0,
               top: 0,
               bottom: -80,
-              child: Chip(
-                label: Text(
-                  dream['classification'],
-                  style: RobotoTextStyle.smallTextStyle(Colors.white),
-                ),
-                backgroundColor: dream['classification'] == 'Pesadilla' ? Colors.purple.shade600:Colors.purple.shade300,
-                avatar: Icon(dream['classification'] == 'Pesadilla' ? Iconsax.emoji_sad:Iconsax.happyemoji, color: Colors.white, size: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            offset: Offset(1, 2),
+                            spreadRadius: 2,
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Icon(Iconsax.heart_copy, color: Colors.purple),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Chip(
+                    label: Text(
+                      dream['classification'],
+                      style: RobotoTextStyle.smallTextStyle(Colors.white),
+                    ),
+                    backgroundColor:
+                        dream['classification'] == 'Pesadilla'
+                            ? Colors.purple.shade600
+                            : Colors.purple.shade300,
+                    avatar: Icon(
+                      dream['classification'] == 'Pesadilla'
+                          ? Iconsax.emoji_sad
+                          : Iconsax.happyemoji,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
