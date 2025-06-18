@@ -28,8 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> getAPIKeyFromFirestore() async {
     try {
-      final doc =
-      await firestore.collection('apiKey').doc('apiKey').get();
+      final doc = await firestore.collection('apiKey').doc('apiKey').get();
       if (doc.exists) {
         setState(() {
           apiKey = doc.data()?['apiKey'] ?? '';
@@ -54,12 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final btnProvider = Provider.of<ButtonProvider>(context);
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
           'Pillow',
@@ -68,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         backgroundColor:
-            btnProvider.isButtonEnabled ? Colors.grey.shade600 : Colors.white,
+            btnProvider.isButtonEnabled ? Colors.transparent : Colors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -84,23 +82,20 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
         ],
-      ),
+      ),*/
       body: Container(
         decoration: BoxDecoration(
           gradient:
               btnProvider.isButtonEnabled
                   ? LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
                     colors: [
-                      Colors.grey.shade600,
-                      Colors.grey.shade700,
-                      Colors.grey.shade800,
-                      Colors.grey.shade900,
-                      Colors.black87,
-                      Colors.black87,
-                      Colors.black87,
+                      Color(0xFF1A003F),
+                      Color(0xFF2E1A5E),
+                      Color(0xFF4A3A7C),
+                      Color(0xFF6B5A9A),
                     ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
                   )
                   : LinearGradient(
                     colors: [
@@ -118,7 +113,40 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [CalendarTimeline(), DreamByDate(), TextAudioInput(apiKey: apiKey,)],
+          children: [
+            SizedBox(
+              height: 80,
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Pillow',
+                      style: AppTextStyle.titleStyle(
+                        btnProvider.isButtonEnabled ? Colors.white : Colors.grey.shade800,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.settings,
+                        color: btnProvider.isButtonEnabled
+                            ? Colors.white
+                            : Colors.grey.shade800,
+                      ),
+                      onPressed: () {
+                        settings(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            CalendarTimeline(),
+            DreamByDate(),
+            TextAudioInput(apiKey: apiKey),
+          ],
         ),
       ),
     );
