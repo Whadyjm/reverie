@@ -1,0 +1,93 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/dream_provider.dart';
+
+class LikeButton extends StatefulWidget {
+  const LikeButton({super.key});
+
+  @override
+  State<LikeButton> createState() => _LikeButtonState();
+}
+
+class _LikeButtonState extends State<LikeButton> {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  bool liked = false;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return GestureDetector(
+      onTap: () async {
+        setState(() {
+          liked = !liked;
+        });
+        try {
+          // Obtén la referencia al documento específico que deseas actualizar
+          var dreamsCollection = firestore
+              .collection('users')
+              .doc(auth.currentUser?.uid)
+              .collection('dreams');
+
+          // Retrieve the document ID dynamically
+          var querySnapshot = await dreamsCollection.limit(1).get();
+          var dreamId =
+              querySnapshot.docs.isNotEmpty
+                  ? querySnapshot.docs.first.id
+                  : null;
+
+          var documentSnapshot =
+              await firestore
+                  .collection('users')
+                  .doc(auth.currentUser?.uid)
+                  .collection('dreams')
+                  .doc(dreamId)
+                  .get();
+          bool liked = documentSnapshot.data()?['isLiked'] ?? false;
+
+          if (dreamId == null) {
+            throw Exception('No document found to update.');
+          }
+
+          await dreamsCollection.doc(dreamId).update({
+            'isLiked': liked ? false : true, // Update the field as needed
+          });
+        } catch (e) {}
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              offset: Offset(1, 2),
+              spreadRadius: 2,
+              blurRadius: 2,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(8),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(scale: animation, child: child),
+            );
+          },
+          child: Icon(
+            liked ? Iconsax.heart : Iconsax.heart_copy,
+            key: ValueKey<bool>(liked),
+            color: Colors.purple,
+          ),
+        ),
+      ),
+    );
+  }
+}

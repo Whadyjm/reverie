@@ -7,25 +7,31 @@ class FirebaseService {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      await firestore.collection('users').doc(auth.currentUser?.uid).collection('dreams').add(
-        {
-              'title': title.split('\n\n')[0],
-              'classification': title.split('\n\n')[1],
-              'analysis': title.split('\n\n').sublist(2).join('\n\n'),
-              'text': controller.text.trim(),
-              'isLiked': false,
-              'rating': 0,
-              'timestamp': DateTime(
-                selectedDate.year,
-                selectedDate.month,
-                selectedDate.day,
-              ),
-            }
-      );
+      var dreamsCollection = firestore.collection('users')
+          .doc(auth.currentUser?.uid)
+          .collection('dreams');
+
+      // Agregar el documento y obtener la referencia
+      var documentRef = await dreamsCollection.add({
+        'title': title.split('\n\n')[0],
+        'classification': title.split('\n\n')[1],
+        'analysis': title.split('\n\n').sublist(2).join('\n\n'),
+        'text': controller.text.trim(),
+        'isLiked': false,
+        'rating': 0,
+        'timestamp': DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+        ),
+      });
+
+      // Actualizar el documento con el dreamId
+      await documentRef.update({'dreamId': documentRef.id});
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error al enviar el sueño.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al enviar el sueño.')),
+      );
     } finally {
       controller.clear();
       FocusScope.of(context).unfocus();

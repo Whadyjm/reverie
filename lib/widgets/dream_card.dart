@@ -6,6 +6,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
+import 'like_button.dart';
 
 class DreamCard extends StatelessWidget {
   const DreamCard({super.key, required this.btnProvider, required this.dream});
@@ -88,24 +89,7 @@ class DreamCard extends StatelessWidget {
               bottom: -80,
               child: Row(
                 children: [
-                  GestureDetector(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade200,
-                            offset: Offset(1, 2),
-                            spreadRadius: 2,
-                            blurRadius: 2,
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(8),
-                      child: Icon(Iconsax.heart_copy, color: Colors.purple),
-                    ),
-                  ),
+                  LikeButton(),
                   const SizedBox(width: 20),
                   Chip(
                     label: Text(

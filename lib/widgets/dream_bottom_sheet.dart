@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -133,14 +134,15 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                               ),
                               const SizedBox(height: 16),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:Colors.purple.shade400,
+                                      backgroundColor: Colors.purple.shade400,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
@@ -151,14 +153,38 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                         widget.btnProvider.isButtonEnabled
                                             ? Colors.white
                                             : Colors.grey.shade800,
-                                      )
+                                      ),
                                     ),
                                   ),
                                   RatingBar(
                                     size: 32,
                                     filledIcon: Icons.star_rounded,
                                     emptyIcon: Icons.star_border_rounded,
-                                    onRatingChanged: (value) => debugPrint('$value'),
+                                    onRatingChanged: (value) async {
+                                      try {
+                                        FirebaseFirestore firestore =
+                                            FirebaseFirestore.instance;
+                                        FirebaseAuth auth =
+                                            FirebaseAuth.instance;
+
+                                        await firestore
+                                            .collection('users')
+                                            .doc(auth.currentUser?.uid)
+                                            .collection('dreams')
+                                            .doc(widget.dream.id)
+                                            .update({'rating': value});
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Error updating rating.',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
                                     initialRating: 0,
                                     maxRating: 5,
                                   ),

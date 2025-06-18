@@ -7,6 +7,7 @@ import 'package:pillow/screens/login_screen.dart';
 import 'package:pillow/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../provider/dream_provider.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
@@ -25,9 +26,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    super.initState();
     getAPIKeyFromFirestore();
     initializeButtonState();
-    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DreamProvider>(context, listen: false).fetchDreams();
+    });
   }
 
   Future<void> getAPIKeyFromFirestore() async {
