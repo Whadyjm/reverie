@@ -101,6 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         Color(0xFF2E1A5E),
                         Color(0xFF4A3A7C),
                         Color(0xFF6B5A9A),
+                        Color(0xFF8C53D6),
+                        Color(0xFFAD75F4),
                       ],
                     )
                     : LinearGradient(

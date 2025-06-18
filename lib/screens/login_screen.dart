@@ -175,7 +175,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       'photoUrl': user.photoURL,
                                       'email': user.email,
                                       'userId': userId,
-                                      'dreams': [],
                                       'userSince': FieldValue.serverTimestamp(),
                                     });
                                   }

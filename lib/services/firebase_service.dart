@@ -13,6 +13,8 @@ class FirebaseService {
               'classification': title.split('\n\n')[1],
               'analysis': title.split('\n\n').sublist(2).join('\n\n'),
               'text': controller.text.trim(),
+              'isLiked': false,
+              'rating': 0,
               'timestamp': DateTime(
                 selectedDate.year,
                 selectedDate.month,
