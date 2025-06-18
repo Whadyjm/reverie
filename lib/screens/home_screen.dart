@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/provider/button_provider.dart';
+import 'package:pillow/screens/login_screen.dart';
+import 'package:pillow/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../style/text_style.dart';
@@ -55,98 +59,146 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
-    return Scaffold(
-      /*appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Pillow',
-          style: AppTextStyle.titleStyle(
-            btnProvider.isButtonEnabled ? Colors.white : Colors.grey.shade800,
-          ),
-        ),
-        backgroundColor:
-            btnProvider.isButtonEnabled ? Colors.transparent : Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color:
-                  btnProvider.isButtonEnabled
-                      ? Colors.white
-                      : Colors.grey.shade800,
+    return SafeArea(
+      child: Scaffold(
+        /*appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Pillow',
+            style: AppTextStyle.titleStyle(
+              btnProvider.isButtonEnabled ? Colors.white : Colors.grey.shade800,
             ),
-            onPressed: () {
-              settings(context);
-            },
           ),
-        ],
-      ),*/
-      body: Container(
-        decoration: BoxDecoration(
-          gradient:
-              btnProvider.isButtonEnabled
-                  ? LinearGradient(
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                    colors: [
-                      Color(0xFF1A003F),
-                      Color(0xFF2E1A5E),
-                      Color(0xFF4A3A7C),
-                      Color(0xFF6B5A9A),
+          backgroundColor:
+              btnProvider.isButtonEnabled ? Colors.transparent : Colors.white,
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                color:
+                    btnProvider.isButtonEnabled
+                        ? Colors.white
+                        : Colors.grey.shade800,
+              ),
+              onPressed: () {
+                settings(context);
+              },
+            ),
+          ],
+        ),*/
+        body: Container(
+          decoration: BoxDecoration(
+            gradient:
+                btnProvider.isButtonEnabled
+                    ? LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        Color(0xFF1A003F),
+                        Color(0xFF2E1A5E),
+                        Color(0xFF4A3A7C),
+                        Color(0xFF6B5A9A),
+                      ],
+                    )
+                    : LinearGradient(
+                      colors: [
+                        Colors.white,
+                        Colors.white,
+                        Colors.white,
+                        Colors.white,
+                        Colors.purple.shade100,
+                        Colors.purple.shade200,
+                        Colors.indigo.shade400,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                height: 80,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Pillow',
+                        style: AppTextStyle.titleStyle(
+                          btnProvider.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey.shade800,
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width - 250,
+                      ), // Add spacing between the Text and CircleAvatar
+                      user != null
+                          ? Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor:
+                                  btnProvider.isButtonEnabled
+                                      ? Colors.white.withOpacity(0.2)
+                                      : Colors.grey.shade200,
+                              child: StreamBuilder<User?>(
+                                stream: user,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData && snapshot.data != null) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(25),
+                                      child: Image.network(
+                                        snapshot.data!.photoURL ?? '',
+                                      ),
+                                    );
+                                  } else {
+                                    return CircleAvatar(
+                                      backgroundColor:
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white.withOpacity(0.2)
+                                              : Colors.grey.shade200,
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          )
+                          : const SizedBox.shrink(),
+                      /*SizedBox(
+                        width: 16,
+                      ), // Add spacing between the CircleAvatar and IconButton
+                      IconButton(
+                        icon: Icon(
+                          Icons.settings,
+                          color:
+                              btnProvider.isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.grey.shade800,
+                        ),
+                        onPressed: () {
+                          settings(context);
+                        },
+                      ),*/
                     ],
-                  )
-                  : LinearGradient(
-                    colors: [
-                      Colors.white,
-                      Colors.white,
-                      Colors.white,
-                      Colors.white,
-                      Colors.purple.shade100,
-                      Colors.purple.shade200,
-                      Colors.indigo.shade400,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
                   ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              height: 80,
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Pillow',
-                      style: AppTextStyle.titleStyle(
-                        btnProvider.isButtonEnabled ? Colors.white : Colors.grey.shade800,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.settings,
-                        color: btnProvider.isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade800,
-                      ),
-                      onPressed: () {
-                        settings(context);
-                      },
-                    ),
-                  ],
                 ),
               ),
-            ),
-            CalendarTimeline(),
-            DreamByDate(),
-            TextAudioInput(apiKey: apiKey),
-          ],
+              CalendarTimeline(),
+              DreamByDate(),
+              TextAudioInput(apiKey: apiKey),
+            ],
+          ),
         ),
       ),
     );
@@ -171,10 +223,6 @@ class _MyHomePageState extends State<MyHomePage> {
             borderRadius: BorderRadius.circular(12),
           ),
           backgroundColor: Colors.white,
-          title: Text(
-            'Cambiar tema',
-            style: RobotoTextStyle.subtitleStyle(Colors.grey.shade800),
-          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -197,11 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         btnProvider.isButtonEnabled
                             ? 'Modo nocturno'
                             : 'Modo diurno',
-                        style: TextStyle(
-                          color: Colors.grey.shade700,
-                          fontFamily: 'roboto',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
+                        style: RobotoTextStyle.subtitleStyle(
+                          Colors.grey.shade700,
                         ),
                       ),
                     ],
@@ -223,19 +268,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Cerrar sesión',
+                    style: RobotoTextStyle.subtitleStyle(Colors.grey.shade700),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      AuthService().signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false,
+                      );
+                    },
+                    icon: Icon(Iconsax.logout_copy),
+                  ),
+                ],
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Salir',
-                style: RobotoTextStyle.smallTextStyle(Colors.grey.shade800),
-              ),
-            ),
-          ],
         );
       },
     );
