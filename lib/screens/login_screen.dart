@@ -1,25 +1,22 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/home_screen.dart';
 import 'package:uuid/uuid.dart';
-import 'package:uuid/v4.dart';
-
 import '../services/auth_service.dart';
 import '../style/text_style.dart';
 
-void main() {
-  runApp(MyApp());
-}
 
-class MyApp extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(home: LoginScreen(), debugShowCheckedModeBanner: false);
-  }
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class LoginScreen extends StatelessWidget {
+class _LoginScreenState extends State<LoginScreen> {
+
+  bool hidePassword = true;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -77,7 +74,13 @@ class LoginScreen extends StatelessWidget {
                             CustomTextField(
                               hintText: 'Contraseña',
                               icon: Icons.lock,
-                              obscureText: true,
+                              suffixIcon: IconButton(onPressed: () {
+                                setState(() {
+                                  hidePassword = !hidePassword;
+                                });
+                              }, icon: Icon(hidePassword ? Iconsax.eye
+                                  : Iconsax.eye_slash), color: Colors.white70,),
+                              obscureText: hidePassword,
                             ),
                             const SizedBox(height: 20),
                             // Login Button
@@ -209,10 +212,12 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final bool obscureText;
+  Widget? suffixIcon;
 
-  const CustomTextField({
+  CustomTextField({
     required this.hintText,
     required this.icon,
+    this.suffixIcon,
     required this.obscureText,
   });
 
@@ -223,6 +228,7 @@ class CustomTextField extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.white70),
+        suffixIcon: suffixIcon,
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.white54),
         filled: true,
