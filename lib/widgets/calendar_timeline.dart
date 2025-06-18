@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/provider/calendar_provider.dart';
@@ -16,13 +17,13 @@ class CalendarTimeline extends StatefulWidget {
 
 class _CalendarTimelineState extends State<CalendarTimeline> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-
+  FirebaseAuth auth = FirebaseAuth.instance;
   Future<int> fetchDreamCountByDate(DateTime date) async {
 
     try {
       final querySnapshot =
       await firestore
-          .collection('dreams')
+          .collection('users').doc(auth.currentUser?.uid).collection('dreams')
           .where(
         'timestamp',
         isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/button_provider.dart';
@@ -25,12 +25,12 @@ class _DreamByDateState extends State<DreamByDate> {
   Widget build(BuildContext context) {
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
     final btnProvider = Provider.of<ButtonProvider>(context);
-
+    FirebaseAuth auth = FirebaseAuth.instance;
     return Expanded(
       child: StreamBuilder<QuerySnapshot>(
         stream:
             firestore
-                .collection('dreams')
+                .collection('users').doc(auth.currentUser?.uid).collection('dreams')
                 .where(
                   'timestamp',
                   isGreaterThanOrEqualTo: DateTime(

@@ -140,37 +140,42 @@ class _MyHomePageState extends State<MyHomePage> {
                         width: MediaQuery.sizeOf(context).width - 250,
                       ), // Add spacing between the Text and CircleAvatar
                       user != null
-                          ? Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor:
-                                  btnProvider.isButtonEnabled
-                                      ? Colors.white.withOpacity(0.2)
-                                      : Colors.grey.shade200,
-                              child: StreamBuilder<User?>(
-                                stream: user,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData && snapshot.data != null) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(25),
-                                      child: Image.network(
-                                        snapshot.data!.photoURL ?? '',
-                                      ),
-                                    );
-                                  } else {
-                                    return CircleAvatar(
-                                      backgroundColor:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white.withOpacity(0.2)
-                                              : Colors.grey.shade200,
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Colors.grey,
-                                      ),
-                                    );
-                                  }
-                                },
+                          ? GestureDetector(
+                        onTap: () {
+                              settings(context);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: CircleAvatar(
+                                radius: 18,
+                                backgroundColor:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white.withOpacity(0.2)
+                                        : Colors.grey.shade200,
+                                child: StreamBuilder<User?>(
+                                  stream: user,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData && snapshot.data != null) {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(25),
+                                        child: Image.network(
+                                          snapshot.data!.photoURL ?? '',
+                                        ),
+                                      );
+                                    } else {
+                                      return CircleAvatar(
+                                        backgroundColor:
+                                            btnProvider.isButtonEnabled
+                                                ? Colors.white.withOpacity(0.2)
+                                                : Colors.grey.shade200,
+                                        child: Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           )

@@ -118,7 +118,7 @@ class LoginScreen extends StatelessWidget {
                                 Expanded(child: const Divider()),
                                 const SizedBox(width: 10),
                                 const Text(
-                                  'o',
+                                  'ó',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 const SizedBox(width: 10),
@@ -172,7 +172,8 @@ class LoginScreen extends StatelessWidget {
                                       'photoUrl': user.photoURL,
                                       'email': user.email,
                                       'userId': userId,
-                                      'createdAt': FieldValue.serverTimestamp(),
+                                      'dreams': [],
+                                      'userSince': FieldValue.serverTimestamp(),
                                     });
                                   }
 
