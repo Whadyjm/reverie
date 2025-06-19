@@ -14,12 +14,12 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Prevent back navigation from the login screen
         return false;
       },
       child: SafeArea(
@@ -83,7 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   },
                                   icon: Icon(
-                                    hidePassword ? Iconsax.eye : Iconsax.eye_slash,
+                                    hidePassword
+                                        ? Iconsax.eye
+                                        : Iconsax.eye_slash,
                                     color: Colors.white70,
                                   ),
                                 ),
@@ -99,7 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     MaterialPageRoute(
                                       builder: (context) => MyHomePage(),
                                     ),
-                                        (route) => false, // Clear the navigation stack
+                                    (route) =>
+                                        false, // Clear the navigation stack
                                   );
                                 },
                               ),
@@ -110,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     MaterialPageRoute(
                                       builder: (context) => MyHomePage(),
                                     ),
-                                        (route) => false,
+                                    (route) => false,
                                   );
                                 },
                                 child: Text(
@@ -144,50 +147,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 text: 'Continuar con Google',
                                 onPressed: () async {
-                                  final userCred =
-                                  await AuthService().signInWithGoogle();
-
-                                  try {
-                                    final user = AuthService().userChanges.first;
-                                    if (user != null) {
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => MyHomePage(),
-                                        ),
-                                            (route) => false,
-                                      );
-                                    }
-                                  } catch (e) {
-                                    print("Error during Google Sign-In: $e");
-                                  }
-
-                                  if (userCred != null) {
-                                    final user = userCred.user!;
-                                    final doc = FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(user.uid);
-                                    final docSnapshot = await doc.get();
-                                    String userId = Uuid().v4();
-
-                                    if (!docSnapshot.exists) {
-                                      await doc.set({
-                                        'name': user.displayName,
-                                        'photoUrl': user.photoURL,
-                                        'email': user.email,
-                                        'userId': userId,
-                                        'userSince': FieldValue.serverTimestamp(),
-                                      });
-                                    }
-
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MyHomePage(),
-                                      ),
-                                          (route) => false,
-                                    );
-                                  }
+                                  setState(() {
+                                    isLoading =
+                                        true; // Activar indicador de carga
+                                  });
+                                  await googleSignIn(context);
+                                  setState(() {
+                                    isLoading =
+                                        false; // Desactivar indicador de carga
+                                  });
                                 },
                               ),
                             ],
@@ -203,6 +171,65 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> googleSignIn(BuildContext context) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: true, // Permitir cancelar al presionar fuera
+        builder:
+            (context) => Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 4,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.purple.shade300,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+      );
+
+      final userCred = await AuthService().signInWithGoogle();
+
+      if (userCred != null) {
+        final user = userCred.user!;
+        final doc = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid);
+        final docSnapshot = await doc.get();
+        String userId = Uuid().v4();
+
+        if (!docSnapshot.exists) {
+          await doc.set({
+            'name': user.displayName,
+            'photoUrl': user.photoURL,
+            'email': user.email,
+            'userId': userId,
+            'userSince': FieldValue.serverTimestamp(),
+          });
+        }
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      print("Error during Google Sign-In: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error, intente de nuevo')));
+    } finally {
+      Navigator.of(context).pop(); // Cerrar el diálogo
+    }
   }
 }
 
