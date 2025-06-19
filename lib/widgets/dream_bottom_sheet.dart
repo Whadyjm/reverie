@@ -185,7 +185,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                         );
                                       }
                                     },
-                                    initialRating: 0,
+                                    initialRating: widget.dream['rating']?.toDouble() ?? 0.0,
                                     maxRating: 5,
                                   ),
                                   const SizedBox(width: 20),

@@ -8,8 +8,9 @@ import 'package:provider/provider.dart';
 import '../provider/dream_provider.dart';
 
 class LikeButton extends StatefulWidget {
-  const LikeButton({super.key});
+  LikeButton({super.key, required this.isLiked});
 
+  bool isLiked;
   @override
   State<LikeButton> createState() => _LikeButtonState();
 }
@@ -74,7 +75,7 @@ class _LikeButtonState extends State<LikeButton> {
         ),
         padding: const EdgeInsets.all(8),
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 500),
           transitionBuilder: (Widget child, Animation<double> animation) {
             return FadeTransition(
               opacity: animation,
@@ -82,7 +83,7 @@ class _LikeButtonState extends State<LikeButton> {
             );
           },
           child: Icon(
-            liked ? Iconsax.heart : Iconsax.heart_copy,
+            widget.isLiked ? Iconsax.heart : Iconsax.heart_copy,
             key: ValueKey<bool>(liked),
             color: Colors.purple,
           ),

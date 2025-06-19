@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import '../provider/dream_provider.dart';
-import 'dream_card.dart';
+import 'dream_card.dart' as dream_card;
 import 'dream_bottom_sheet.dart';
 import 'dream_list_empty.dart';
 
@@ -29,25 +29,25 @@ class _DreamByDateState extends State<DreamByDate> {
     return Expanded(
       child: StreamBuilder<QuerySnapshot>(
         stream:
-            firestore
-                .collection('users').doc(auth.currentUser?.uid).collection('dreams')
-                .where(
-                  'timestamp',
-                  isGreaterThanOrEqualTo: DateTime(
-                    _selectedDate.year,
-                    _selectedDate.month,
-                    _selectedDate.day,
-                  ),
-                )
-                .where(
-                  'timestamp',
-                  isLessThan: DateTime(
-                    _selectedDate.year,
-                    _selectedDate.month,
-                    _selectedDate.day + 1,
-                  ),
-                )
-                .snapshots(),
+        firestore
+            .collection('users').doc(auth.currentUser?.uid).collection('dreams')
+            .where(
+          'timestamp',
+          isGreaterThanOrEqualTo: DateTime(
+            _selectedDate.year,
+            _selectedDate.month,
+            _selectedDate.day,
+          ),
+        )
+            .where(
+          'timestamp',
+          isLessThan: DateTime(
+            _selectedDate.year,
+            _selectedDate.month,
+            _selectedDate.day + 1,
+          ),
+        )
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -58,26 +58,24 @@ class _DreamByDateState extends State<DreamByDate> {
           return dreams.isEmpty
               ? DreamListEmpty(btnProvider: btnProvider)
               : ListView.builder(
-                itemCount: dreamCount, // Use the variable here
-                itemBuilder: (context, index) {
-                  final dream = dreams[index];
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return DreamBottomSheet(btnProvider: btnProvider, dream: dream);
-                        },
-                      );
+            itemCount: dreamCount, // Use the variable here
+            itemBuilder: (context, index) {
+              final dream = dreams[index];
+              return GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return DreamBottomSheet(btnProvider: btnProvider, dream: dream);
                     },
-                    child: DreamCard(btnProvider: btnProvider, dream: dream),
                   );
                 },
+                child: dream_card.DreamCard(btnProvider: btnProvider, dream: dream),
               );
+            },
+          );
         },
       ),
     );
   }
 }
-
-

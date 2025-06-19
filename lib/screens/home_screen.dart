@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:pillow/provider/button_provider.dart';
 import 'package:pillow/screens/login_screen.dart';
-import 'package:pillow/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../provider/dream_provider.dart';
+import '../provider/button_provider.dart';
+import '../services/auth_service.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
@@ -23,17 +22,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   String apiKey = '';
-
-  @override
-  void initState() {
-    super.initState();
-    getAPIKeyFromFirestore();
-    initializeButtonState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DreamProvider>(context, listen: false).fetchDreams();
-    });
-  }
 
   Future<void> getAPIKeyFromFirestore() async {
     try {
@@ -66,150 +54,125 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
-    return SafeArea(
-      child: Scaffold(
-        /*appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Pillow',
-            style: AppTextStyle.titleStyle(
-              btnProvider.isButtonEnabled ? Colors.white : Colors.grey.shade800,
-            ),
-          ),
-          backgroundColor:
-              btnProvider.isButtonEnabled ? Colors.transparent : Colors.white,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.settings,
-                color:
-                    btnProvider.isButtonEnabled
-                        ? Colors.white
-                        : Colors.grey.shade800,
+
+    return WillPopScope(
+      onWillPop: () async {
+        User? currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+                (route) => false,
+          );
+          return false; // Prevent default back navigation
+        }
+        return true; // Allow default back navigation
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: btnProvider.isButtonEnabled
+                  ? LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [
+                  Color(0xFF1A003F),
+                  Color(0xFF2E1A5E),
+                  Color(0xFF4A3A7C),
+                  Color(0xFF6B5A9A),
+                  Color(0xFF8C53D6),
+                  Color(0xFFAD75F4),
+                ],
+              )
+                  : LinearGradient(
+                colors: [
+                  Colors.white,
+                  Colors.white,
+                  Colors.white,
+                  Colors.white,
+                  Colors.purple.shade100,
+                  Colors.purple.shade200,
+                  Colors.indigo.shade400,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              onPressed: () {
-                settings(context);
-              },
             ),
-          ],
-        ),*/
-        body: Container(
-          decoration: BoxDecoration(
-            gradient:
-                btnProvider.isButtonEnabled
-                    ? LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: [
-                        Color(0xFF1A003F),
-                        Color(0xFF2E1A5E),
-                        Color(0xFF4A3A7C),
-                        Color(0xFF6B5A9A),
-                        Color(0xFF8C53D6),
-                        Color(0xFFAD75F4),
-                      ],
-                    )
-                    : LinearGradient(
-                      colors: [
-                        Colors.white,
-                        Colors.white,
-                        Colors.white,
-                        Colors.white,
-                        Colors.purple.shade100,
-                        Colors.purple.shade200,
-                        Colors.indigo.shade400,
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                height: 80,
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Pillow',
-                        style: AppTextStyle.titleStyle(
-                          btnProvider.isButtonEnabled
-                              ? Colors.white
-                              : Colors.grey.shade800,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  height: 80,
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Pillow',
+                          style: AppTextStyle.titleStyle(
+                            btnProvider.isButtonEnabled
+                                ? Colors.white
+                                : Colors.grey.shade800,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width - 250,
-                      ), // Add spacing between the Text and CircleAvatar
-                      user != null
-                          ? GestureDetector(
-                        onTap: () {
-                              settings(context);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: CircleAvatar(
-                                radius: 18,
-                                backgroundColor:
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white.withOpacity(0.2)
-                                        : Colors.grey.shade200,
-                                child: StreamBuilder<User?>(
-                                  stream: user,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData && snapshot.data != null) {
-                                      return ClipRRect(
-                                        borderRadius: BorderRadius.circular(25),
-                                        child: Image.network(
-                                          snapshot.data!.photoURL ?? '',
-                                        ),
-                                      );
-                                    } else {
-                                      return CircleAvatar(
-                                        backgroundColor:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white.withOpacity(0.2)
-                                                : Colors.grey.shade200,
-                                        child: Icon(
-                                          Icons.person,
-                                          color: Colors.grey,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width - 250,
+                        ),
+                        user != null
+                            ? GestureDetector(
+                          onTap: () {
+                            settings(context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: btnProvider.isButtonEnabled
+                                  ? Colors.white.withOpacity(0.2)
+                                  : Colors.grey.shade200,
+                              child: StreamBuilder<User?>(
+                                stream: user,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data != null) {
+                                    return ClipRRect(
+                                      borderRadius:
+                                      BorderRadius.circular(25),
+                                      child: Image.network(
+                                        snapshot.data!.photoURL ?? '',
+                                      ),
+                                    );
+                                  } else {
+                                    return CircleAvatar(
+                                      backgroundColor:
+                                      btnProvider.isButtonEnabled
+                                          ? Colors.white
+                                          .withOpacity(0.2)
+                                          : Colors.grey.shade200,
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
-                          )
-                          : const SizedBox.shrink(),
-                      /*SizedBox(
-                        width: 16,
-                      ), // Add spacing between the CircleAvatar and IconButton
-                      IconButton(
-                        icon: Icon(
-                          Icons.settings,
-                          color:
-                              btnProvider.isButtonEnabled
-                                  ? Colors.white
-                                  : Colors.grey.shade800,
-                        ),
-                        onPressed: () {
-                          settings(context);
-                        },
-                      ),*/
-                    ],
+                          ),
+                        )
+                            : const SizedBox.shrink(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              CalendarTimeline(),
-              DreamByDate(),
-              TextAudioInput(apiKey: apiKey),
-            ],
+                CalendarTimeline(),
+                DreamByDate(),
+                TextAudioInput(apiKey: apiKey),
+              ],
+            ),
           ),
         ),
       ),
@@ -252,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       SizedBox(
                         width: 8,
-                      ), // Add spacing between the icon and text
+                      ),
                       Text(
                         btnProvider.isButtonEnabled
                             ? 'Modo nocturno'
@@ -294,7 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (route) => false,
+                            (route) => false,
                       );
                     },
                     icon: Icon(Iconsax.logout_copy),
