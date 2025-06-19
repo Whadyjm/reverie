@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       borderRadius:
                                       BorderRadius.circular(25),
                                       child: Image.network(
-                                        snapshot.data!.photoURL ?? '',
+                                        snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
                                       ),
                                     );
                                   } else {

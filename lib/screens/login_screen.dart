@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/home_screen.dart';
@@ -15,6 +16,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
   bool isLoading = false;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Iniciar Sesión',
+                                'Inicia Sesión',
                                 style: RobotoTextStyle.titleStyle(Colors.white),
                               ),
                               const SizedBox(height: 20),
@@ -70,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 hintText: 'Correo electrónico',
                                 icon: Icons.person,
                                 obscureText: false,
+                                controller: emailController,
                               ),
                               const SizedBox(height: 15),
                               // Password Field
@@ -90,31 +95,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 obscureText: hidePassword,
+                                controller: passwordController,
                               ),
                               const SizedBox(height: 20),
                               // Login Button
-                              CustomButton(
-                                text: 'Inicia sesión',
-                                onPressed: () {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyHomePage(),
+                              isLoading
+                                  ? SizedBox(
+                                    width: 25,
+                                    height: 25,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 4,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.purple.shade300,
+                                      ),
                                     ),
-                                    (route) =>
-                                        false, // Clear the navigation stack
-                                  );
-                                },
-                              ),
+                                  )
+                                  : CustomButton(
+                                    text: 'Iniciar sesión',
+                                    onPressed: () async {
+                                      await authProcess(context);
+                                    },
+                                  ),
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyHomePage(),
-                                    ),
-                                    (route) => false,
-                                  );
+                                  registerModalSheet(context);
                                 },
                                 child: Text(
                                   'Regístrate',
@@ -173,6 +177,159 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void registerModalSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.black.withAlpha(250),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (
+            BuildContext context,
+            void Function(void Function()) setState,
+          ) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      'Regístro',
+                      style: RobotoTextStyle.titleStyle(Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'Nombre y apellido',
+                    icon: Icons.person,
+                    obscureText: false,
+                    controller: nameController,
+                  ),
+                  const SizedBox(height: 15),
+                  CustomTextField(
+                    hintText: 'Correo electrónico',
+                    icon: Icons.email,
+                    obscureText: false,
+                    controller: emailController,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'Contraseña',
+                    icon: Icons.lock,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          hidePassword = !hidePassword;
+                        });
+                      },
+                      icon: Icon(
+                        hidePassword ? Iconsax.eye : Iconsax.eye_slash,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    obscureText: hidePassword,
+                    controller: passwordController,
+                  ),
+                  const SizedBox(height: 20),
+                  isLoading
+                      ? SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 4,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.purple.shade300,
+                          ),
+                        ),
+                      )
+                      : CustomButton(
+                        text: 'Registrar',
+                        onPressed: () async {
+                          try {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                );
+
+                            final user = FirebaseAuth.instance.currentUser;
+
+                            var doc = FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user!.uid);
+                            await doc.set({
+                              'name': nameController.text.trim(),
+                              'photoUrl': '',
+                              'email': emailController.text.trim(),
+                              'userId': user.uid,
+                              'userSince': FieldValue.serverTimestamp(),
+                            });
+                          } catch (e) {
+                          } finally {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                              (route) => false,
+                            );
+                          }
+                        },
+                      ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> authProcess(BuildContext context) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
+
+      if (userCredential.user != null) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+    } finally {
+      setState(() {
+        isLoading = false; // Hide loading indicator
+      });
+    }
+  }
+
   Future<void> googleSignIn(BuildContext context) async {
     try {
       showDialog(
@@ -204,14 +361,13 @@ class _LoginScreenState extends State<LoginScreen> {
             .collection('users')
             .doc(user.uid);
         final docSnapshot = await doc.get();
-        String userId = Uuid().v4();
 
         if (!docSnapshot.exists) {
           await doc.set({
             'name': user.displayName,
             'photoUrl': user.photoURL,
             'email': user.email,
-            'userId': userId,
+            'userId': user.uid,
             'userSince': FieldValue.serverTimestamp(),
           });
         }
@@ -227,8 +383,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error, intente de nuevo')));
-    } finally {
-      Navigator.of(context).pop(); // Cerrar el diálogo
     }
   }
 }
@@ -238,17 +392,20 @@ class CustomTextField extends StatelessWidget {
   final IconData icon;
   final bool obscureText;
   Widget? suffixIcon;
+  TextEditingController controller = TextEditingController();
 
   CustomTextField({
     required this.hintText,
     required this.icon,
     this.suffixIcon,
     required this.obscureText,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
