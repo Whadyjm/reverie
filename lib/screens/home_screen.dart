@@ -23,6 +23,13 @@ class _MyHomePageState extends State<MyHomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   String apiKey = '';
 
+  @override
+  void initState() {
+    super.initState();
+    getAPIKeyFromFirestore();
+    initializeButtonState();
+  }
+
   Future<void> getAPIKeyFromFirestore() async {
     try {
       final doc = await firestore.collection('apiKey').doc('apiKey').get();
@@ -124,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         user != null
                             ? GestureDetector(
                           onTap: () {
+                            FocusScope.of(context).unfocus();
                             settings(context);
                           },
                           child: Padding(
@@ -170,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 CalendarTimeline(),
                 DreamByDate(),
-                TextAudioInput(apiKey: apiKey),
+                //TextAudioInput(apiKey: apiKey),
               ],
             ),
           ),

@@ -52,6 +52,7 @@ class _TextAudioInputState extends State<TextAudioInput> {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () async {
+                    FocusScope.of(context).unfocus();
                     if (_dreamController.text.trim().isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

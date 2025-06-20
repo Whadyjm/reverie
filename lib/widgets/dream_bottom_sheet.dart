@@ -23,7 +23,14 @@ class DreamBottomSheet extends StatefulWidget {
 }
 
 class _DreamBottomSheetState extends State<DreamBottomSheet> {
+  double currentRating = 0.0;
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    currentRating = widget.dream['rating']?.toDouble() ?? 0.0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +168,9 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                     filledIcon: Icons.star_rounded,
                                     emptyIcon: Icons.star_border_rounded,
                                     onRatingChanged: (value) async {
+                                      setState(() {
+                                        currentRating = value;
+                                      });
                                       try {
                                         FirebaseFirestore firestore =
                                             FirebaseFirestore.instance;
@@ -185,7 +195,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                         );
                                       }
                                     },
-                                    initialRating: widget.dream['rating']?.toDouble() ?? 0.0,
+                                    initialRating: currentRating,
                                     maxRating: 5,
                                   ),
                                   const SizedBox(width: 20),

@@ -15,6 +15,7 @@ class _DreamTextfieldState extends State<DreamTextfield> {
   Widget build(BuildContext context) {
     return Expanded(
       child: TextField(
+        autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         style: TextStyle(
           fontFamily: 'roboto',

@@ -18,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool hidePassword = true;
   bool isLoading = false;
+  bool isLoadingGoogle = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -182,12 +183,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 text: 'Continuar con Google',
                                 onPressed: () async {
                                   setState(() {
-                                    isLoading =
+                                    isLoadingGoogle =
                                         true; // Activar indicador de carga
                                   });
                                   await googleSignIn(context);
                                   setState(() {
-                                    isLoading =
+                                    isLoadingGoogle =
                                         false; // Desactivar indicador de carga
                                   });
                                 },
