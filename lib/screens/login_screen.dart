@@ -337,7 +337,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .collection('users')
                                 .doc(user!.uid);
                             await doc.set({
-                              'userPin': '',
                               'name': nameController.text.trim(),
                               'photoUrl': '',
                               'email': emailController.text.trim(),
@@ -349,8 +348,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             String userPin = (await FirebaseFirestore.instance
                                 .collection('users')
                                 .doc(user.uid)
-                                .get())
-                                .data()?['userPin'] as String? ?? '';
+                                .collection('pin')
+                                .doc('pin')
+                                .get()).data()?['userPin'] as String? ?? '';
 
                             Navigator.pushAndRemoveUntil(
                               context,

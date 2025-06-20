@@ -70,8 +70,9 @@ class _SecretPinState extends State<SecretPin> {
           (route) => false,
     );
 
-    await FirebaseFirestore.instance.collection('users').doc(widget.userUid).update({
-      'userPin': _pin,
+    await FirebaseFirestore.instance.collection('users').doc(widget.userUid).collection('pin').add({
+      'pin': _pin,
+      'createdAt': Timestamp.now(),
     });
   }
 
