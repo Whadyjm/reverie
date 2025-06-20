@@ -100,8 +100,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: hidePassword,
                                 controller: passwordController,
                               ),
-                              const SizedBox(height: 20),
-                              // Login Button
+                              const SizedBox(height: 10),
+                              TextButton(
+                                onPressed: () async {
+                                  forgotPaswordModalSheet(context);
+                                },
+                                child: Text(
+                                  'Recuperar contraseña',
+                                  style: RobotoTextStyle.subtitleStyle(
+                                    Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
                               isLoading
                                   ? SizedBox(
                                     width: 25,
@@ -294,7 +305,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   (context) => AlertDialog(
                                     title: Text(
                                       'Por favor, complete todos los campos',
-                                      style: TextStyle(color: Colors.white, fontSize: 15),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      ),
                                     ),
                                     backgroundColor: Colors.grey.shade900,
                                     shape: RoundedRectangleBorder(
@@ -341,7 +355,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     (context) => AlertDialog(
                                       title: Text(
                                         'Este email ya se encuentra en uso.',
-                                        style: TextStyle(color: Colors.white, fontSize: 15),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
                                       ),
                                       backgroundColor: Colors.grey.shade900,
                                       shape: RoundedRectangleBorder(
@@ -356,7 +373,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     (context) => AlertDialog(
                                       title: Text(
                                         'La contraseña suministrada es muy débil.',
-                                        style: TextStyle(color: Colors.white, fontSize: 15),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
                                       ),
                                       backgroundColor: Colors.grey.shade900,
                                       shape: RoundedRectangleBorder(
@@ -371,7 +391,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     (context) => AlertDialog(
                                       title: Text(
                                         'Email inválido.',
-                                        style: TextStyle(color: Colors.white, fontSize: 15),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
                                       ),
                                       backgroundColor: Colors.grey.shade900,
                                       shape: RoundedRectangleBorder(
@@ -509,5 +532,88 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text('Error, intente de nuevo')));
     }
+  }
+
+  void forgotPaswordModalSheet(BuildContext context) {
+
+    final TextEditingController emailController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.black.withAlpha(250),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      'Recuperar contraseña',
+                      style: RobotoTextStyle.titleStyle(Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'Correo electrónico',
+                    icon: Icons.email,
+                    obscureText: false,
+                    controller: emailController,
+                  ),
+                  const SizedBox(height: 20),
+                  isLoading
+                      ? SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 4,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.purple.shade300,
+                          ),
+                        ),
+                      )
+                      : CustomButton(
+                        text: 'Enviar',
+                        onPressed: () async {
+                          final email = emailController.text.trim();
+                          if (email.isNotEmpty) {
+                            try {
+                              await FirebaseAuth.instance.sendPasswordResetEmail(
+                                email: email,
+                              );
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Correo de recuperación enviado.'),
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error: ${e.toString()}')),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Por favor, ingresa un correo válido.'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                ],
+              ),
+            );
+          },
+        );
   }
 }
