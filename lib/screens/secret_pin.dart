@@ -10,6 +10,58 @@ class SecretPin extends StatefulWidget {
 }
 
 class _SecretPinState extends State<SecretPin> {
+
+  final List<TextEditingController> _controllers = [];
+  final List<FocusNode> _focusNodes = [];
+  String _pin = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (int i = 0; i < 4; i++) {
+      _controllers.add(TextEditingController());
+      _focusNodes.add(FocusNode());
+    }
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var node in _focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  void _onDigitEntered(int index, String value) {
+    if (value.isNotEmpty) {
+      if (index < 3) {
+        FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+      } else {
+        _focusNodes[index].unfocus();
+      }
+    } else if (value.isEmpty && index > 0) {
+      FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+    }
+
+    _pin = _controllers.map((c) => c.text).join();
+
+    if (_pin.length == 4) {
+      _handlePinComplete();
+    }
+    setState(() {});
+  }
+
+  void _handlePinComplete() {
+    // Here you can save the pin or perform validation
+    print('Complete pin: $_pin');
+    // For example:
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => NextScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
