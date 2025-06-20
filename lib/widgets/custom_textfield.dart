@@ -5,6 +5,7 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final IconData icon;
   final bool obscureText;
+  bool? autofocus;
   Widget? suffixIcon;
   TextEditingController controller = TextEditingController();
 
@@ -12,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     required this.hintText,
     required this.icon,
     this.suffixIcon,
+    this.autofocus,
     required this.obscureText,
     required this.controller,
   });
@@ -19,6 +21,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      autofocus: autofocus ?? false,
       textInputAction: TextInputAction.next,
       controller: controller,
       obscureText: obscureText,

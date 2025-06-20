@@ -100,19 +100,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: hidePassword,
                                 controller: passwordController,
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 5),
                               TextButton(
                                 onPressed: () async {
                                   forgotPaswordModalSheet(context);
                                 },
                                 child: Text(
                                   'Recuperar contraseña',
-                                  style: RobotoTextStyle.subtitleStyle(
+                                  style: RobotoTextStyle.small2TextStyle(
                                     Colors.white,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 5),
                               isLoading
                                   ? SizedBox(
                                     width: 25,
@@ -158,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       } catch (e) {}
                                     },
                                   ),
+                              const SizedBox(height: 10),
                               TextButton(
                                 onPressed: () {
                                   registerModalSheet(context);
@@ -169,6 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -564,6 +566,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   CustomTextField(
+                    autofocus: true,
                     hintText: 'Correo electrónico',
                     icon: Icons.email,
                     obscureText: false,
@@ -592,21 +595,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.black.withAlpha(250),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                   content: Text('Correo de recuperación enviado.'),
                                 ),
                               );
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: ${e.toString()}')),
-                              );
                             }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Por favor, ingresa un correo válido.'),
-                              ),
-                            );
                           }
                         },
                       ),
