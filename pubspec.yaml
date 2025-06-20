@@ -47,6 +47,7 @@ dependencies:
   google_sign_in: ^6.3.0
   uuid: ^4.5.1
   custom_rating_bar: ^3.0.0
+  animate_do: ^4.2.0
 
 dev_dependencies:
   flutter_test:
