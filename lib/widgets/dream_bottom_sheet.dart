@@ -34,208 +34,215 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color:
-            widget.btnProvider.isButtonEnabled
-                ? Colors.grey.shade900
-                : Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.dream['title'],
-            style: AppTextStyle.subtitleStyle(
+    return Padding(
+      padding: const EdgeInsets.only(top: 90),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color:
               widget.btnProvider.isButtonEnabled
-                  ? Colors.white
-                  : Colors.grey.shade700,
-            ),
-          ),
-          const Divider(),
-          SingleChildScrollView(
-            child: Text(
-              widget.dream['text'],
-              style: TextStyle(
-                color:
-                    widget.btnProvider.isButtonEnabled
-                        ? Colors.white
-                        : Colors.grey.shade800,
-                fontFamily: 'roboto',
-                fontSize: 16,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Iconsax.arrow_left_2_copy,
-                  color:
-                      widget.btnProvider.isButtonEnabled
-                          ? Colors.white70
-                          : null,
-                ),
-              ),
-              const SizedBox(width: 15),
-              OutlinedButton.icon(
-                iconAlignment: IconAlignment.end,
-                onPressed: () async {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  await Future.delayed(const Duration(seconds: 2));
-                  setState(() {
-                    isLoading = false;
-                  });
-                  showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
-                    ),
-                    backgroundColor:
-                        widget.btnProvider.isButtonEnabled
-                            ? Colors.grey.shade900
-                            : Colors.white,
-                    builder: (BuildContext context) {
-                      return Container(
-                        padding: const EdgeInsets.all(16),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Text(
-                                  'Análisis del sueño',
-                                  style: AppTextStyle.subtitleStyle(
-                                    widget.btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
-                                  ),
-                                ),
-                              ),
-                              const Divider(),
-                              SingleChildScrollView(
-                                child: Text(
-                                  widget.dream['analysis'],
-                                  style: TextStyle(
-                                    color:
-                                        widget.btnProvider.isButtonEnabled
-                                            ? Colors.white
-                                            : Colors.grey.shade800,
-                                    fontFamily: 'roboto',
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.purple.shade400,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Cerrar',
-                                      style: RobotoTextStyle.smallTextStyle(
-                                        widget.btnProvider.isButtonEnabled
-                                            ? Colors.white
-                                            : Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ),
-                                  RatingBar(
-                                    size: 32,
-                                    filledIcon: Icons.star_rounded,
-                                    emptyIcon: Icons.star_border_rounded,
-                                    onRatingChanged: (value) async {
-                                      setState(() {
-                                        currentRating = value;
-                                      });
-                                      try {
-                                        FirebaseFirestore firestore =
-                                            FirebaseFirestore.instance;
-                                        FirebaseAuth auth =
-                                            FirebaseAuth.instance;
-
-                                        await firestore
-                                            .collection('users')
-                                            .doc(auth.currentUser?.uid)
-                                            .collection('dreams')
-                                            .doc(widget.dream.id)
-                                            .update({'rating': value});
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Error updating rating.',
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    initialRating: currentRating,
-                                    maxRating: 5,
-                                  ),
-                                  const SizedBox(width: 20),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                icon:
-                    isLoading
-                        ? SizedBox(
-                          width: 15,
-                          height: 15,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.purple.shade300,
-                            ),
-                          ),
-                        )
-                        : Icon(Iconsax.magic_star, color: Colors.amber),
-                label: Text(
-                  'Ver análisis',
-                  style: TextStyle(
+                  ? Colors.grey.shade900
+                  : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Iconsax.arrow_left_2_copy,
                     color:
-                        widget.btnProvider.isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade800,
-                    fontFamily: 'roboto',
-                    fontSize: 16,
+                    widget.btnProvider.isButtonEnabled
+                        ? Colors.white70
+                        : null,
                   ),
                 ),
+                Text(
+                  widget.dream['title'],
+                  style: AppTextStyle.subtitleStyle(
+                    widget.btnProvider.isButtonEnabled
+                        ? Colors.white
+                        : Colors.grey.shade700,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(),
+            SingleChildScrollView(
+              child: Text(
+                widget.dream['text'],
+                style: TextStyle(
+                  color:
+                      widget.btnProvider.isButtonEnabled
+                          ? Colors.white
+                          : Colors.grey.shade800,
+                  fontFamily: 'roboto',
+                  fontSize: 16,
+                ),
               ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(width: 15),
+                OutlinedButton.icon(
+                  iconAlignment: IconAlignment.end,
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await Future.delayed(const Duration(seconds: 2));
+                    setState(() {
+                      isLoading = false;
+                    });
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
+                      ),
+                      backgroundColor:
+                          widget.btnProvider.isButtonEnabled
+                              ? Colors.grey.shade900
+                              : Colors.white,
+                      builder: (BuildContext context) {
+                        return Container(
+                          padding: const EdgeInsets.all(16),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'Análisis del sueño',
+                                    style: AppTextStyle.subtitleStyle(
+                                      widget.btnProvider.isButtonEnabled
+                                          ? Colors.white
+                                          : Colors.grey.shade700,
+                                    ),
+                                  ),
+                                ),
+                                const Divider(),
+                                SingleChildScrollView(
+                                  child: Text(
+                                    widget.dream['analysis'],
+                                    style: TextStyle(
+                                      color:
+                                          widget.btnProvider.isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade800,
+                                      fontFamily: 'roboto',
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.purple.shade400,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Cerrar',
+                                        style: RobotoTextStyle.smallTextStyle(
+                                          widget.btnProvider.isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade800,
+                                        ),
+                                      ),
+                                    ),
+                                    RatingBar(
+                                      size: 32,
+                                      filledIcon: Icons.star_rounded,
+                                      emptyIcon: Icons.star_border_rounded,
+                                      onRatingChanged: (value) async {
+                                        setState(() {
+                                          currentRating = value;
+                                        });
+                                        try {
+                                          FirebaseFirestore firestore =
+                                              FirebaseFirestore.instance;
+                                          FirebaseAuth auth =
+                                              FirebaseAuth.instance;
+
+                                          await firestore
+                                              .collection('users')
+                                              .doc(auth.currentUser?.uid)
+                                              .collection('dreams')
+                                              .doc(widget.dream.id)
+                                              .update({'rating': value});
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Error updating rating.',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      initialRating: currentRating,
+                                      maxRating: 5,
+                                    ),
+                                    const SizedBox(width: 20),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon:
+                      isLoading
+                          ? SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.purple.shade300,
+                              ),
+                            ),
+                          )
+                          : Icon(Iconsax.magic_star, color: Colors.amber),
+                  label: Text(
+                    'Ver análisis',
+                    style: TextStyle(
+                      color:
+                          widget.btnProvider.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey.shade800,
+                      fontFamily: 'roboto',
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

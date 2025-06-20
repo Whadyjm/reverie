@@ -11,8 +11,10 @@ class FirebaseService {
           .doc(auth.currentUser?.uid)
           .collection('dreams');
 
+      final dreamId = FirebaseFirestore.instance.collection('dreams').doc().id;
       // Agregar el documento y obtener la referencia
       var documentRef = await dreamsCollection.add({
+        'dreamId': dreamId,
         'title': title.split('\n\n')[0],
         'classification': title.split('\n\n')[1],
         'analysis': title.split('\n\n').sublist(2).join('\n\n'),

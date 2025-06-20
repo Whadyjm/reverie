@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/login_screen.dart';
+import 'package:pillow/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
+import '../provider/calendar_provider.dart';
 import '../services/auth_service.dart';
+import '../services/firebase_service.dart';
+import '../services/gemini_service.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
@@ -22,12 +26,26 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   String apiKey = '';
+  TextEditingController _dreamController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     getAPIKeyFromFirestore();
     initializeButtonState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    _dreamController.dispose();
+    super.dispose();
   }
 
   Future<void> getAPIKeyFromFirestore() async {
@@ -61,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
+    final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
 
     return WillPopScope(
       onWillPop: () async {
@@ -69,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => LoginScreen()),
-                (route) => false,
+            (route) => false,
           );
           return false; // Prevent default back navigation
         }
@@ -79,32 +98,33 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Scaffold(
           body: Container(
             decoration: BoxDecoration(
-              gradient: btnProvider.isButtonEnabled
-                  ? LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: [
-                  Color(0xFF1A003F),
-                  Color(0xFF2E1A5E),
-                  Color(0xFF4A3A7C),
-                  Color(0xFF6B5A9A),
-                  Color(0xFF8C53D6),
-                  Color(0xFFAD75F4),
-                ],
-              )
-                  : LinearGradient(
-                colors: [
-                  Colors.white,
-                  Colors.white,
-                  Colors.white,
-                  Colors.white,
-                  Colors.purple.shade100,
-                  Colors.purple.shade200,
-                  Colors.indigo.shade400,
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
+              gradient:
+                  btnProvider.isButtonEnabled
+                      ? LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                        colors: [
+                          Color(0xFF1A003F),
+                          Color(0xFF2E1A5E),
+                          Color(0xFF4A3A7C),
+                          Color(0xFF6B5A9A),
+                          Color(0xFF8C53D6),
+                          Color(0xFFAD75F4),
+                        ],
+                      )
+                      : LinearGradient(
+                        colors: [
+                          Colors.white,
+                          Colors.white,
+                          Colors.white,
+                          Colors.white,
+                          Colors.purple.shade100,
+                          Colors.purple.shade200,
+                          Colors.indigo.shade400,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,52 +145,54 @@ class _MyHomePageState extends State<MyHomePage> {
                                 : Colors.grey.shade800,
                           ),
                         ),
-                        SizedBox(
-                          width: MediaQuery.sizeOf(context).width - 250,
-                        ),
+                        SizedBox(width: MediaQuery.sizeOf(context).width - 250),
                         user != null
                             ? GestureDetector(
-                          onTap: () {
-                            FocusScope.of(context).unfocus();
-                            settings(context);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor: btnProvider.isButtonEnabled
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.shade200,
-                              child: StreamBuilder<User?>(
-                                stream: user,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData &&
-                                      snapshot.data != null) {
-                                    return ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.circular(25),
-                                      child: Image.network(
-                                        snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                      ),
-                                    );
-                                  } else {
-                                    return CircleAvatar(
-                                      backgroundColor:
+                              onTap: () {
+                                FocusScope.of(context).unfocus();
+                                settings(context);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor:
                                       btnProvider.isButtonEnabled
-                                          ? Colors.white
-                                          .withOpacity(0.2)
+                                          ? Colors.white.withOpacity(0.2)
                                           : Colors.grey.shade200,
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Colors.grey,
-                                      ),
-                                    );
-                                  }
-                                },
+                                  child: StreamBuilder<User?>(
+                                    stream: user,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          snapshot.data != null) {
+                                        return ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            25,
+                                          ),
+                                          child: Image.network(
+                                            snapshot.data!.photoURL ??
+                                                'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                          ),
+                                        );
+                                      } else {
+                                        return CircleAvatar(
+                                          backgroundColor:
+                                              btnProvider.isButtonEnabled
+                                                  ? Colors.white.withOpacity(
+                                                    0.2,
+                                                  )
+                                                  : Colors.grey.shade200,
+                                          child: Icon(
+                                            Icons.person,
+                                            color: Colors.grey,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
+                            )
                             : const SizedBox.shrink(),
                       ],
                     ),
@@ -181,6 +203,201 @@ class _MyHomePageState extends State<MyHomePage> {
                 //TextAudioInput(apiKey: apiKey),
               ],
             ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled:
+                    true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                ),
+                backgroundColor:
+                    btnProvider.isButtonEnabled
+                        ? Colors.grey.shade900
+                        : Colors.white,
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: 16.0,
+                      right: 16.0,
+                      top: 16.0,
+                      bottom:
+                          MediaQuery.of(context)
+                              .viewInsets
+                              .bottom, // Ajusta el espacio según el teclado
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '¿Qué soñaste hoy?',
+                            style: AppTextStyle.subtitleStyle(
+                              btnProvider.isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.grey.shade700,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            textCapitalization: TextCapitalization.sentences,
+                            style: TextStyle(
+                              fontFamily: 'roboto',
+                              color:
+                                  btnProvider.isButtonEnabled
+                                      ? Colors.white
+                                      : Colors.grey.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            controller: _dreamController,
+                            decoration: InputDecoration(
+                              hintText: 'Escribe tu sueño...',
+                              hintStyle: TextStyle(
+                                color:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white70
+                                        : Colors.grey.shade500,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            maxLines: 5,
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 70,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                FocusScope.of(context).unfocus();
+                                if (_dreamController.text.trim().isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      duration: const Duration(seconds: 1),
+                                      backgroundColor: Colors.grey.shade700,
+                                      content: Text(
+                                        'El campo de texto está vacío',
+                                        style: RobotoTextStyle.smallTextStyle(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                try {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+
+                                  final title = await GeminiService()
+                                      .generateTitle(
+                                        _dreamController.text,
+                                        apiKey,
+                                      );
+                                  FirebaseService().saveDream(
+                                    context,
+                                    _dreamController,
+                                    _selectedDate,
+                                    title,
+                                  );
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error, intente de nuevo'),
+                                    ),
+                                  );
+                                } finally {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  _dreamController.clear();
+                                    Navigator.pop(context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                              ),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.purple.shade400,
+                                      Colors.purple.shade600,
+                                      Colors.indigo.shade400,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child:
+                                      isLoading
+                                          ? SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 4,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    Colors.white,
+                                                  ),
+                                            ),
+                                          )
+                                          : Text(
+                                            'Guardar',
+                                            style: TextStyle(
+                                              fontFamily: 'roboto',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+child: Container(
+  height: 100,
+  width: 100,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12),
+    gradient: LinearGradient(
+      colors: [
+        Colors.purple.shade400,
+        Colors.purple.shade600,
+        Colors.indigo.shade400,
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    shape: BoxShape.rectangle,
+  ),
+  child: Icon(Icons.add, color: Colors.white),
+),
           ),
         ),
       ),
@@ -221,9 +438,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             : Icons.wb_sunny,
                         color: Colors.grey.shade700,
                       ),
-                      SizedBox(
-                        width: 8,
-                      ),
+                      SizedBox(width: 8),
                       Text(
                         btnProvider.isButtonEnabled
                             ? 'Modo nocturno'
@@ -265,7 +480,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginScreen()),
-                            (route) => false,
+                        (route) => false,
                       );
                     },
                     icon: Icon(Iconsax.logout_copy),
