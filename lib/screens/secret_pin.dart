@@ -6,16 +6,17 @@ import 'package:pillow/style/text_style.dart';
 import 'home_screen.dart';
 
 class SecretPin extends StatefulWidget {
-  SecretPin({super.key, required this.userUid});
+  SecretPin({super.key, required this.userUid, this.userHasPin, this.userPin});
 
   String userUid;
+  bool? userHasPin;
+  String? userPin;
 
   @override
   State<SecretPin> createState() => _SecretPinState();
 }
 
 class _SecretPinState extends State<SecretPin> {
-
   final List<TextEditingController> _controllers = [];
   final List<FocusNode> _focusNodes = [];
   String _pin = '';
@@ -62,18 +63,40 @@ class _SecretPinState extends State<SecretPin> {
 
   void _handlePinComplete() async {
     print('Complete pin: $_pin');
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-          builder: (context) => MyHomePage()
-      ),
-          (route) => false,
-    );
 
-    await FirebaseFirestore.instance.collection('users').doc(widget.userUid).collection('pin').add({
-      'pin': _pin,
-      'createdAt': Timestamp.now(),
-    });
+    if (widget.userHasPin == true) {
+      if (_pin == widget.userPin) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+              (route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('El pin ingresado es incorrecto.', style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.grey.shade900,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+        return;
+      }
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+            (route) => false,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userUid)
+          .collection('pin')
+          .add({'pin': _pin, 'createdAt': Timestamp.now()});
+    }
   }
 
   @override
@@ -102,20 +125,24 @@ class _SecretPinState extends State<SecretPin> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Establece un pin de seguridad',
+                widget.userHasPin == true
+                    ? 'Ingresa tu pin'
+                    : 'Establece un pin de seguridad',
                 style: RobotoTextStyle.titleStyle(Colors.white),
               ),
               const SizedBox(height: 5),
               Text(
-                'Este pin mantendrá tus sueños a salvo',
+                widget.userHasPin == true
+                    ? 'Este pin mantiene tus sueños a salvo'
+                    : 'Este pin mantendrá tus sueños a salvo',
                 style: RobotoTextStyle.smallTextStyle(Colors.white),
               ),
-              const SizedBox(height: 30,),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   4,
-                      (index) => Container(
+                  (index) => Container(
                     width: 60,
                     height: 60,
                     margin: const EdgeInsets.symmetric(horizontal: 10),

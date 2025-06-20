@@ -77,12 +77,12 @@ Stream<int> fetchDreamCountByDate(DateTime date) {
                     color: btnProvider.isButtonEnabled
                         ? Colors.black.withOpacity(0.3)
                         : Colors.grey.shade300,
-                    blurRadius: 10,
+                    blurRadius: 5,
                     offset: Offset(0, 4),
                   ),
                   BoxShadow(
                     color: Colors.white.withOpacity(0.2), // Sombra interior blanca para efecto glass
-                    blurRadius: 2,
+                    blurRadius: 5,
                     offset: Offset(0, -2),
                     spreadRadius: 1,
                   ),

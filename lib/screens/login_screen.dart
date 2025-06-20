@@ -101,7 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: hidePassword,
                                 controller: passwordController,
                               ),
-                              const SizedBox(height: 5),
                               TextButton(
                                 onPressed: () async {
                                   forgotPaswordModalSheet(context);
@@ -113,7 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 5),
                               isLoading
                                   ? SizedBox(
                                     width: 25,
@@ -159,7 +157,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       } catch (e) {}
                                     },
                                   ),
-                              const SizedBox(height: 10),
                               TextButton(
                                 onPressed: () {
                                   registerModalSheet(context);
@@ -171,7 +168,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -181,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     'ó',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 5),
                                   Expanded(child: const Divider()),
                                 ],
                               ),
@@ -344,18 +340,25 @@ class _LoginScreenState extends State<LoginScreen> {
                               'userSince': FieldValue.serverTimestamp(),
                             });
 
-
-                            String userPin = (await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.uid)
-                                .collection('pin')
-                                .doc('pin')
-                                .get()).data()?['userPin'] as String? ?? '';
+                            String userPin =
+                                (await FirebaseFirestore.instance
+                                            .collection('users')
+                                            .doc(user.uid)
+                                            .collection('pin')
+                                            .doc()
+                                            .get())
+                                        .data()?['pin']
+                                    as String? ??
+                                '';
 
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => userPin.isNotEmpty ? MyHomePage():SecretPin(userUid: user.uid,)
+                                builder:
+                                    (context) =>
+                                        userPin.isNotEmpty
+                                            ? MyHomePage()
+                                            : SecretPin(userUid: user.uid),
                               ),
                               (route) => false,
                             );
@@ -447,10 +450,43 @@ class _LoginScreenState extends State<LoginScreen> {
             password: passwordController.text.trim(),
           );
 
+      final user = FirebaseAuth.instance.currentUser;
+      String? userUid = user?.uid;
+
+      var documentRef =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userUid)
+              .collection('pin')
+              .get();
+
+      // verificar que el usuario tenga pin
+      String userPin =
+          (await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userUid)
+                  .collection('pin')
+                  .doc(
+                    documentRef.docs.isNotEmpty
+                        ? documentRef.docs.first.id
+                        : null,
+                  )
+                  .get())
+              .data()?['pin'];
+      print('----------$userPin-----------');
+
+      bool userHasPin = userPin.isEmpty ? false : true;
+
       if (userCredential.user != null) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    userPin.isNotEmpty
+                        ? SecretPin(userUid: userUid!, userHasPin: userHasPin, userPin: userPin,)
+                        : MyHomePage(),
+          ),
           (route) => false,
         );
       }
@@ -548,7 +584,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void forgotPaswordModalSheet(BuildContext context) {
-
     final TextEditingController emailController = TextEditingController();
 
     showModalBottomSheet(
@@ -559,71 +594,70 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Text(
+                  'Recuperar contraseña',
+                  style: RobotoTextStyle.titleStyle(Colors.white),
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Recuperar contraseña',
-                      style: RobotoTextStyle.titleStyle(Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomTextField(
-                    autofocus: true,
-                    hintText: 'Correo electrónico',
-                    icon: Icons.email,
-                    obscureText: false,
-                    controller: emailController,
-                  ),
-                  const SizedBox(height: 20),
-                  isLoading
-                      ? SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 4,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.purple.shade300,
-                          ),
-                        ),
-                      )
-                      : CustomButton(
-                        text: 'Enviar',
-                        onPressed: () async {
-                          final email = emailController.text.trim();
-                          if (email.isNotEmpty) {
-                            try {
-                              await FirebaseAuth.instance.sendPasswordResetEmail(
-                                email: email,
-                              );
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: Colors.black.withAlpha(250),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  content: Text('Correo de recuperación enviado.'),
-                                ),
-                              );
-                            } catch (e) {
-                            }
-                          }
-                        },
+              const SizedBox(height: 20),
+              CustomTextField(
+                autofocus: true,
+                hintText: 'Correo electrónico',
+                icon: Icons.email,
+                obscureText: false,
+                controller: emailController,
+              ),
+              const SizedBox(height: 20),
+              isLoading
+                  ? SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.purple.shade300,
                       ),
-                ],
-              ),
-            );
-          },
+                    ),
+                  )
+                  : CustomButton(
+                    text: 'Enviar',
+                    onPressed: () async {
+                      final email = emailController.text.trim();
+                      if (email.isNotEmpty) {
+                        try {
+                          await FirebaseAuth.instance.sendPasswordResetEmail(
+                            email: email,
+                          );
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.black.withAlpha(250),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              content: Text('Correo de recuperación enviado.'),
+                            ),
+                          );
+                        } catch (e) {}
+                      }
+                    },
+                  ),
+            ],
+          ),
         );
+      },
+    );
   }
 }
