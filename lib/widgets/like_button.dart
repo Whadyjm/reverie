@@ -8,9 +8,10 @@ import 'package:provider/provider.dart';
 import '../provider/dream_provider.dart';
 
 class LikeButton extends StatefulWidget {
-  LikeButton({super.key, required this.isLiked});
+  LikeButton({super.key, required this.isLiked, required this.dreamId});
 
   bool isLiked;
+  String dreamId;
   @override
   State<LikeButton> createState() => _LikeButtonState();
 }
@@ -36,26 +37,26 @@ class _LikeButtonState extends State<LikeButton> {
               .collection('dreams');
 
           // Retrieve the document ID dynamically
-          var querySnapshot = await dreamsCollection.limit(1).get();
+         /* var querySnapshot = await dreamsCollection.limit(1).get();
           var dreamId =
               querySnapshot.docs.isNotEmpty
                   ? querySnapshot.docs.first.id
-                  : null;
+                  : null;*/
 
           var documentSnapshot =
               await firestore
                   .collection('users')
                   .doc(auth.currentUser?.uid)
                   .collection('dreams')
-                  .doc(dreamId)
+                  .doc(widget.dreamId)
                   .get();
           bool liked = documentSnapshot.data()?['isLiked'] ?? false;
 
-          if (dreamId == null) {
+          if (widget.dreamId == null) {
             throw Exception('No document found to update.');
           }
 
-          await dreamsCollection.doc(dreamId).update({
+          await dreamsCollection.doc(widget.dreamId).update({
             'isLiked': liked ? false : true, // Update the field as needed
           });
         } catch (e) {}

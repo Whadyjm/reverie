@@ -89,7 +89,7 @@ class DreamCard extends StatelessWidget {
               bottom: -80,
               child: Row(
                 children: [
-                  LikeButton(isLiked: dream['isLiked'],),
+                  LikeButton(isLiked: dream['isLiked'], dreamId: dream['dreamId'],),
                   const SizedBox(width: 20),
                   Chip(
                     label: Text(
