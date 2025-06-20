@@ -67,28 +67,43 @@ Stream<int> fetchDreamCountByDate(DateTime date) {
             onTap: onTap,
             child: Container(
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12), // Bordes redondeados para el efecto glass
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2), // Borde sutil blanco para efecto glass
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: btnProvider.isButtonEnabled ? Colors.black54:Colors.grey.shade300,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
+                    color: btnProvider.isButtonEnabled
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.shade300,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.2), // Sombra interior blanca para efecto glass
+                    blurRadius: 2,
+                    offset: Offset(0, -2),
+                    spreadRadius: 1,
                   ),
                 ],
-                gradient:
-                    isSelected
-                        ? LinearGradient(
-                          colors: [
-                            Colors.grey.shade200,
-                            Colors.purple.shade200,
-                            Colors.purple.shade200,
-                            Colors.indigo.shade300,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
-                        : null,
-                color: isSelected ? null : btnProvider.isButtonEnabled? Colors.white70:Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                gradient: isSelected
+                    ? LinearGradient(
+                  colors: [
+                    Colors.grey.shade200.withOpacity(0.8), // Transparencia para glassmorphism
+                    Colors.purple.shade200.withOpacity(0.8),
+                    Colors.purple.shade200.withOpacity(0.8),
+                    Colors.indigo.shade300.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+                    : LinearGradient(
+                  colors: [
+                    Colors.white.withOpacity(0.3),
+                    Colors.white.withOpacity(0.1),
+                  ],
+                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
