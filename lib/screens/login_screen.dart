@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/home_screen.dart';
+import 'package:pillow/screens/secret_pin.dart';
 import 'package:uuid/uuid.dart';
 import '../services/auth_service.dart';
 import '../style/text_style.dart';
@@ -336,16 +337,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .collection('users')
                                 .doc(user!.uid);
                             await doc.set({
+                              'userPin': '',
                               'name': nameController.text.trim(),
                               'photoUrl': '',
                               'email': emailController.text.trim(),
                               'userId': user.uid,
                               'userSince': FieldValue.serverTimestamp(),
                             });
+
+
+                            String userPin = (await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid)
+                                .get())
+                                .data()?['userPin'] as String? ?? '';
+
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MyHomePage(),
+                                builder: (context) => userPin.isNotEmpty ? MyHomePage():SecretPin()
                               ),
                               (route) => false,
                             );
@@ -514,6 +524,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (!docSnapshot.exists) {
           await doc.set({
+            'userPin': '',
             'name': user.displayName,
             'photoUrl': user.photoURL,
             'email': user.email,
