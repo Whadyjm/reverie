@@ -19,27 +19,22 @@ class CalendarTimeline extends StatefulWidget {
 class _CalendarTimelineState extends State<CalendarTimeline> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  Future<int> fetchDreamCountByDate(DateTime date) async {
-
-    try {
-      final querySnapshot =
-      await firestore
-          .collection('users').doc(auth.currentUser?.uid).collection('dreams')
-          .where(
+Stream<int> fetchDreamCountByDate(DateTime date) {
+  return firestore
+      .collection('users')
+      .doc(auth.currentUser?.uid)
+      .collection('dreams')
+      .where(
         'timestamp',
         isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
       )
-          .where(
+      .where(
         'timestamp',
         isLessThan: DateTime(date.year, date.month, date.day + 1),
       )
-          .get();
-      return querySnapshot.docs.length;
-    } catch (e) {
-      return 0;
-    }
-
-  }
+      .snapshots()
+      .map((querySnapshot) => querySnapshot.docs.length);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +119,8 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       fontSize: 40,
                     ),
                   ),
-                  FutureBuilder<int>(
-                    future: fetchDreamCountByDate(date),
+                  StreamBuilder<int>(
+                    stream: fetchDreamCountByDate(date),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Text(

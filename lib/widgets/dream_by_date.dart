@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import '../provider/dream_provider.dart';
+import '../style/text_style.dart';
 import 'dream_card.dart' as dream_card;
 import 'dream_bottom_sheet.dart';
 import 'dream_list_empty.dart';
@@ -29,25 +30,27 @@ class _DreamByDateState extends State<DreamByDate> {
     return Expanded(
       child: StreamBuilder<QuerySnapshot>(
         stream:
-        firestore
-            .collection('users').doc(auth.currentUser?.uid).collection('dreams')
-            .where(
-          'timestamp',
-          isGreaterThanOrEqualTo: DateTime(
-            _selectedDate.year,
-            _selectedDate.month,
-            _selectedDate.day,
-          ),
-        )
-            .where(
-          'timestamp',
-          isLessThan: DateTime(
-            _selectedDate.year,
-            _selectedDate.month,
-            _selectedDate.day + 1,
-          ),
-        )
-            .snapshots(),
+            firestore
+                .collection('users')
+                .doc(auth.currentUser?.uid)
+                .collection('dreams')
+                .where(
+                  'timestamp',
+                  isGreaterThanOrEqualTo: DateTime(
+                    _selectedDate.year,
+                    _selectedDate.month,
+                    _selectedDate.day,
+                  ),
+                )
+                .where(
+                  'timestamp',
+                  isLessThan: DateTime(
+                    _selectedDate.year,
+                    _selectedDate.month,
+                    _selectedDate.day + 1,
+                  ),
+                )
+                .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -58,22 +61,79 @@ class _DreamByDateState extends State<DreamByDate> {
           return dreams.isEmpty
               ? DreamListEmpty(btnProvider: btnProvider)
               : ListView.builder(
-            itemCount: dreamCount, // Use the variable here
-            itemBuilder: (context, index) {
-              final dream = dreams[index];
-              return GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return DreamBottomSheet(btnProvider: btnProvider, dream: dream);
+                itemCount: dreamCount, // Use the variable here
+                itemBuilder: (context, index) {
+                  final dream = dreams[index];
+                  return GestureDetector(
+                    onLongPress: () async {
+                      bool confirmDelete = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Confirmar Eliminación',
+                              style: RobotoTextStyle.titleStyle(Colors.black87),
+                            ),
+                            content: Text(
+                              '¿Estás seguro de que deseas eliminar este sueño?',
+                              style: RobotoTextStyle.subtitleStyle(
+                                Colors.grey.shade600,
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed:
+                                    () => Navigator.of(context).pop(false),
+                                child: Text(
+                                  'Cancelar',
+                                  style: RobotoTextStyle.smallTextStyle(
+                                    Colors.purple.shade300,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed:
+                                    () => Navigator.of(context).pop(true),
+                                child: Text(
+                                  'Eliminar',
+                                  style: RobotoTextStyle.smallTextStyle(
+                                    Colors.red.shade400,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      if (confirmDelete == true) {
+                        await firestore
+                            .collection('users')
+                            .doc(auth.currentUser?.uid)
+                            .collection('dreams')
+                            .doc(dream['dreamId'])
+                            .delete();
+                        print('Dream deleted');
+                      }
                     },
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return DreamBottomSheet(
+                            btnProvider: btnProvider,
+                            dream: dream,
+                          );
+                        },
+                      );
+                    },
+                    child: dream_card.DreamCard(
+                      btnProvider: btnProvider,
+                      dream: dream,
+                    ),
                   );
                 },
-                child: dream_card.DreamCard(btnProvider: btnProvider, dream: dream),
               );
-            },
-          );
         },
       ),
     );

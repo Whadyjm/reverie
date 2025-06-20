@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: Text(
-                      'Regístro',
+                      'Registro',
                       style: RobotoTextStyle.titleStyle(Colors.white),
                     ),
                   ),

@@ -275,22 +275,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               onPressed: () async {
                                 FocusScope.of(context).unfocus();
                                 if (_dreamController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      duration: const Duration(seconds: 1),
-                                      backgroundColor: Colors.grey.shade700,
-                                      content: Text(
-                                        'El campo de texto está vacío',
-                                        style: RobotoTextStyle.smallTextStyle(
-                                          Colors.white,
-                                        ),
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  );
                                   return;
                                 }
                                 try {
