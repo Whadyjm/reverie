@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/style/text_style.dart';
+import 'package:pillow/widgets/custom_button.dart';
 
 import 'home_screen.dart';
 
@@ -174,6 +175,15 @@ class _SecretPinState extends State<SecretPin> {
                   ),
                 ),
               ),
+              Visibility(
+                visible: widget.userHasPin == true ? true:false,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100),
+                  child: CustomButton(text: 'Recuperar pin', onPressed: (){
+                    _pin = ''; //TODO: Implementar recuperación de pin
+                  },),
+                ),
+              )
             ],
           ),
         ),
