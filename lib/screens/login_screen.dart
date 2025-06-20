@@ -7,6 +7,8 @@ import 'package:pillow/screens/home_screen.dart';
 import 'package:uuid/uuid.dart';
 import '../services/auth_service.dart';
 import '../style/text_style.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_textfield.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -113,7 +115,35 @@ class _LoginScreenState extends State<LoginScreen> {
                                   : CustomButton(
                                     text: 'Iniciar sesión',
                                     onPressed: () async {
-                                      await authProcess(context);
+                                      if (emailController.text.trim().isEmpty ||
+                                          passwordController.text
+                                              .trim()
+                                              .isEmpty) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Por favor, complete todos los campos',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            backgroundColor:
+                                                Colors.grey.shade900,
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
+
+                                      try {
+                                        await authProcess(context);
+                                      } catch (e) {}
                                     },
                                   ),
                               TextButton(
@@ -254,6 +284,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       : CustomButton(
                         text: 'Registrar',
                         onPressed: () async {
+                          if (nameController.text.trim().isEmpty ||
+                              emailController.text.trim().isEmpty ||
+                              passwordController.text.trim().isEmpty) {
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: Text(
+                                      'Por favor, complete todos los campos',
+                                      style: TextStyle(color: Colors.white, fontSize: 15),
+                                    ),
+                                    backgroundColor: Colors.grey.shade900,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                            );
+                            return;
+                          }
                           try {
                             setState(() {
                               isLoading = true;
@@ -276,11 +325,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               'userId': user.uid,
                               'userSince': FieldValue.serverTimestamp(),
                             });
-                          } catch (e) {
-                          } finally {
-                            setState(() {
-                              isLoading = false;
-                            });
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -288,6 +332,61 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               (route) => false,
                             );
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'email-already-in-use') {
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: Text(
+                                        'Este email ya se encuentra en uso.',
+                                        style: TextStyle(color: Colors.white, fontSize: 15),
+                                      ),
+                                      backgroundColor: Colors.grey.shade900,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                              );
+                            } else if (e.code == 'weak-password') {
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: Text(
+                                        'La contraseña suministrada es muy débil.',
+                                        style: TextStyle(color: Colors.white, fontSize: 15),
+                                      ),
+                                      backgroundColor: Colors.grey.shade900,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                              );
+                            } else if (e.code == 'invalid-email') {
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: Text(
+                                        'Email inválido.',
+                                        style: TextStyle(color: Colors.white, fontSize: 15),
+                                      ),
+                                      backgroundColor: Colors.grey.shade900,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                              );
+                            } else {
+                              print("Error: ${e.code}");
+                            }
+                          } catch (e) {
+                            print("Unexpected error: $e");
+                          } finally {
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
                         },
                       ),
@@ -319,10 +418,35 @@ class _LoginScreenState extends State<LoginScreen> {
           (route) => false,
         );
       }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'El correo electrónico y/o contraseña no es válido.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No se encontró un usuario con este correo.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'La contraseña es incorrecta.';
+          break;
+        case 'network-request-failed':
+          errorMessage = 'Error de red. Verifica tu conexión.';
+          break;
+        default:
+          errorMessage = 'El correo electrónico y/o contraseña no es válido.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage, style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.grey.shade900,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
     } finally {
       setState(() {
         isLoading = false; // Hide loading indicator
@@ -384,65 +508,5 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text('Error, intente de nuevo')));
     }
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String hintText;
-  final IconData icon;
-  final bool obscureText;
-  Widget? suffixIcon;
-  TextEditingController controller = TextEditingController();
-
-  CustomTextField({
-    required this.hintText,
-    required this.icon,
-    this.suffixIcon,
-    required this.obscureText,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.white70),
-        suffixIcon: suffixIcon,
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white54),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-}
-
-class CustomButton extends StatelessWidget {
-  final String text;
-  void Function()? onPressed;
-  Widget? image;
-  CustomButton({super.key, required this.text, this.onPressed, this.image});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: image,
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black.withOpacity(0.4),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-      ),
-      label: Text(text),
-    );
   }
 }
