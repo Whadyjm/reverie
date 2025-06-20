@@ -355,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => userPin.isNotEmpty ? MyHomePage():SecretPin()
+                                builder: (context) => userPin.isNotEmpty ? MyHomePage():SecretPin(userUid: user.uid,)
                               ),
                               (route) => false,
                             );

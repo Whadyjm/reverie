@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/style/text_style.dart';
 
+import 'home_screen.dart';
+
 class SecretPin extends StatefulWidget {
-  const SecretPin({super.key});
+  SecretPin({super.key, required this.userUid});
+
+  String userUid;
 
   @override
   State<SecretPin> createState() => _SecretPinState();
@@ -55,11 +60,19 @@ class _SecretPinState extends State<SecretPin> {
     setState(() {});
   }
 
-  void _handlePinComplete() {
-    // Here you can save the pin or perform validation
+  void _handlePinComplete() async {
     print('Complete pin: $_pin');
-    // For example:
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => NextScreen()));
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyHomePage()
+      ),
+          (route) => false,
+    );
+
+    await FirebaseFirestore.instance.collection('users').doc(widget.userUid).update({
+      'userPin': _pin,
+    });
   }
 
   @override
@@ -111,6 +124,8 @@ class _SecretPinState extends State<SecretPin> {
                     ),
                     child: Center(
                       child: TextField(
+                        controller: _controllers[index],
+                        focusNode: _focusNodes[index],
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
                         maxLength: 1,
@@ -125,6 +140,7 @@ class _SecretPinState extends State<SecretPin> {
                           counterText: '',
                           border: InputBorder.none,
                         ),
+                        onChanged: (value) => _onDigitEntered(index, value),
                       ),
                     ),
                   ),
