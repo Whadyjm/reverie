@@ -512,7 +512,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     } finally {
       setState(() {
-        isLoading = false; // Hide loading indicator
+        isLoading = false;
       });
     }
   }
@@ -553,8 +553,8 @@ class _LoginScreenState extends State<LoginScreen> {
             'email': user.email,
             'userId': user.uid,
             'userSince': FieldValue.serverTimestamp(),
-            'pinCreated': true, // Cambiado a false inicialmente
-            'pin': '', // Establecer campo pin vacío por defecto
+            'pinCreated': true,
+            'pin': '',
           });
         }
 
@@ -562,7 +562,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final userPin = userData.data()?['pin'] ?? '';
         final pinCreated = userData.data()?['pinCreated'] ?? false;
         bool userHasPin = userPin.isEmpty ? false : true;
-        // Cerrar el diálogo de carga antes de navegar
+
         Navigator.of(context).pop();
 
         Navigator.pushAndRemoveUntil(
@@ -579,7 +579,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      // Cerrar el diálogo de carga si hay error
       Navigator.of(context).pop();
       print("Error during Google Sign-In: $e");
       ScaffoldMessenger.of(context).showSnackBar(
