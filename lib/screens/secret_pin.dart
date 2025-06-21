@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/style/text_style.dart';
 import 'package:pillow/widgets/custom_button.dart';
 
+import '../widgets/custom_textfield.dart';
 import 'home_screen.dart';
 
 class SecretPin extends StatefulWidget {
-  SecretPin({super.key, required this.userUid, this.userHasPin, this.userPin});
+  SecretPin({super.key, required this.userUid, this.userHasPin, this.userPin, this.pinCreated});
 
   String userUid;
   bool? userHasPin;
   String? userPin;
+  bool? pinCreated;
 
   @override
   State<SecretPin> createState() => _SecretPinState();
@@ -25,7 +28,6 @@ class _SecretPinState extends State<SecretPin> {
   @override
   void initState() {
     super.initState();
-
     for (int i = 0; i < 4; i++) {
       _controllers.add(TextEditingController());
       _focusNodes.add(FocusNode());
@@ -43,7 +45,7 @@ class _SecretPinState extends State<SecretPin> {
     super.dispose();
   }
 
-  void _onDigitEntered(int index, String value) {
+  void _onDigitEntered(int index, String value) async {
     if (value.isNotEmpty) {
       if (index < 3) {
         FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
@@ -55,6 +57,23 @@ class _SecretPinState extends State<SecretPin> {
     }
 
     _pin = _controllers.map((c) => c.text).join();
+
+    if (_pin.length == 4 && widget.pinCreated == false){
+
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.userUid)
+            .update({'pin': _pin, 'pinCreatedAt': Timestamp.now(),});
+      }catch(e){}
+      finally{
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+              (route) => false,
+        );
+      }
+    }
 
     if (_pin.length == 4) {
       _handlePinComplete();
@@ -95,8 +114,7 @@ class _SecretPinState extends State<SecretPin> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userUid)
-          .collection('pin')
-          .add({'pin': _pin, 'createdAt': Timestamp.now()});
+          .update({'pin': _pin, 'pinCreatedAt': Timestamp.now(),});
     }
   }
 
@@ -180,7 +198,8 @@ class _SecretPinState extends State<SecretPin> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 100),
                   child: CustomButton(text: 'Recuperar pin', onPressed: (){
-                    _pin = ''; //TODO: Implementar recuperación de pin
+                    _pin = '';
+                    recoverPinDialog(context);
                   },),
                 ),
               )
@@ -188,6 +207,83 @@ class _SecretPinState extends State<SecretPin> {
           ),
         ),
       ),
+    );
+  }
+
+  void recoverPinDialog(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.black.withAlpha(250),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Text(
+                  'Recuperar pin',
+                  style: RobotoTextStyle.titleStyle(Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+              CustomTextField(
+                autofocus: true,
+                hintText: 'Correo electrónico',
+                icon: Icons.email,
+                obscureText: false,
+                controller: emailController,
+              ),
+              const SizedBox(height: 20),
+               CustomButton(
+                text: 'Siguiente',
+                onPressed: () async {
+                  final user = FirebaseAuth.instance.currentUser;
+
+                  if (user?.email == emailController.text.trim()) {
+                    Navigator.pop(context);
+                    setState(() {
+                      widget.userHasPin = false;
+                      widget.pinCreated = false;
+                      _pin = '';
+                    });
+
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder:
+                          (context) => AlertDialog(
+                        title: Text(
+                          'Email no coincide.',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                        ),
+                        backgroundColor: Colors.grey.shade900,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

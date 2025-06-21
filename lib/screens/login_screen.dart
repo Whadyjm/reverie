@@ -338,6 +338,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'email': emailController.text.trim(),
                               'userId': user.uid,
                               'userSince': FieldValue.serverTimestamp(),
+                              'pinCreated': true,
                             });
 
                             String userPin =
@@ -453,26 +454,17 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = FirebaseAuth.instance.currentUser;
       String? userUid = user?.uid;
 
-      var documentRef =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userUid)
-              .collection('pin')
-              .get();
-
-      // verificar que el usuario tenga pin
       String userPin =
-          (await FirebaseFirestore.instance
+          await FirebaseFirestore.instance
                   .collection('users')
-                  .doc(userUid)
-                  .collection('pin')
-                  .doc(
-                    documentRef.docs.isNotEmpty
-                        ? documentRef.docs.first.id
-                        : null,
-                  )
-                  .get())
-              .data()?['pin'];
+                  .doc(userUid).get().then((value) => value.data()?['pin']);
+
+      bool pinCreated = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUid)
+          .get()
+          .then((value) => value.data()?['pinCreated']);
+
       print('----------$userPin-----------');
 
       bool userHasPin = userPin.isEmpty ? false : true;
@@ -484,7 +476,12 @@ class _LoginScreenState extends State<LoginScreen> {
             builder:
                 (context) =>
                     userPin.isNotEmpty
-                        ? SecretPin(userUid: userUid!, userHasPin: userHasPin, userPin: userPin,)
+                        ? SecretPin(
+                          userUid: userUid!,
+                          userHasPin: userHasPin,
+                          userPin: userPin,
+                          pinCreated: pinCreated,
+                        )
                         : MyHomePage(),
           ),
           (route) => false,
