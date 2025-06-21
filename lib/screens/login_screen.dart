@@ -342,15 +342,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
 
                             String userPin =
-                                (await FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(user.uid)
-                                            .collection('pin')
-                                            .doc()
-                                            .get())
-                                        .data()?['pin']
-                                    as String? ??
-                                '';
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user.uid).get().then((value) => value.data()?['pin']);
 
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -527,56 +521,70 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       showDialog(
         context: context,
-        barrierDismissible: true, // Permitir cancelar al presionar fuera
-        builder:
-            (context) => Center(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 4,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.purple.shade300,
-                    ),
-                  ),
+        barrierDismissible: false,
+        builder: (context) => Center(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(
+                strokeWidth: 4,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Colors.purple.shade300,
                 ),
               ),
             ),
+          ),
+        ),
       );
 
       final userCred = await AuthService().signInWithGoogle();
 
       if (userCred != null) {
         final user = userCred.user!;
-        final doc = FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid);
+        final doc = FirebaseFirestore.instance.collection('users').doc(user.uid);
         final docSnapshot = await doc.get();
 
         if (!docSnapshot.exists) {
           await doc.set({
-            'userPin': '',
             'name': user.displayName,
             'photoUrl': user.photoURL,
             'email': user.email,
             'userId': user.uid,
             'userSince': FieldValue.serverTimestamp(),
+            'pinCreated': true, // Cambiado a false inicialmente
+            'pin': '', // Establecer campo pin vacío por defecto
           });
         }
 
+        final userData = await doc.get();
+        final userPin = userData.data()?['pin'] ?? '';
+        final pinCreated = userData.data()?['pinCreated'] ?? false;
+        bool userHasPin = userPin.isEmpty ? false : true;
+        // Cerrar el diálogo de carga antes de navegar
+        Navigator.of(context).pop();
+
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-          (route) => false,
+          MaterialPageRoute(
+            builder: (context) => SecretPin(
+              userUid: user.uid,
+              userHasPin: userHasPin,
+              userPin: userPin,
+              pinCreated: pinCreated,
+            )
+          ),
+              (route) => false,
         );
       }
     } catch (e) {
+      // Cerrar el diálogo de carga si hay error
+      Navigator.of(context).pop();
       print("Error during Google Sign-In: $e");
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error, intente de nuevo')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error, intente de nuevo')),
+      );
     }
   }
 
