@@ -37,6 +37,10 @@ class _MyHomePageState extends State<MyHomePage> {
     getAPIKeyFromFirestore();
     initializeButtonState();
     getAnalysisStyle();
+    // Cargar el valor guardado al iniciar la pantalla
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
+    });
     print('-----------------------$analysisStyle-------------------------');
   }
 
@@ -271,10 +275,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
+    final pinProvider = Provider.of<ButtonProvider>(context);
     final analysisSelected = Provider.of<DreamProvider>(context).analysisSelected;
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
     final userName = FirebaseAuth.instance.currentUser?.displayName;
@@ -364,21 +371,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-                      // Theme Toggle
+
+                      // Modo Claro / Oscuro
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                btnProvider.isButtonEnabled
-                                    ? Icons.nightlight_round
-                                    : Icons.wb_sunny,
-                                color: Colors.grey.shade700,
-                              ),
-                              const SizedBox(width: 8),
-                            ],
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Text(
+                                  btnProvider.isButtonEnabled ? 'Modo Claro' : 'Modo Oscuro',
+                                  style: RobotoTextStyle.smallTextStyle(Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
                           ),
                           Switch(
                             activeColor: Colors.purple.shade300,
@@ -397,6 +402,40 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ],
                       ),
+
+                      const SizedBox(height: 12),
+
+// Pin activo / inactivo
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Text(
+                                  pinProvider.isPinActive ? 'Pin activo' : 'Pin inactivo',
+                                  style: RobotoTextStyle.smallTextStyle(Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            activeColor: Colors.purple.shade300,
+                            value: pinProvider.isPinActive,
+                            onChanged: (value2) async {
+                              setState(() {
+                                if (value2) {
+                                  pinProvider.enablePin();
+                                } else {
+                                  pinProvider.disablePin();
+                                }
+                              });
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setBool('isPinActive', value2);
+                            },
+                          ),
+                        ],
+                      ),
+
                       const Divider(height: 20, thickness: 1),
 
                       // Cards Section
@@ -421,15 +460,27 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(height: 12),
 
                       // Psychological Card
+                      // Psicológico Card
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
+                            analysisStyle = 'psicologico';
+                          });
+                          final user = FirebaseAuth.instance.currentUser;
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user!.uid)
+                              .update({
+                            'analysisStyle': 'psicologico'
                           });
                         },
                         child: Card(
-                          color: analysisStyle == 'psicologico' ?Colors.purple.shade100:Colors.white,
+                          color: analysisStyle == 'psicologico' ? Colors.purple.shade100 : Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Column(
@@ -461,14 +512,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
 
-                      // Mystical Card
+// Místico Card
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
+                            analysisStyle = 'mistico';
+                          });
+                          final user = FirebaseAuth.instance.currentUser;
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user!.uid)
+                              .update({
+                            'analysisStyle': 'mistico'
                           });
                         },
                         child: Card(
-                          color: analysisStyle == 'mistico' ?Colors.purple.shade100:Colors.white,
+                          color: analysisStyle == 'mistico' ? Colors.purple.shade100 : Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
@@ -505,14 +564,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
 
-                      // Hybrid Card
+// Híbrido Card
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           setState(() {
+                            analysisStyle = 'hibrido';
+                          });
+                          final user = FirebaseAuth.instance.currentUser;
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user!.uid)
+                              .update({
+                            'analysisStyle': 'hibrido'
                           });
                         },
                         child: Card(
-                          color: analysisStyle == 'hibrido' ? Colors.purple.shade100:Colors.white,
+                          color: analysisStyle == 'hibrido' ? Colors.purple.shade100 : Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
@@ -548,6 +615,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       ),
+
 
                       const Divider(height: 20, thickness: 1),
 
