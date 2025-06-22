@@ -43,7 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
   }
 
   @override
@@ -97,6 +96,181 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void _showPsychologicalSchools(BuildContext context) {
+    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    final isDarkMode = btnProvider.isButtonEnabled;
+    final textColor = isDarkMode ? Colors.white : Colors.grey.shade900;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+        title: Text('Escuelas Psicológicas',
+            style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Freudiano', style: TextStyle(color: textColor)),
+              onTap: () {
+                Navigator.pop(context);
+                // Handle Freud selection
+              },
+            ),
+            const Divider(height: 1),
+            ListTile(
+              title: Text('Junguiano', style: TextStyle(color: textColor)),
+              onTap: () {
+                Navigator.pop(context);
+                // Handle Jung selection
+              },
+            ),
+            const Divider(height: 1),
+            ListTile(
+              title: Text('Gestalt', style: TextStyle(color: textColor)),
+              onTap: () {
+                Navigator.pop(context);
+                // Handle Gestalt selection
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _buildAnalysisCard(
+      BuildContext context, {
+        required String icon,
+        required String title,
+        required String description,
+        String? idealFor,
+        String? styles,
+        required String buttonText,
+        required Color textColor,
+        required Color cardColor,
+        required VoidCallback onPressed,
+        bool showDetails = true,
+      }) {
+    return Card(
+      color: cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(icon, style: TextStyle(fontSize: 24)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(description, style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.8))),
+            if (idealFor != null) ...[
+              const SizedBox(height: 8),
+              Text('Ideal para:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: textColor)),
+              Text(idealFor, style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.8))),
+            ],
+            if (styles != null) ...[
+              const SizedBox(height: 8),
+              Text('Estilos:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: textColor)),
+              Text(styles, style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.8))),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+  void showAnalysisOptionsDialog(BuildContext context) {
+    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    final isDarkMode = btnProvider.isButtonEnabled;
+    final textColor = isDarkMode ? Colors.white : Colors.grey.shade900;
+    final cardColor = isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('✨ Métodos de análisis',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
+            const SizedBox(height: 8),
+            Text('Elige el enfoque que mejor se adapte a tus necesidades',
+                style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.8))),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Psychological Option
+              _buildAnalysisCard(
+                context,
+                icon: '🧠',
+                title: 'Exploración Psicológica',
+                description: 'Conecta tu sueño con emociones, partes de ti mismo y símbolos internos.',
+                idealFor: 'Comprensión personal, crecimiento interior, análisis emocional',
+                styles: 'Introspectivo, simbólico, terapéutico',
+                buttonText: 'Interpretación Psicológica',
+                textColor: textColor,
+                cardColor: cardColor,
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showPsychologicalSchools(context);
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // Mystical Option
+              _buildAnalysisCard(
+                context,
+                icon: '🔮',
+                title: 'Exploración Mística',
+                description: 'Descubre si tu sueño trae un mensaje del alma, una señal del universo o una energía especial.',
+                idealFor: 'Guía espiritual, significados ocultos, sincronías',
+                styles: 'Simbolología ancestral, tarot, energías, astrología',
+                buttonText: 'Interpretación Mística',
+                textColor: textColor,
+                cardColor: cardColor,
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Add mystical interpretation logic
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // Hybrid Option
+              _buildAnalysisCard(
+                context,
+                icon: '🌀',
+                title: 'Ambas cosas (Híbrido)',
+                description: '¿Y si los sueños fueran espejo de tu interior y mensajeros del universo? Combina ambos enfoques para una visión más completa.',
+                buttonText: 'Exploración Completa',
+                textColor: textColor,
+                cardColor: cardColor,
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Add hybrid interpretation logic
+                },
+                showDetails: false,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService().userChanges;
@@ -121,6 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: SafeArea(
         child: Scaffold(
+          endDrawerEnableOpenDragGesture: false,
           endDrawer: Drawer(
             width: MediaQuery.of(context).size.width * 0.6,
             child: Column(
@@ -225,12 +400,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       const Divider(height: 20, thickness: 1),
 
                       // Cards Section
-                      Text(
-                        'Modo de Análisis',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Modos de Análisis',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              showAnalysisOptionsDialog(context);
+                            },
+                            child: Icon(Iconsax.info_circle, color: Colors.grey.shade800, size: 20,),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 12),
 
@@ -241,7 +427,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           });
                         },
                         child: Card(
-                          color: Colors.white,
+                          color: analysisStyle == 'psicologico' ?Colors.purple.shade100:Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           child: Padding(
@@ -282,12 +468,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           });
                         },
                         child: Card(
+                          color: analysisStyle == 'mistico' ?Colors.purple.shade100:Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Column(
@@ -326,12 +512,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           });
                         },
                         child: Card(
+                          color: analysisStyle == 'hibrido' ? Colors.purple.shade100:Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Column(
@@ -764,31 +950,34 @@ Widget _buildDrawerItem({
   );
 }
 
-void _navigateTo(BuildContext context, String route) {
-  Navigator.pop(context); // Close drawer first
-  Navigator.pushNamed(context, route);
-}
-
 void _logout(BuildContext context) {
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Logout'),
-      content: const Text('Are you sure you want to logout?'),
+      title: const Text('Cerrar sesión'),
+      content: const Text('¿Seguro deseas cerrar sesión?'),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
+          child: const Text('Cancelar'),
         ),
         TextButton(
           onPressed: () {
             Navigator.pop(ctx); // Close dialog
             Navigator.pop(context); // Close drawer
-            // Add your logout logic here
+            AuthService().signOut();
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (route) => false,
+            );
           },
-          child: const Text('Logout', style: TextStyle(color: Colors.red)),
+          child: const Text('Salir', style: TextStyle(color: Colors.red)),
         ),
       ],
     ),
   );
 }
+
+
+
