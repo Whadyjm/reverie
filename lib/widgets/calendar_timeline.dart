@@ -78,12 +78,12 @@ Stream<int> fetchDreamCountByDate(DateTime date) {
                         ? Colors.black.withOpacity(0.3)
                         : Colors.grey.shade300,
                     blurRadius: 5,
-                    offset: Offset(0, 4),
+                    offset: Offset(0, 2),
                   ),
                   BoxShadow(
                     color: Colors.white.withOpacity(0.2), // Sombra interior blanca para efecto glass
                     blurRadius: 5,
-                    offset: Offset(0, -2),
+                    offset: Offset(0, 0),
                     spreadRadius: 1,
                   ),
                 ],

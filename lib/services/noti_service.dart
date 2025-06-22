@@ -1,4 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotiService {
   static final NotiService _instance = NotiService._internal();
@@ -6,7 +9,7 @@ class NotiService {
   NotiService._internal();
 
   final FlutterLocalNotificationsPlugin notificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
@@ -20,16 +23,20 @@ class NotiService {
   Future<void> initNotification() async {
     if (_isInitialized) return;
 
+    tz.initializeTimeZones();
+    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+
     // Android initialization (use 'app_icon' if you have a custom drawable)
     const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     final InitializationSettings initializationSettings =
-    InitializationSettings(
-      android: androidSettings,
-      // Add iOS settings if needed
-      // iOS: DarwinInitializationSettings()
-    );
+        InitializationSettings(
+          android: androidSettings,
+          // Add iOS settings if needed
+          // iOS: DarwinInitializationSettings()
+        );
 
     // Create notification channel for Android 8.0+
     await _createNotificationChannel();
@@ -58,7 +65,8 @@ class NotiService {
 
     await notificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
@@ -73,10 +81,8 @@ class NotiService {
         priority: Priority.high,
         playSound: true,
         enableVibration: true,
-        icon: '@mipmap/ic_launcher', // Match your initialization icon
+        icon: '@mipmap/ic_launcher',
       ),
-      // Add iOS details if needed
-      // iOS: DarwinNotificationDetails()
     );
   }
 
@@ -98,5 +104,49 @@ class NotiService {
       _notificationDetails(), // Fixed: Use the proper details
       payload: payload,
     );
+  }
+
+  Future<void> scheduleNotification({
+    int id = 0,
+    String? title,
+    String? body,
+    int? hour,
+    int? minute,
+    String? payload,
+  }) async {
+    if (!_isInitialized) {
+      await initNotification();
+    }
+
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour ?? 7,
+      minute ?? 0,
+    );
+
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    await notificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      scheduledDate,
+      _notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: payload,
+    );
+
+    print('Notification scheduled for $scheduledDate');
+  }
+
+  Future<void> cancelAllNotifications(){
+    return notificationsPlugin.cancelAll();
   }
 }

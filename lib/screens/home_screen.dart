@@ -212,6 +212,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   child: Text('Enviar notificacion'),
                 ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await NotiService().scheduleNotification(
+                      title: 'Hello!',
+                      body: 'This is a test notification',
+                      hour: 9,
+                      minute: 45,
+                      payload: 'notification_payload',
+                    );
+                  },
+                  child: Text('Programar notificacion'),
+                ),
                 //TextAudioInput(apiKey: apiKey),
               ],
             ),
