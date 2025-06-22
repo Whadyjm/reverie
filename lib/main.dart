@@ -19,6 +19,14 @@ void main() async {
   final notiService = NotiService();
   await notiService.initNotification();
 
+  await NotiService().scheduleNotification(
+    title: '📝🌙✨ Tu diario de sueños te espera',
+    body: '¿Recuerdas lo que soñaste anoche?',
+    hour: 7,
+    minute: 0,
+    payload: 'notification_payload',
+  );
+
   // Optional: Request notification permissions (required for Android 13+)
   await _requestNotificationPermissions();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -64,11 +72,13 @@ void main() async {
 
 Future<void> _requestNotificationPermissions() async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+        AndroidFlutterLocalNotificationsPlugin
+      >()
+      ?.requestNotificationsPermission();
 }
 
 class MyApp extends StatelessWidget {

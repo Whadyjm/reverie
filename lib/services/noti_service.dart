@@ -143,7 +143,7 @@ class NotiService {
       payload: payload,
     );
 
-    print('Notification scheduled for $scheduledDate');
+    print('--------------Notification scheduled for $scheduledDate------------------');
   }
 
   Future<void> cancelAllNotifications(){
