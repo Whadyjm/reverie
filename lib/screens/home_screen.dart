@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/login_screen.dart';
+import 'package:pillow/services/noti_service.dart';
 import 'package:pillow/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -201,6 +202,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 CalendarTimeline(),
                 DreamByDate(),
+                ElevatedButton(
+                  onPressed: () async {
+                    await NotiService().showNotification(
+                      title: 'Hello!',
+                      body: 'This is a test notification',
+                      payload: 'notification_payload',
+                    );
+                  },
+                  child: Text('Enviar notificacion'),
+                ),
                 //TextAudioInput(apiKey: apiKey),
               ],
             ),
@@ -211,10 +222,11 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
-                  isScrollControlled:
-                      true,
+                  isScrollControlled: true,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
                   ),
                   backgroundColor:
                       btnProvider.isButtonEnabled
@@ -284,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {
                                       isLoading = true;
                                     });
-            
+
                                     final title = await GeminiService()
                                         .generateTitle(
                                           _dreamController.text,
@@ -299,7 +311,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Error, intente de nuevo'),
+                                        content: Text(
+                                          'Error, intente de nuevo',
+                                        ),
                                       ),
                                     );
                                   } finally {
@@ -307,7 +321,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       isLoading = false;
                                     });
                                     _dreamController.clear();
-                                      Navigator.pop(context);
+                                    Navigator.pop(context);
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -343,9 +357,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 4,
                                                 valueColor:
-                                                    AlwaysStoppedAnimation<Color>(
-                                                      Colors.white,
-                                                    ),
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Colors.white),
                                               ),
                                             )
                                             : Text(
@@ -367,24 +381,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 );
               },
-            child: Container(
-              height: 100,
-              width: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.purple.shade400,
-                    Colors.purple.shade600,
-                    Colors.indigo.shade400,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+              child: Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple.shade400,
+                      Colors.purple.shade600,
+                      Colors.indigo.shade400,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.rectangle,
                 ),
-                shape: BoxShape.rectangle,
+                child: Icon(Icons.add, color: Colors.white),
               ),
-              child: Icon(Icons.add, color: Colors.white),
-            ),
             ),
           ),
         ),
