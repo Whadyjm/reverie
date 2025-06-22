@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -344,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             String userPin =
                             await FirebaseFirestore.instance
                                 .collection('users')
-                                .doc(user.uid).get().then((value) => value.data()?['pin']);
+                                .doc(user.uid).get().then((value) => value.data()?['pin'] ?? '');
 
                             Navigator.pushAndRemoveUntil(
                               context,
