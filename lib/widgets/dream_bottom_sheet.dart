@@ -163,9 +163,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                       child: Text(
                                         'Cerrar',
                                         style: RobotoTextStyle.smallTextStyle(
-                                          widget.btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade800,
+                                          Colors.white,
                                         ),
                                       ),
                                     ),

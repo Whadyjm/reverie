@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/login_screen.dart';
-import 'package:pillow/services/noti_service.dart';
-import 'package:pillow/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
@@ -18,7 +16,6 @@ import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
 import '../widgets/select_analysis_style.dart';
-import '../widgets/text_audio_input.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -106,6 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final btnProvider = Provider.of<ButtonProvider>(context);
     final analysisSelected = Provider.of<DreamProvider>(context).analysisSelected;
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
+    final userName = FirebaseAuth.instance.currentUser?.displayName;
+    final userEmail = FirebaseAuth.instance.currentUser?.email;
 
     return WillPopScope(
       onWillPop: () async {
@@ -122,6 +121,272 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: SafeArea(
         child: Scaffold(
+          endDrawer: Drawer(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: Column(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: DrawerHeader(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.shade700,
+                          Colors.deepPurple.shade400,
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundColor: btnProvider.isButtonEnabled
+                              ? Colors.white.withOpacity(0.2)
+                              : Colors.grey.shade200,
+                          child: StreamBuilder<User?>(
+                            stream: user,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData && snapshot.data != null) {
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: Image.network(
+                                    snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                  ),
+                                );
+                              } else {
+                                return CircleAvatar(
+                                  backgroundColor: btnProvider.isButtonEnabled
+                                      ? Colors.white.withOpacity(0.2)
+                                      : Colors.grey.shade200,
+                                  child: Icon(Icons.person, color: Colors.grey),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          userName ?? 'User',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          userEmail ?? 'Email',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white70,
+                              fontSize: 10
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Main Drawer Items
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    children: [
+                      // Theme Toggle
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                btnProvider.isButtonEnabled
+                                    ? Icons.nightlight_round
+                                    : Icons.wb_sunny,
+                                color: Colors.grey.shade700,
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                          ),
+                          Switch(
+                            activeColor: Colors.purple.shade300,
+                            value: btnProvider.isButtonEnabled,
+                            onChanged: (value) async {
+                              setState(() {
+                                if (value) {
+                                  btnProvider.enableButton();
+                                } else {
+                                  btnProvider.disableButton();
+                                }
+                              });
+                              final prefs = await SharedPreferences.getInstance();
+                              await prefs.setBool('isButtonEnabled', value);
+                            },
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 20, thickness: 1),
+
+                      // Cards Section
+                      Text(
+                        'Modo de Análisis',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Psychological Card
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                          });
+                        },
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 4,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      '🧠 Psicológico',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Analiza emociones y patrones mentales',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Mystical Card
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                          });
+                        },
+                        child: Card(
+                          elevation: 4,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      '🔮 Místico',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Interpreta señales y mensajes espirituales',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Hybrid Card
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                          });
+                        },
+                        child: Card(
+                          elevation: 4,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      '🌀 Híbrido',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Combina ambos enfoques de análisis',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const Divider(height: 20, thickness: 1),
+
+                      // Logout Option
+                      _buildDrawerItem(
+                        icon: Iconsax.logout,
+                        title: 'Cerrar sesión',
+                        onTap: () => _logout(context),
+                        color: Colors.grey.shade800,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Footer
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'App Version 1.0.0',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+          ),
           body: Container(
             decoration: BoxDecoration(
               gradient:
@@ -173,51 +438,57 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         SizedBox(width: MediaQuery.sizeOf(context).width - 250),
                         user != null
-                            ? GestureDetector(
-                              onTap: () {
-                                FocusScope.of(context).unfocus();
-                                settings(context);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: CircleAvatar(
-                                  radius: 18,
-                                  backgroundColor:
-                                      btnProvider.isButtonEnabled
-                                          ? Colors.white.withOpacity(0.2)
-                                          : Colors.grey.shade200,
-                                  child: StreamBuilder<User?>(
-                                    stream: user,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData &&
-                                          snapshot.data != null) {
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            25,
-                                          ),
-                                          child: Image.network(
-                                            snapshot.data!.photoURL ??
-                                                'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                          ),
-                                        );
-                                      } else {
-                                        return CircleAvatar(
-                                          backgroundColor:
-                                              btnProvider.isButtonEnabled
-                                                  ? Colors.white.withOpacity(
-                                                    0.2,
-                                                  )
-                                                  : Colors.grey.shade200,
-                                          child: Icon(
-                                            Icons.person,
-                                            color: Colors.grey,
-                                          ),
-                                        );
-                                      }
-                                    },
+                            ? Builder(
+                              builder: (context) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      Scaffold.of(context).openEndDrawer();
+                                      FocusScope.of(context).unfocus();
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor:
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white.withOpacity(0.2)
+                                              : Colors.grey.shade200,
+                                      child: StreamBuilder<User?>(
+                                        stream: user,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData &&
+                                              snapshot.data != null) {
+                                            return ClipRRect(
+                                              borderRadius: BorderRadius.circular(
+                                                25,
+                                              ),
+                                              child: Image.network(
+                                                snapshot.data!.photoURL ??
+                                                    'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                              ),
+                                            );
+                                          } else {
+                                            return CircleAvatar(
+                                              backgroundColor:
+                                                  btnProvider.isButtonEnabled
+                                                      ? Colors.white.withOpacity(
+                                                        0.2,
+                                                      )
+                                                      : Colors.grey.shade200,
+                                              child: Icon(
+                                                Icons.person,
+                                                color: Colors.grey,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              }
                             )
                             : const SizedBox.shrink(),
                       ],
@@ -449,46 +720,6 @@ class _MyHomePageState extends State<MyHomePage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        btnProvider.isButtonEnabled
-                            ? Icons.nightlight_round
-                            : Icons.wb_sunny,
-                        color: Colors.grey.shade700,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        btnProvider.isButtonEnabled
-                            ? 'Modo nocturno'
-                            : 'Modo diurno',
-                        style: RobotoTextStyle.subtitleStyle(
-                          Colors.grey.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Switch(
-                    activeColor: Colors.purple.shade300,
-                    value: btnProvider.isButtonEnabled,
-                    onChanged: (value) async {
-                      setState(() {
-                        if (value) {
-                          btnProvider.enableButton();
-                        } else {
-                          btnProvider.disableButton();
-                        }
-                      });
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setBool('isButtonEnabled', value);
-                    },
-                  ),
-                ],
-              ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -516,4 +747,48 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+}
+
+Widget _buildDrawerItem({
+  required IconData icon,
+  required String title,
+  required VoidCallback onTap,
+  Color? color,
+}) {
+  return ListTile(
+    leading: Icon(icon, color: color ?? Colors.deepPurple),
+    title: Text(title, style: TextStyle(color: color ?? Colors.black87)),
+    onTap: onTap,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+    minLeadingWidth: 24,
+  );
+}
+
+void _navigateTo(BuildContext context, String route) {
+  Navigator.pop(context); // Close drawer first
+  Navigator.pushNamed(context, route);
+}
+
+void _logout(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Logout'),
+      content: const Text('Are you sure you want to logout?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(ctx); // Close dialog
+            Navigator.pop(context); // Close drawer
+            // Add your logout logic here
+          },
+          child: const Text('Logout', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
 }
