@@ -333,6 +333,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .collection('users')
                                 .doc(user!.uid);
                             await doc.set({
+                              'analysisStyle': '',
                               'name': nameController.text.trim(),
                               'photoUrl': '',
                               'email': emailController.text.trim(),

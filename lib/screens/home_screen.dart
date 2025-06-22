@@ -10,12 +10,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
+import '../provider/dream_provider.dart';
 import '../services/auth_service.dart';
 import '../services/firebase_service.dart';
 import '../services/gemini_service.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
+import '../widgets/select_analysis_style.dart';
 import '../widgets/text_audio_input.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -30,12 +32,15 @@ class _MyHomePageState extends State<MyHomePage> {
   String apiKey = '';
   TextEditingController _dreamController = TextEditingController();
   bool isLoading = false;
+  String analysisStyle = '';
 
   @override
   void initState() {
     super.initState();
     getAPIKeyFromFirestore();
     initializeButtonState();
+    getAnalysisStyle();
+    print('-----------------------$analysisStyle-------------------------');
   }
 
   @override
@@ -50,6 +55,24 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  Future<void> getAnalysisStyle() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final fetchedAnalysisStyle =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid).get().then((value) => value.data()?['analysisStyle'] ?? '');
+        setState(() {
+          analysisStyle = fetchedAnalysisStyle;
+        });
+      }
+      print('-----------------$analysisStyle-----------------');
+    } catch (e) {
+      print('Error fetching analysis style: $e');
+    }
+  }
+
   Future<void> getAPIKeyFromFirestore() async {
     try {
       final doc = await firestore.collection('apiKey').doc('apiKey').get();
@@ -57,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           apiKey = doc.data()?['apiKey'] ?? '';
         });
-        print(apiKey);
+        print('-----------------------------$apiKey-----------------------------------');
       } else {
         print('Document does not exist.');
       }
@@ -81,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
+    final analysisSelected = Provider.of<DreamProvider>(context).analysisSelected;
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
 
     return WillPopScope(
@@ -210,8 +234,15 @@ class _MyHomePageState extends State<MyHomePage> {
             duration: Duration(milliseconds: 800),
             child: FloatingActionButton(
               onPressed: () {
-                showModalBottomSheet(
-                  context: context,
+                if (analysisStyle.isEmpty && analysisSelected == false) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SelectAnalysisStyle();
+                    },
+                  );
+                } else if (analysisStyle.isNotEmpty || analysisSelected == true){
+                showModalBottomSheet(context: context,
                   isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
@@ -219,9 +250,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   backgroundColor:
-                      btnProvider.isButtonEnabled
-                          ? Colors.grey.shade900
-                          : Colors.white,
+                  btnProvider.isButtonEnabled
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   builder: (BuildContext context) {
                     return Padding(
                       padding: EdgeInsets.only(
@@ -229,9 +260,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         right: 16.0,
                         top: 16.0,
                         bottom:
-                            MediaQuery.of(context)
-                                .viewInsets
-                                .bottom, // Ajusta el espacio según el teclado
+                        MediaQuery.of(context)
+                            .viewInsets
+                            .bottom, // Ajusta el espacio según el teclado
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -252,9 +283,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: TextStyle(
                                 fontFamily: 'roboto',
                                 color:
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
+                                btnProvider.isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
                                 fontWeight: FontWeight.w500,
                               ),
                               controller: _dreamController,
@@ -262,9 +293,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 hintText: 'Escribe tu sueño...',
                                 hintStyle: TextStyle(
                                   color:
-                                      btnProvider.isButtonEnabled
-                                          ? Colors.white70
-                                          : Colors.grey.shade500,
+                                  btnProvider.isButtonEnabled
+                                      ? Colors.white70
+                                      : Colors.grey.shade500,
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -289,9 +320,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                     final title = await GeminiService()
                                         .generateTitle(
-                                          _dreamController.text,
-                                          apiKey,
-                                        );
+                                      _dreamController.text,
+                                      apiKey,
+                                    );
                                     FirebaseService().saveDream(
                                       context,
                                       _dreamController,
@@ -340,26 +371,26 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Container(
                                     alignment: Alignment.center,
                                     child:
-                                        isLoading
-                                            ? SizedBox(
-                                              width: 25,
-                                              height: 25,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 4,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
-                                              ),
-                                            )
-                                            : Text(
-                                              'Guardar',
-                                              style: TextStyle(
-                                                fontFamily: 'roboto',
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
+                                    isLoading
+                                        ? SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 4,
+                                        valueColor:
+                                        AlwaysStoppedAnimation<
+                                            Color
+                                        >(Colors.white),
+                                      ),
+                                    )
+                                        : Text(
+                                      'Guardar',
+                                      style: TextStyle(
+                                        fontFamily: 'roboto',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -368,8 +399,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     );
-                  },
-                );
+                },
+                );}
               },
               child: Container(
                 height: 100,
