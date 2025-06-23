@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/style/text_style.dart';
 import 'package:pillow/widgets/custom_button.dart';
 
@@ -202,7 +203,19 @@ class _SecretPinState extends State<SecretPin> {
                     recoverPinDialog(context);
                   },),
                 ),
-              )
+              ),
+              const SizedBox(height: 50,),
+              Icon(Iconsax.lock_1, color: Colors.white70, size: 40),
+              const SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Tus sueños estan seguros.',
+                    style: RobotoTextStyle.smallTextStyle(Colors.white),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

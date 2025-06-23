@@ -332,9 +332,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (snapshot.hasData && snapshot.data != null) {
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(25),
-                                  child: Image.network(
+                                  child: snapshot.data!.photoURL != null
+                                  ?Image.network(
                                     snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                  ),
+                                  ):Icon(Icons.person, color: Colors.grey, size: 20,)
                                 );
                               } else {
                                 return CircleAvatar(
@@ -718,10 +719,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                               borderRadius: BorderRadius.circular(
                                                 25,
                                               ),
-                                              child: Image.network(
-                                                snapshot.data!.photoURL ??
-                                                    'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                              ),
+                                              child:  snapshot.data!.photoURL != null
+                                                  ?Image.network(
+                                                snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                              ):Icon(Icons.person, color: Colors.grey, size: 20,)
                                             );
                                           } else {
                                             return CircleAvatar(
@@ -828,7 +829,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               maxLines: 5,
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(Iconsax.lock_1, color: Colors.white38, size: 15),
+                                const SizedBox(width: 5,),
+                                Text('Tus sueños se encuentran a salvo.', style: RobotoTextStyle.small2TextStyle(Colors.white38))
+                              ],
+                            ),
+                            const SizedBox(height: 6),
                             SizedBox(
                               height: 70,
                               width: double.infinity,
