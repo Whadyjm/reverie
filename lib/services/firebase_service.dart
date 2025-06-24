@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseService {
-  void saveDream(context, controller, selectedDate, title) async {
+  void saveDream(context, controller, selectedDate, title, analysisStyle) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
     try {
@@ -18,6 +18,7 @@ class FirebaseService {
         'title': title.split('\n\n')[0],
         'classification': title.split('\n\n')[1],
         'analysis': title.split('\n\n').sublist(2).join('\n\n'),
+        'analysisStyle': analysisStyle,
         'text': controller.text.trim(),
         'isLiked': false,
         'rating': 0,

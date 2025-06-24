@@ -6,6 +6,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
+import 'analysis_style_tag.dart';
 import 'like_button.dart';
 
 class FavoriteDreamCard extends StatelessWidget {
@@ -16,6 +17,7 @@ class FavoriteDreamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final analysisStyle = dream['analysisStyle'];
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -87,6 +89,8 @@ class FavoriteDreamCard extends StatelessWidget {
             bottom: -80,
             child: Row(
               children: [
+                AnalysisStyleTag(analysisStyle: analysisStyle,),
+                const SizedBox(width: 20),
                 LikeButton(isLiked: dream['isLiked'], dreamId: dream['dreamId'],),
                 const SizedBox(width: 20),
                 Chip(

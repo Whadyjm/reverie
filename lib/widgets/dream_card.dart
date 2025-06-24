@@ -3,6 +3,7 @@ import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:pillow/widgets/analysis_style_tag.dart';
 
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
@@ -16,6 +17,9 @@ class DreamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final analysisStyle = dream['analysisStyle'];
+
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
@@ -89,6 +93,8 @@ class DreamCard extends StatelessWidget {
               bottom: -80,
               child: Row(
                 children: [
+                  AnalysisStyleTag(analysisStyle: analysisStyle,),
+                  const SizedBox(width: 20),
                   LikeButton(isLiked: dream['isLiked'], dreamId: dream['dreamId'],),
                   const SizedBox(width: 20),
                   Chip(

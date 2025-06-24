@@ -883,17 +883,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {
                                       isLoading = true;
                                     });
-
+                                    print(analysisStyle);
                                     final title = await GeminiService()
                                         .generateTitle(
                                       _dreamController.text,
                                       apiKey,
+                                      analysisStyle
                                     );
                                     FirebaseService().saveDream(
                                       context,
                                       _dreamController,
                                       _selectedDate,
                                       title,
+                                      analysisStyle
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
