@@ -39,10 +39,9 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color:
-              widget.btnProvider.isButtonEnabled
-                  ? Colors.grey.shade900
-                  : Colors.white,
+          color: widget.btnProvider.isButtonEnabled
+              ? Colors.grey.shade900
+              : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         ),
         child: Column(

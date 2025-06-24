@@ -103,14 +103,27 @@ class FavoriteDreamsScreen extends StatelessWidget {
                           itemCount: dreams.length,
                           itemBuilder: (context, index) {
                             final dream = dreams[index];
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: FavoriteDreamCard.FavoriteDreamCard(
-                                btnProvider: btnProvider,
-                                dream: dream,
+                            return GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DreamBottomSheet(
+                                      btnProvider: btnProvider,
+                                      dream: dream,
+                                    );
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: FavoriteDreamCard.FavoriteDreamCard(
+                                  btnProvider: btnProvider,
+                                  dream: dream,
+                                ),
                               ),
                             );
                           },
