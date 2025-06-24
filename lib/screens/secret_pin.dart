@@ -150,14 +150,7 @@ class _SecretPinState extends State<SecretPin> {
                     : 'Establece un pin de seguridad',
                 style: RobotoTextStyle.titleStyle(Colors.white),
               ),
-              const SizedBox(height: 5),
-              Text(
-                widget.userHasPin == true
-                    ? 'Este pin mantiene tus sueños a salvo'
-                    : 'Este pin mantendrá tus sueños a salvo',
-                style: RobotoTextStyle.smallTextStyle(Colors.white),
-              ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -206,13 +199,13 @@ class _SecretPinState extends State<SecretPin> {
               ),
               const SizedBox(height: 50,),
               Icon(Iconsax.lock_1, color: Colors.white70, size: 40),
-              const SizedBox(height: 20,),
+              const SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Tus sueños estan seguros.',
-                    style: RobotoTextStyle.smallTextStyle(Colors.white),
+                    'Este pin mantiene tus sueños a salvo',
+                    style: RobotoTextStyle.smallTextStyle(Colors.white70),
                   ),
                 ],
               ),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pillow/style/text_style.dart';
 import 'package:pillow/widgets/dream_textfield_modal.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../provider/button_provider.dart';
 import '../provider/dream_provider.dart';
@@ -18,7 +19,7 @@ class SelectAnalysisStyle extends StatefulWidget {
 }
 
 class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
-  int? _selectedCardIndex; // Tracks which card is selected
+  int? _selectedCardIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -237,6 +238,15 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                                   ? 'mistico'
                                   : 'hibrido',
                         });
+
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('analysisStyle',
+                            _selectedCardIndex == 0
+                                ? 'psicologico'
+                                : _selectedCardIndex == 1
+                                    ? 'mistico'
+                                    : 'hibrido');
+
                         analysisSelected.toggleAnalysisSelected();
                         Navigator.pop(context, _selectedCardIndex);
                       },

@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
+      Provider.of<DreamProvider>(context, listen: false).loadAnalysisStyle();
     });
     print('-----------------------$analysisStyle-------------------------');
   }
@@ -283,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
     final pinProvider = Provider.of<ButtonProvider>(context);
+    final analysisStyleProvider = Provider.of<DreamProvider>(context);
     final analysisSelected = Provider.of<DreamProvider>(context).analysisSelected;
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
     final userName = FirebaseAuth.instance.currentUser?.displayName;
@@ -297,9 +299,9 @@ class _MyHomePageState extends State<MyHomePage> {
             MaterialPageRoute(builder: (context) => LoginScreen()),
             (route) => false,
           );
-          return false; // Prevent default back navigation
+          return false;
         }
-        return true; // Allow default back navigation
+        return true;
       },
       child: SafeArea(
         child: Scaffold(
@@ -308,6 +310,9 @@ class _MyHomePageState extends State<MyHomePage> {
             width: MediaQuery.of(context).size.width * 0.6,
             child: Column(
               children: [
+                /*ElevatedButton(onPressed: (){
+                  print(analysisStyleProvider.analysisStyle);
+                }, child: Text('Test: Estilo de analisis')),*/
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: DrawerHeader(
@@ -494,6 +499,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               .update({
                             'analysisStyle': 'psicologico'
                           });
+
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('analysisStyle','psicologico');
                         },
                         child: Card(
                           color: analysisStyle == 'psicologico' ? Colors.purple.shade100 : Colors.white,
@@ -546,6 +554,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               .update({
                             'analysisStyle': 'mistico'
                           });
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('analysisStyle','mistico');
                         },
                         child: Card(
                           color: analysisStyle == 'mistico' ? Colors.purple.shade100 : Colors.white,
@@ -598,6 +608,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               .update({
                             'analysisStyle': 'hibrido'
                           });
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('analysisStyle','hibrido');
                         },
                         child: Card(
                           color: analysisStyle == 'hibrido' ? Colors.purple.shade100 : Colors.white,

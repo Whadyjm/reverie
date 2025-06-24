@@ -34,6 +34,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final isPinActive = prefs.getBool('isPinActive') ?? false;
+
   final currentUser = FirebaseAuth.instance.currentUser;
 
   Widget initialScreen;
