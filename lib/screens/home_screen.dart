@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:pillow/screens/favorite_screen.dart';
 import 'package:pillow/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -372,7 +373,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
-
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return FavoriteDreamsScreen();
+                          }, ));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Favoritos',
+                                style: RobotoTextStyle.smallTextStyle(Colors.grey.shade800),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 20, thickness: 1),
                       // Modo Claro / Oscuro
                       Row(
                         children: [
@@ -703,7 +723,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     });
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
+                                    padding: const EdgeInsets.only(top: 15),
                                     child: CircleAvatar(
                                       radius: 18,
                                       backgroundColor:
