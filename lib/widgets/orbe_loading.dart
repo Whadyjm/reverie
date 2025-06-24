@@ -29,7 +29,7 @@ class _AnimatedFloatingOrbeState extends State<AnimatedFloatingOrbe>
   void initState() {
     super.initState();
 
-    // Pulsing
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,

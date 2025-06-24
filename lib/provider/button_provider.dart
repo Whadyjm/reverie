@@ -3,9 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ButtonProvider with ChangeNotifier {
   bool _isButtonEnabled = false;
+  bool _isTextBlurred = false;
   bool _isPinActive = true;
 
   bool get isButtonEnabled => _isButtonEnabled;
+  bool get isTextBlurred => _isTextBlurred;
   bool get isPinActive => _isPinActive;
 
   void togglePin() {
@@ -39,6 +41,18 @@ class ButtonProvider with ChangeNotifier {
 
   void disableButton() {
     _isButtonEnabled = false;
+    notifyListeners();
+  }
+  void toggleTextBlur() {
+    _isTextBlurred = !_isTextBlurred;
+    notifyListeners();
+  }
+  void enableTextBlur() {
+    _isTextBlurred = true;
+    notifyListeners();
+  }
+  void disableTextBlur() {
+    _isTextBlurred = false;
     notifyListeners();
   }
 }

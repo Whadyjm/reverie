@@ -33,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  blur:
+    dependency: "direct main"
+    description:
+      name: blur
+      sha256: "1318cf79c735784eda8dffc77b1085b757373d233c1c8d94dc0cfd81530a3574"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -373,6 +381,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  hugeicons:
+    dependency: "direct main"
+    description:
+      name: hugeicons
+      sha256: cf172bae0c3ff2e2114324d05e79872081f4cd3c009f5979285fec73a693096a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.11"
   iconsax_flutter:
     dependency: "direct main"
     description:

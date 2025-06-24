@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/favorite_screen.dart';
 import 'package:pillow/screens/login_screen.dart';
@@ -284,7 +285,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final user = AuthService().userChanges;
     final btnProvider = Provider.of<ButtonProvider>(context);
     final pinProvider = Provider.of<ButtonProvider>(context);
-    final analysisStyleProvider = Provider.of<DreamProvider>(context);
     final analysisSelected = Provider.of<DreamProvider>(context).analysisSelected;
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
     final userName = FirebaseAuth.instance.currentUser?.displayName;
@@ -790,204 +790,233 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           floatingActionButton: Pulse(
             duration: Duration(milliseconds: 800),
-            child: FloatingActionButton(
-              onPressed: () {
-                if (analysisStyle.isEmpty && analysisSelected == false) {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SelectAnalysisStyle();
-                    },
-                  );
-                } else if (analysisStyle.isNotEmpty || analysisSelected == true){
-                showModalBottomSheet(context: context,
-                  isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(12),
-                    ),
-                  ),
-                  backgroundColor:
-                  btnProvider.isButtonEnabled
-                      ? Colors.grey.shade900
-                      : Colors.white,
-                  builder: (BuildContext context) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: 16.0,
-                        right: 16.0,
-                        top: 16.0,
-                        bottom:
-                        MediaQuery.of(context)
-                            .viewInsets
-                            .bottom, // Ajusta el espacio según el teclado
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    btnProvider.toggleTextBlur();
+                  },
+                  child: Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.shade400,
+                          Colors.purple.shade600,
+                          Colors.indigo.shade400,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '¿Qué soñaste hoy?',
-                              style: AppTextStyle.subtitleStyle(
-                                btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              style: TextStyle(
-                                fontFamily: 'roboto',
-                                color:
-                                btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade700,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              controller: _dreamController,
-                              decoration: InputDecoration(
-                                hintText: 'Escribe tu sueño...',
-                                hintStyle: TextStyle(
-                                  color:
-                                  btnProvider.isButtonEnabled
-                                      ? Colors.white70
-                                      : Colors.grey.shade500,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              maxLines: 5,
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Iconsax.lock_1, color: Colors.white38, size: 15),
-                                const SizedBox(width: 5,),
-                                Text('Tus sueños se encuentran a salvo.', style: RobotoTextStyle.small2TextStyle(Colors.white38))
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            SizedBox(
-                              height: 70,
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  FocusScope.of(context).unfocus();
-                                  if (_dreamController.text.trim().isEmpty) {
-                                    return;
-                                  }
-                                  try {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    print(analysisStyle);
-                                    final title = await GeminiService()
-                                        .generateTitle(
-                                      _dreamController.text,
-                                      apiKey,
-                                      analysisStyle
-                                    );
-                                    FirebaseService().saveDream(
-                                      context,
-                                      _dreamController,
-                                      _selectedDate,
-                                      title,
-                                      analysisStyle
-                                    );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Error, intente de nuevo',
-                                        ),
-                                      ),
-                                    );
-                                  } finally {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    _dreamController.clear();
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                ),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.purple.shade400,
-                                        Colors.purple.shade600,
-                                        Colors.indigo.shade400,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child:
-                                    isLoading
-                                        ? SizedBox(
-                                      width: 25,
-                                      height: 25,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 4,
-                                        valueColor:
-                                        AlwaysStoppedAnimation<
-                                            Color
-                                        >(Colors.white),
-                                      ),
-                                    )
-                                        : Text(
-                                      'Guardar',
-                                      style: TextStyle(
-                                        fontFamily: 'roboto',
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Icon(btnProvider.isTextBlurred ? Iconsax.eye_slash:Iconsax.eye, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                FloatingActionButton(
+                  onPressed: () {
+                    if (analysisStyle.isEmpty && analysisSelected == false) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SelectAnalysisStyle();
+                        },
+                      );
+                    } else if (analysisStyle.isNotEmpty || analysisSelected == true){
+                    showModalBottomSheet(context: context,
+                      isScrollControlled: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(12),
                         ),
                       ),
-                    );
-                },
-                );}
-              },
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.purple.shade400,
-                      Colors.purple.shade600,
-                      Colors.indigo.shade400,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                      backgroundColor:
+                      btnProvider.isButtonEnabled
+                          ? Colors.grey.shade900
+                          : Colors.white,
+                      builder: (BuildContext context) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: 16.0,
+                            right: 16.0,
+                            top: 16.0,
+                            bottom:
+                            MediaQuery.of(context)
+                                .viewInsets
+                                .bottom, // Ajusta el espacio según el teclado
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '¿Qué soñaste hoy?',
+                                  style: AppTextStyle.subtitleStyle(
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white
+                                        : Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                TextField(
+                                  textCapitalization: TextCapitalization.sentences,
+                                  style: TextStyle(
+                                    fontFamily: 'roboto',
+                                    color:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  controller: _dreamController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Escribe tu sueño...',
+                                    hintStyle: TextStyle(
+                                      color:
+                                      btnProvider.isButtonEnabled
+                                          ? Colors.white70
+                                          : Colors.grey.shade500,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  maxLines: 5,
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    Icon(Iconsax.lock_1, color: Colors.white38, size: 15),
+                                    const SizedBox(width: 5,),
+                                    Text('Tus sueños se encuentran a salvo.', style: RobotoTextStyle.small2TextStyle(Colors.white38))
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                SizedBox(
+                                  height: 70,
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      FocusScope.of(context).unfocus();
+                                      if (_dreamController.text.trim().isEmpty) {
+                                        return;
+                                      }
+                                      try {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        print(analysisStyle);
+                                        final title = await GeminiService()
+                                            .generateTitle(
+                                          _dreamController.text,
+                                          apiKey,
+                                          analysisStyle
+                                        );
+                                        FirebaseService().saveDream(
+                                          context,
+                                          _dreamController,
+                                          _selectedDate,
+                                          title,
+                                          analysisStyle
+                                        );
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Error, intente de nuevo',
+                                            ),
+                                          ),
+                                        );
+                                      } finally {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        _dreamController.clear();
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.purple.shade400,
+                                            Colors.purple.shade600,
+                                            Colors.indigo.shade400,
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child:
+                                        isLoading
+                                            ? SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 4,
+                                            valueColor:
+                                            AlwaysStoppedAnimation<
+                                                Color
+                                            >(Colors.white),
+                                          ),
+                                        )
+                                            : Text(
+                                          'Guardar',
+                                          style: TextStyle(
+                                            fontFamily: 'roboto',
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                    },
+                    );}
+                  },
+                  child: Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.shade400,
+                          Colors.purple.shade600,
+                          Colors.indigo.shade400,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Icon(Iconsax.add_copy, color: Colors.white, size: 30,),
                   ),
-                  shape: BoxShape.rectangle,
                 ),
-                child: Icon(Icons.add, color: Colors.white),
-              ),
+              ],
             ),
           ),
         ),

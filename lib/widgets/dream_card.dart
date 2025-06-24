@@ -1,9 +1,11 @@
+import 'package:blur/blur.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/widgets/analysis_style_tag.dart';
+import 'package:provider/provider.dart';
 
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
@@ -19,6 +21,7 @@ class DreamCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final analysisStyle = dream['analysisStyle'];
+    final btnProvider = Provider.of<ButtonProvider>(context);
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -50,37 +53,45 @@ class DreamCard extends StatelessWidget {
                   Row(
                     children: [
                       Flexible(
-                        child: Text(
-                          dream['title'],
-                          style: AppTextStyle.subtitleStyle(
-                            Colors.grey.shade600,
+                        child: Blur(
+                          colorOpacity: 0,
+                          blur: btnProvider.isTextBlurred ? 2.5:0,
+                          child: Text(
+                            dream['title'],
+                            style: AppTextStyle.subtitleStyle(
+                              Colors.grey.shade600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 3),
-                    child: Text(
-                      dream['text'],
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'roboto',
-                        fontWeight: FontWeight.w500,
-                        foreground:
-                            Paint()
-                              ..shader = LinearGradient(
-                                colors: [
-                                  Colors.transparent.withAlpha(200),
-                                  Colors.transparent.withAlpha(150),
-                                  Colors.transparent.withAlpha(50),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
-                        fontSize: 15,
+                    child: Blur(
+                      colorOpacity: 0,
+                      blur: btnProvider.isTextBlurred ? 2.5:0,
+                      child: Text(
+                        dream['text'],
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'roboto',
+                          fontWeight: FontWeight.w500,
+                          foreground:
+                              Paint()
+                                ..shader = LinearGradient(
+                                  colors: [
+                                    Colors.transparent.withAlpha(200),
+                                    Colors.transparent.withAlpha(150),
+                                    Colors.transparent.withAlpha(50),
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ),
@@ -98,9 +109,14 @@ class DreamCard extends StatelessWidget {
                   LikeButton(isLiked: dream['isLiked'], dreamId: dream['dreamId'],),
                   const SizedBox(width: 20),
                   Chip(
-                    label: Text(
-                      dream['classification'],
-                      style: RobotoTextStyle.smallTextStyle(Colors.white),
+                    label: Blur(
+                      borderRadius: BorderRadius.circular(12),
+                      colorOpacity: 0.01,
+                      blur: btnProvider.isTextBlurred ? 2.5:0,
+                      child: Text(
+                        dream['classification'],
+                        style: RobotoTextStyle.smallTextStyle(Colors.white),
+                      ),
                     ),
                     backgroundColor:
                         dream['classification'] == 'Pesadilla'
