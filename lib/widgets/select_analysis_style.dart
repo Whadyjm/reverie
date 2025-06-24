@@ -74,30 +74,44 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                   _selectedCardIndex == 0
                       ? selectedCardColor
                       : unselectedCardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/card1.png',
+                      opacity: const AlwaysStoppedAnimation(0.4),
+                      fit: BoxFit.fitWidth,
+                      width: MediaQuery.of(context).size.width,
+                      height: 120
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Text(
+                              '🧠 Exploración Psicológica',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                         Text(
-                          '🧠 Exploración Psicológica',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: textColor,
-                          ),
+                          'Conecta tu sueño con emociones, partes de ti mismo y símbolos internos.',
+                          style: TextStyle(color: textColor),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Conecta tu sueño con emociones, partes de ti mismo y símbolos internos.',
-                      style: TextStyle(color: textColor),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -126,30 +140,56 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                   _selectedCardIndex == 1
                       ? selectedCardColor
                       : unselectedCardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                        'assets/card2.png',
+                        opacity: const AlwaysStoppedAnimation(0.4),
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width,
+                        height: 120
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('assets/card2.png'),
+                                  fit: BoxFit.cover,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(0.4),
+                                    BlendMode.darken,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '🔮 Exploración Mística',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
                         Text(
-                          '🔮 Exploración Mística',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: textColor,
-                          ),
+                          'Descubre si tu sueño trae un mensaje del alma, una señal del universo o una energía especial.',
+                          style: TextStyle(color: textColor),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Descubre si tu sueño trae un mensaje del alma, una señal del universo o una energía especial.',
-                      style: TextStyle(color: textColor),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -178,30 +218,56 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                   _selectedCardIndex == 2
                       ? selectedCardColor
                       : unselectedCardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                        'assets/card3.png',
+                        opacity: const AlwaysStoppedAnimation(0.4),
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width,
+                        height: 120
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '🌀 Ambas cosas (Híbrido)',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: textColor,
+                        Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/card3.png'),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.4),
+                                BlendMode.darken,
+                              ),
+                            ),
                           ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              '🌀 Ambas cosas (Híbrido)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Combina ambos enfoques para una visión más completa.',
+                          style: TextStyle(color: textColor),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Combina ambos enfoques para una visión más completa.',
-                      style: TextStyle(color: textColor),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -232,20 +298,23 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                             .collection('users')
                             .doc(user!.uid)
                             .update({
-                          'analysisStyle': _selectedCardIndex == 0
-                              ? 'psicologico'
-                              : _selectedCardIndex == 1
-                                  ? 'mistico'
-                                  : 'hibrido',
-                        });
+                              'analysisStyle':
+                                  _selectedCardIndex == 0
+                                      ? 'psicologico'
+                                      : _selectedCardIndex == 1
+                                      ? 'mistico'
+                                      : 'hibrido',
+                            });
 
                         final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('analysisStyle',
-                            _selectedCardIndex == 0
-                                ? 'psicologico'
-                                : _selectedCardIndex == 1
-                                    ? 'mistico'
-                                    : 'hibrido');
+                        await prefs.setString(
+                          'analysisStyle',
+                          _selectedCardIndex == 0
+                              ? 'psicologico'
+                              : _selectedCardIndex == 1
+                              ? 'mistico'
+                              : 'hibrido',
+                        );
 
                         analysisSelected.toggleAnalysisSelected();
                         Navigator.pop(context, _selectedCardIndex);
