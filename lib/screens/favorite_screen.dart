@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:pillow/widgets/orbe_loading.dart';
 import 'package:provider/provider.dart';
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
@@ -24,15 +25,14 @@ class FavoriteDreamsScreen extends StatelessWidget {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [
-        Colors.deepPurple.shade900,
-        Colors.deepPurple.shade800,
-        Colors.deepPurple.shade700,
-        Colors.purple.shade800,
-        Colors.purple.shade700,
-        Colors.purple.shade600,
-        Colors.purple.shade100,
+        Color(0xFF1A003F),
+        Color(0xFF2E1A5E),
+        Color(0xFF4A3A7C),
+        Color(0xFF6B5A9A),
+        Color(0xFF8C53D6),
+        Color(0xFFAD75F4),
       ],
-      stops: const [0.0, 0.2, 0.4, 0.5, 0.65, 0.8, 1.0],
+      stops: const [0.0, 0.2, 0.4, 0.5, 0.8, 1.0],
     );
 
     return Scaffold(
@@ -89,16 +89,7 @@ class FavoriteDreamsScreen extends StatelessWidget {
                     final dreams = snapshot.data?.docs ?? [];
 
                     return dreams.isEmpty
-                        ? Center(
-                          child: SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
+                        ? AnimatedFloatingOrbe()
                         : ListView.builder(
                           itemCount: dreams.length,
                           itemBuilder: (context, index) {
