@@ -723,7 +723,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                 : Colors.grey.shade800,
                           ),
                         ),
-                        SizedBox(width: MediaQuery.sizeOf(context).width - 250),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24, left: 15),
+                          child: Text(
+                            'Hola, ${userName?.split(' ').first ?? 'Usuario'}  👋',
+                            style: RobotoTextStyle.subtitleStyle(
+                              btnProvider.isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.grey.shade800,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: MediaQuery.sizeOf(context).width - 350),
                         user != null
                             ? Builder(
                               builder: (context) {
