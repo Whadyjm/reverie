@@ -319,6 +319,11 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                     );
                     analysisSelected.analysisStyle = _selectedCardIndex == 0 ? 'psicologico' : _selectedCardIndex == 1 ? 'mistico' : 'hibrido';
                     analysisSelected.toggleAnalysisSelected();
+                    analysisSelected.analysisStyle = _selectedCardIndex == 0
+                        ? 'psicologico'
+                        : _selectedCardIndex == 1
+                        ? 'mistico'
+                        : 'hibrido';
                     Navigator.pop(context, _selectedCardIndex);
                   },
                   style: ElevatedButton.styleFrom(
