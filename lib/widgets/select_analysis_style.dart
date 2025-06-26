@@ -24,15 +24,16 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
   @override
   Widget build(BuildContext context) {
     final analysisSelected = Provider.of<DreamProvider>(context);
+
     final btnProvider = Provider.of<ButtonProvider>(context);
     final bool isDarkMode = btnProvider.isButtonEnabled;
     final Color textColor = isDarkMode ? Colors.white : Colors.grey.shade900;
     final Color unselectedCardColor =
-        isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100;
+    isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100;
     final Color selectedCardColor =
-        isDarkMode ? Colors.purple.shade400 : Colors.purple.shade100;
+    isDarkMode ? Colors.purple.shade400 : Colors.purple.shade100;
     final Color selectedBorderColor =
-        isDarkMode ? Colors.purple.shade100 : Colors.purple;
+    isDarkMode ? Colors.purple.shade100 : Colors.purple;
 
     return AlertDialog(
       backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
@@ -62,28 +63,28 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
             child: Card(
               elevation: 8,
               shadowColor:
-                  isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+              isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side:
-                    _selectedCardIndex == 0
-                        ? BorderSide(color: selectedBorderColor, width: 2)
-                        : BorderSide.none,
+                _selectedCardIndex == 0
+                    ? BorderSide(color: selectedBorderColor, width: 2)
+                    : BorderSide.none,
               ),
               color:
-                  _selectedCardIndex == 0
-                      ? selectedCardColor
-                      : unselectedCardColor,
+              _selectedCardIndex == 0
+                  ? selectedCardColor
+                  : unselectedCardColor,
               child: Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      'assets/card1.png',
-                      opacity: const AlwaysStoppedAnimation(0.4),
-                      fit: BoxFit.fitWidth,
-                      width: MediaQuery.of(context).size.width,
-                      height: 120
+                        'assets/card1.png',
+                        opacity: const AlwaysStoppedAnimation(0.4),
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width,
+                        height: 120
                     ),
                   ),
                   Padding(
@@ -128,18 +129,18 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
             child: Card(
               elevation: 8,
               shadowColor:
-                  isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+              isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side:
-                    _selectedCardIndex == 1
-                        ? BorderSide(color: selectedBorderColor, width: 2)
-                        : BorderSide.none,
+                _selectedCardIndex == 1
+                    ? BorderSide(color: selectedBorderColor, width: 2)
+                    : BorderSide.none,
               ),
               color:
-                  _selectedCardIndex == 1
-                      ? selectedCardColor
-                      : unselectedCardColor,
+              _selectedCardIndex == 1
+                  ? selectedCardColor
+                  : unselectedCardColor,
               child: Stack(
                 children: [
                   ClipRRect(
@@ -206,18 +207,18 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
             child: Card(
               elevation: 8,
               shadowColor:
-                  isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+              isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side:
-                    _selectedCardIndex == 2
-                        ? BorderSide(color: selectedBorderColor, width: 2)
-                        : BorderSide.none,
+                _selectedCardIndex == 2
+                    ? BorderSide(color: selectedBorderColor, width: 2)
+                    : BorderSide.none,
               ),
               color:
-                  _selectedCardIndex == 2
-                      ? selectedCardColor
-                      : unselectedCardColor,
+              _selectedCardIndex == 2
+                  ? selectedCardColor
+                  : unselectedCardColor,
               child: Stack(
                 children: [
                   ClipRRect(
@@ -276,99 +277,100 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
       actions: [
         _selectedCardIndex != null
             ? FadeInDown(
-              duration: const Duration(milliseconds: 500),
-              child: FadeIn(
-                duration: const Duration(microseconds: 1000),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Cancelar',
-                        style: TextStyle(color: textColor),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final user = FirebaseAuth.instance.currentUser;
-                        await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(user!.uid)
-                            .update({
-                              'analysisStyle':
-                                  _selectedCardIndex == 0
-                                      ? 'psicologico'
-                                      : _selectedCardIndex == 1
-                                      ? 'mistico'
-                                      : 'hibrido',
-                            });
-
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString(
-                          'analysisStyle',
-                          _selectedCardIndex == 0
-                              ? 'psicologico'
-                              : _selectedCardIndex == 1
-                              ? 'mistico'
-                              : 'hibrido',
-                        );
-
-                        analysisSelected.toggleAnalysisSelected();
-                        Navigator.pop(context, _selectedCardIndex);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 10,
-                        ),
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                      ).copyWith(
-                        overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.purple.shade700.withOpacity(0.2);
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.indigo.shade600,
-                              Colors.purple.shade600,
-                              Colors.deepPurple.shade500,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                        ),
-                        child: Container(
-                          constraints: const BoxConstraints(
-                            minWidth: 88,
-                            minHeight: 48,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Confirmar',
-                            style: RobotoTextStyle.smallTextStyle(Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+          duration: const Duration(milliseconds: 500),
+          child: FadeIn(
+            duration: const Duration(microseconds: 1000),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: textColor),
+                  ),
                 ),
-              ),
-            )
+                ElevatedButton(
+                  onPressed: () async {
+                    setState(() {});
+                    final user = FirebaseAuth.instance.currentUser;
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user!.uid)
+                        .update({
+                      'analysisStyle':
+                      _selectedCardIndex == 0
+                          ? 'psicologico'
+                          : _selectedCardIndex == 1
+                          ? 'mistico'
+                          : 'hibrido',
+                    });
+
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setString(
+                      'analysisStyle',
+                      _selectedCardIndex == 0
+                          ? 'psicologico'
+                          : _selectedCardIndex == 1
+                          ? 'mistico'
+                          : 'hibrido',
+                    );
+                    analysisSelected.analysisStyle = _selectedCardIndex == 0 ? 'psicologico' : _selectedCardIndex == 1 ? 'mistico' : 'hibrido';
+                    analysisSelected.toggleAnalysisSelected();
+                    Navigator.pop(context, _selectedCardIndex);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 10,
+                    ),
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ).copyWith(
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.purple.shade700.withOpacity(0.2);
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.indigo.shade600,
+                          Colors.purple.shade600,
+                          Colors.deepPurple.shade500,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Container(
+                      constraints: const BoxConstraints(
+                        minWidth: 88,
+                        minHeight: 48,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Confirmar',
+                        style: RobotoTextStyle.smallTextStyle(Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
             : const SizedBox.shrink(),
       ],
     );

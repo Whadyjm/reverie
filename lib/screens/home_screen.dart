@@ -290,6 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final userName = FirebaseAuth.instance.currentUser?.displayName;
     final userEmail = FirebaseAuth.instance.currentUser?.email;
 
+    final analysisStyleProvider = Provider.of<DreamProvider>(context);
     return WillPopScope(
       onWillPop: () async {
         User? currentUser = FirebaseAuth.instance.currentUser;
@@ -297,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => LoginScreen()),
-            (route) => false,
+                (route) => false,
           );
           return false;
         }
@@ -337,11 +338,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context, snapshot) {
                               if (snapshot.hasData && snapshot.data != null) {
                                 return ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child: snapshot.data!.photoURL != null
-                                  ?Image.network(
-                                    snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                  ):Icon(Icons.person, color: Colors.grey, size: 20,)
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: snapshot.data!.photoURL != null
+                                        ?Image.network(
+                                      snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                    ):Icon(Icons.person, color: Colors.grey, size: 20,)
                                 );
                               } else {
                                 return CircleAvatar(
@@ -491,6 +492,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onTap: () async {
                           setState(() {
                             analysisStyle = 'psicologico';
+                            analysisStyleProvider.analysisStyle = 'psicologico';
                           });
                           final user = FirebaseAuth.instance.currentUser;
                           await FirebaseFirestore.instance
@@ -504,7 +506,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           await prefs.setString('analysisStyle','psicologico');
                         },
                         child: Card(
-                          color: analysisStyle == 'psicologico' ? Colors.purple.shade100 : Colors.white,
+                          color: analysisStyleProvider.analysisStyle == 'psicologico' ? Colors.purple.shade100 : Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
@@ -546,6 +548,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onTap: () async {
                           setState(() {
                             analysisStyle = 'mistico';
+                            analysisStyleProvider.analysisStyle = 'mistico';
                           });
                           final user = FirebaseAuth.instance.currentUser;
                           await FirebaseFirestore.instance
@@ -558,7 +561,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           await prefs.setString('analysisStyle','mistico');
                         },
                         child: Card(
-                          color: analysisStyle == 'mistico' ? Colors.purple.shade100 : Colors.white,
+                          color: analysisStyleProvider.analysisStyle == 'mistico' ? Colors.purple.shade100 : Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
@@ -600,6 +603,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onTap: () async {
                           setState(() {
                             analysisStyle = 'hibrido';
+                            analysisStyleProvider.analysisStyle = 'hibrido';
                           });
                           final user = FirebaseAuth.instance.currentUser;
                           await FirebaseFirestore.instance
@@ -612,7 +616,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           await prefs.setString('analysisStyle','hibrido');
                         },
                         child: Card(
-                          color: analysisStyle == 'hibrido' ? Colors.purple.shade100 : Colors.white,
+                          color: analysisStyleProvider.analysisStyle == 'hibrido' ? Colors.purple.shade100 : Colors.white,
                           elevation: 4,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
@@ -677,32 +681,32 @@ class _MyHomePageState extends State<MyHomePage> {
           body: Container(
             decoration: BoxDecoration(
               gradient:
-                  btnProvider.isButtonEnabled
-                      ? LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          Color(0xFF1A003F),
-                          Color(0xFF2E1A5E),
-                          Color(0xFF4A3A7C),
-                          Color(0xFF6B5A9A),
-                          Color(0xFF8C53D6),
-                          Color(0xFFAD75F4),
-                        ],
-                      )
-                      : LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white,
-                          Colors.white,
-                          Colors.white,
-                          Colors.purple.shade100,
-                          Colors.purple.shade200,
-                          Colors.indigo.shade400,
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
+              btnProvider.isButtonEnabled
+                  ? LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [
+                  Color(0xFF1A003F),
+                  Color(0xFF2E1A5E),
+                  Color(0xFF4A3A7C),
+                  Color(0xFF6B5A9A),
+                  Color(0xFF8C53D6),
+                  Color(0xFFAD75F4),
+                ],
+              )
+                  : LinearGradient(
+                colors: [
+                  Colors.white,
+                  Colors.white,
+                  Colors.white,
+                  Colors.white,
+                  Colors.purple.shade100,
+                  Colors.purple.shade200,
+                  Colors.indigo.shade400,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -737,28 +741,28 @@ class _MyHomePageState extends State<MyHomePage> {
                         SizedBox(width: MediaQuery.sizeOf(context).width - 350),
                         user != null
                             ? Builder(
-                              builder: (context) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Scaffold.of(context).openEndDrawer();
-                                      FocusScope.of(context).unfocus();
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 15),
-                                    child: CircleAvatar(
-                                      radius: 18,
-                                      backgroundColor:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white.withOpacity(0.2)
-                                              : Colors.grey.shade200,
-                                      child: StreamBuilder<User?>(
-                                        stream: user,
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData &&
-                                              snapshot.data != null) {
-                                            return ClipRRect(
+                            builder: (context) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    Scaffold.of(context).openEndDrawer();
+                                    FocusScope.of(context).unfocus();
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 15),
+                                  child: CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white.withOpacity(0.2)
+                                        : Colors.grey.shade200,
+                                    child: StreamBuilder<User?>(
+                                      stream: user,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData &&
+                                            snapshot.data != null) {
+                                          return ClipRRect(
                                               borderRadius: BorderRadius.circular(
                                                 25,
                                               ),
@@ -766,28 +770,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   ?Image.network(
                                                 snapshot.data!.photoURL ?? 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
                                               ):Icon(Icons.person, color: Colors.grey, size: 20,)
-                                            );
-                                          } else {
-                                            return CircleAvatar(
-                                              backgroundColor:
-                                                  btnProvider.isButtonEnabled
-                                                      ? Colors.white.withOpacity(
-                                                        0.2,
-                                                      )
-                                                      : Colors.grey.shade200,
-                                              child: Icon(
-                                                Icons.person,
-                                                color: Colors.grey,
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      ),
+                                          );
+                                        } else {
+                                          return CircleAvatar(
+                                            backgroundColor:
+                                            btnProvider.isButtonEnabled
+                                                ? Colors.white.withOpacity(
+                                              0.2,
+                                            )
+                                                : Colors.grey.shade200,
+                                            child: Icon(
+                                              Icons.person,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                      },
                                     ),
                                   ),
-                                );
-                              }
-                            )
+                                ),
+                              );
+                            }
+                        )
                             : const SizedBox.shrink(),
                       ],
                     ),
@@ -838,175 +842,175 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       );
                     } else if (analysisStyle.isNotEmpty || analysisSelected == true){
-                    showModalBottomSheet(context: context,
-                      isScrollControlled: true,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                      ),
-                      backgroundColor:
-                      btnProvider.isButtonEnabled
-                          ? Colors.grey.shade900
-                          : Colors.white,
-                      builder: (BuildContext context) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            left: 16.0,
-                            right: 16.0,
-                            top: 16.0,
-                            bottom:
-                            MediaQuery.of(context)
-                                .viewInsets
-                                .bottom, // Ajusta el espacio según el teclado
+                      showModalBottomSheet(context: context,
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
                           ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '¿Qué soñaste hoy?',
-                                  style: AppTextStyle.subtitleStyle(
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
+                        ),
+                        backgroundColor:
+                        btnProvider.isButtonEnabled
+                            ? Colors.grey.shade900
+                            : Colors.white,
+                        builder: (BuildContext context) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              left: 16.0,
+                              right: 16.0,
+                              top: 16.0,
+                              bottom:
+                              MediaQuery.of(context)
+                                  .viewInsets
+                                  .bottom, // Ajusta el espacio según el teclado
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '¿Qué soñaste hoy?',
+                                    style: AppTextStyle.subtitleStyle(
+                                      btnProvider.isButtonEnabled
+                                          ? Colors.white
+                                          : Colors.grey.shade700,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 16),
-                                TextField(
-                                  textCapitalization: TextCapitalization.sentences,
-                                  style: TextStyle(
-                                    fontFamily: 'roboto',
-                                    color:
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  controller: _dreamController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Escribe tu sueño...',
-                                    hintStyle: TextStyle(
+                                  const SizedBox(height: 16),
+                                  TextField(
+                                    textCapitalization: TextCapitalization.sentences,
+                                    style: TextStyle(
+                                      fontFamily: 'roboto',
                                       color:
                                       btnProvider.isButtonEnabled
-                                          ? Colors.white70
-                                          : Colors.grey.shade500,
+                                          ? Colors.white
+                                          : Colors.grey.shade700,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                    controller: _dreamController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Escribe tu sueño...',
+                                      hintStyle: TextStyle(
+                                        color:
+                                        btnProvider.isButtonEnabled
+                                            ? Colors.white70
+                                            : Colors.grey.shade500,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
+                                    maxLines: 5,
                                   ),
-                                  maxLines: 5,
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Icon(Iconsax.lock_1, color: Colors.white38, size: 15),
-                                    const SizedBox(width: 5,),
-                                    Text('Tus sueños se encuentran a salvo.', style: RobotoTextStyle.small2TextStyle(Colors.white38))
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                SizedBox(
-                                  height: 70,
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      FocusScope.of(context).unfocus();
-                                      if (_dreamController.text.trim().isEmpty) {
-                                        return;
-                                      }
-                                      try {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        print(analysisStyle);
-                                        final title = await GeminiService()
-                                            .generateTitle(
-                                          _dreamController.text,
-                                          apiKey,
-                                          analysisStyle
-                                        );
-                                        FirebaseService().saveDream(
-                                          context,
-                                          _dreamController,
-                                          _selectedDate,
-                                          title,
-                                          analysisStyle
-                                        );
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Error, intente de nuevo',
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Icon(Iconsax.lock_1, color: Colors.white38, size: 15),
+                                      const SizedBox(width: 5,),
+                                      Text('Tus sueños se encuentran a salvo.', style: RobotoTextStyle.small2TextStyle(Colors.white38))
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  SizedBox(
+                                    height: 70,
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        FocusScope.of(context).unfocus();
+                                        if (_dreamController.text.trim().isEmpty) {
+                                          return;
+                                        }
+                                        try {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          print(analysisStyleProvider.analysisStyle);
+                                          final title = await GeminiService()
+                                              .generateTitle(
+                                            _dreamController.text,
+                                            apiKey,
+                                            analysisStyle == '' ? analysisStyleProvider.analysisStyle: analysisStyle,
+                                          );
+                                          FirebaseService().saveDream(
+                                            context,
+                                            _dreamController,
+                                            _selectedDate,
+                                            title,
+                                            analysisStyle == '' ? analysisStyleProvider.analysisStyle: analysisStyle,
+                                          );
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Error, intente de nuevo',
+                                              ),
+                                            ),
+                                          );
+                                        } finally {
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                          _dreamController.clear();
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        backgroundColor: Colors.transparent,
+                                        shadowColor: Colors.transparent,
+                                      ),
+                                      child: Ink(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              Colors.purple.shade400,
+                                              Colors.purple.shade600,
+                                              Colors.indigo.shade400,
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          child:
+                                          isLoading
+                                              ? SizedBox(
+                                            width: 25,
+                                            height: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 4,
+                                              valueColor:
+                                              AlwaysStoppedAnimation<
+                                                  Color
+                                              >(Colors.white),
+                                            ),
+                                          )
+                                              : Text(
+                                            'Guardar',
+                                            style: TextStyle(
+                                              fontFamily: 'roboto',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                        );
-                                      } finally {
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                        _dreamController.clear();
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                    ),
-                                    child: Ink(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.purple.shade400,
-                                            Colors.purple.shade600,
-                                            Colors.indigo.shade400,
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child:
-                                        isLoading
-                                            ? SizedBox(
-                                          width: 25,
-                                          height: 25,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 4,
-                                            valueColor:
-                                            AlwaysStoppedAnimation<
-                                                Color
-                                            >(Colors.white),
-                                          ),
-                                        )
-                                            : Text(
-                                          'Guardar',
-                                          style: TextStyle(
-                                            fontFamily: 'roboto',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                    },
-                    );}
+                          );
+                        },
+                      );}
                   },
                   child: Container(
                     height: 100,
@@ -1071,7 +1075,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (route) => false,
+                            (route) => false,
                       );
                     },
                     icon: Icon(Iconsax.logout_copy),
@@ -1129,6 +1133,3 @@ void _logout(BuildContext context) {
     ),
   );
 }
-
-
-

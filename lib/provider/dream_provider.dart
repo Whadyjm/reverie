@@ -17,6 +17,11 @@ class DreamProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  set analysisStyle(String style) {
+    _analysisStyle = style;
+    notifyListeners();
+  }
+
   void toggleAnalysisSelected() {
     _analysisiSelected = true;
     notifyListeners();
