@@ -7,6 +7,7 @@ import 'package:pillow/provider/button_provider.dart';
 import 'package:pillow/provider/calendar_provider.dart';
 import 'package:pillow/provider/dream_provider.dart';
 import 'package:pillow/screens/login_screen.dart';
+import 'package:pillow/screens/onboarding_screen.dart';
 import 'package:pillow/screens/secret_pin.dart';
 import 'package:pillow/screens/home_screen.dart';
 import 'package:pillow/services/noti_service.dart';
@@ -20,7 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown, // Opcional: permite invertir el dispositivo
+    DeviceOrientation.portraitDown,
   ]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -39,44 +40,44 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final isPinActive = prefs.getBool('isPinActive') ?? false;
+  final onboardingSeen = prefs.getBool('onboardingSeen') ?? false;
 
   final currentUser = FirebaseAuth.instance.currentUser;
 
   Widget initialScreen;
 
-  if (currentUser == null) {
-    // Usuario NO logeado
+  if (!onboardingSeen) {
+    initialScreen = OnboardingPage();
+  } else if (currentUser == null) {
     initialScreen = LoginScreen();
-  } else {
-    // Usuario logeado
-    if (isPinActive) {
-      try {
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUser.uid)
-            .get();
+  } else if (isPinActive) {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
 
-        final userPin = userDoc.data()?['pin']?.toString() ?? '';
-        final pinCreated = userDoc.data()?['pinCreated'] as bool? ?? false;
-        final userHasPin = userPin.isNotEmpty;
+      final userPin = userDoc.data()?['pin']?.toString() ?? '';
+      final pinCreated = userDoc.data()?['pinCreated'] as bool? ?? false;
+      final userHasPin = userPin.isNotEmpty;
 
-        initialScreen = SecretPin(
-          userUid: currentUser.uid,
-          userHasPin: userHasPin,
-          userPin: userPin,
-          pinCreated: pinCreated,
-        );
-      } catch (e) {
-        print('Error cargando datos de PIN: $e');
-        initialScreen = LoginScreen(); // fallback
-      }
-    } else {
-      initialScreen = MyHomePage(); // PIN inactivo + usuario logeado
+      initialScreen = SecretPin(
+        userUid: currentUser.uid,
+        userHasPin: userHasPin,
+        userPin: userPin,
+        pinCreated: pinCreated,
+      );
+    } catch (e) {
+      print('Error cargando datos de PIN: $e');
+      initialScreen = LoginScreen();
     }
+  } else {
+    initialScreen = MyHomePage();
   }
 
   runApp(MyApp(initialScreen: initialScreen));
 }
+
 
 Future<void> _requestNotificationPermissions() async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
