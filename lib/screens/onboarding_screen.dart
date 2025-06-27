@@ -18,17 +18,17 @@ class _OnboardingPageState extends State<OnboardingPage>
     {
       'title': 'Registra tus sueños',
       'subtitle': 'Escribe tus sueños antes de que desaparezcan.',
-      'image': 'assets/card1.png',
+      'image': 'assets/page1.png',
     },
     {
       'title': 'Interprétalos con IA',
       'subtitle': 'Descubre el significado oculto detrás de tus sueños.',
-      'image': 'assets/card2.png',
+      'image': 'assets/page2.png',
     },
     {
       'title': 'Explora tu mundo interior',
       'subtitle': 'Observa tu evolución emocional a través de tus sueños.',
-      'image': 'assets/card3.png',
+      'image': 'assets/page3.png',
     },
   ];
 

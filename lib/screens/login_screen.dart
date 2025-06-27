@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     'ó',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 10),
                                   Expanded(child: const Divider()),
                                 ],
                               ),
