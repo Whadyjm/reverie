@@ -348,8 +348,10 @@ class _MyHomePageState extends State<MyHomePage> {
     final userName = FirebaseAuth.instance.currentUser?.displayName;
     final userEmail = FirebaseAuth.instance.currentUser?.email;
 
-
-    final analysisStyleProvider = Provider.of<DreamProvider>(context, listen: false);
+    final analysisStyleProvider = Provider.of<DreamProvider>(
+      context,
+      listen: false,
+    );
     analysisStyleProvider.analysisStyle = analysisStyle;
     return WillPopScope(
       onWillPop: () async {
@@ -940,15 +942,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 30),
                 FloatingActionButton(
                   onPressed: () async {
-                    setState(() {});
-                    if (analysisStyle.isEmpty && analysisSelected == false) {
+                    if (analysisStyleProvider.analysisStyle.isEmpty &&
+                        analysisSelected == false) {
                       await showDialog(
+                        barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           return SelectAnalysisStyle();
                         },
                       );
-
+                      analysisStyle = analysisStyleProvider.analysisStyle;
+                      print(analysisStyle);
                       await Future.delayed(Duration(milliseconds: 300));
 
                       showModalBottomSheet(
@@ -972,7 +976,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom:
                                   MediaQuery.of(context)
                                       .viewInsets
-                                      .bottom, // Ajusta el espacio según el teclado
+                                      .bottom,
                             ),
                             child: SingleChildScrollView(
                               child: Column(
@@ -980,7 +984,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         '¿Qué soñaste hoy?',
@@ -991,19 +996,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                       ),
                                       Text(
-                                        analysisStyleProvider.analysisStyle.isEmpty
+                                        analysisStyleProvider
+                                                .analysisStyle
+                                                .isEmpty
                                             ? ''
-                                            : analysisStyleProvider.analysisStyle == 'psicologico'
+                                            : analysisStyleProvider
+                                                    .analysisStyle ==
+                                                'psicologico'
                                             ? '🧠'
-                                            : analysisStyleProvider.analysisStyle == 'mistico'
+                                            : analysisStyleProvider
+                                                    .analysisStyle ==
+                                                'mistico'
                                             ? '🔮'
-                                            : analysisStyleProvider.analysisStyle == 'hibrido'
+                                            : analysisStyleProvider
+                                                    .analysisStyle ==
+                                                'hibrido'
                                             ? '🌀'
                                             : '',
-                                        style: TextStyle(fontSize: 25, color:
-                                        btnProvider.isButtonEnabled
-                                            ? Colors.white
-                                            : Colors.grey.shade700,
+                                        style: TextStyle(
+                                          fontSize: 25,
+                                          color:
+                                              btnProvider.isButtonEnabled
+                                                  ? Colors.white
+                                                  : Colors.grey.shade700,
                                         ),
                                       ),
                                     ],
@@ -1040,14 +1055,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                     children: [
                                       Icon(
                                         Iconsax.lock_1,
-                                        color: btnProvider.isButtonEnabled?Colors.white38:Colors.grey.shade500,
+                                        color:
+                                            btnProvider.isButtonEnabled
+                                                ? Colors.white38
+                                                : Colors.grey.shade500,
                                         size: 15,
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
                                         'Tus sueños se encuentran a salvo.',
                                         style: RobotoTextStyle.small2TextStyle(
-                                          btnProvider.isButtonEnabled?Colors.white38:Colors.grey.shade500,
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white38
+                                              : Colors.grey.shade500,
                                         ),
                                       ),
                                     ],
@@ -1169,7 +1189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         },
                       );
-                    } else if (analysisStyle.isNotEmpty ||
+                    } else if (analysisStyleProvider.analysisStyle.isNotEmpty ||
                         analysisSelected == true) {
                       showModalBottomSheet(
                         context: context,
@@ -1200,7 +1220,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         '¿Qué soñaste hoy?',
@@ -1211,19 +1232,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                       ),
                                       Text(
-                                        analysisStyleProvider.analysisStyle.isEmpty
+                                        analysisStyleProvider
+                                                .analysisStyle
+                                                .isEmpty
                                             ? ''
-                                            : analysisStyleProvider.analysisStyle == 'psicologico'
+                                            : analysisStyleProvider
+                                                    .analysisStyle ==
+                                                'psicologico'
                                             ? '🧠'
-                                            : analysisStyleProvider.analysisStyle == 'mistico'
+                                            : analysisStyleProvider
+                                                    .analysisStyle ==
+                                                'mistico'
                                             ? '🔮'
-                                            : analysisStyleProvider.analysisStyle == 'hibrido'
+                                            : analysisStyleProvider
+                                                    .analysisStyle ==
+                                                'hibrido'
                                             ? '🌀'
                                             : '',
-                                        style: TextStyle(fontSize: 25, color:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade700,
+                                        style: TextStyle(
+                                          fontSize: 25,
+                                          color:
+                                              btnProvider.isButtonEnabled
+                                                  ? Colors.white
+                                                  : Colors.grey.shade700,
                                         ),
                                       ),
                                     ],
@@ -1260,14 +1291,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                     children: [
                                       Icon(
                                         Iconsax.lock_1,
-                                        color: btnProvider.isButtonEnabled?Colors.white38:Colors.grey.shade500,
+                                        color:
+                                            btnProvider.isButtonEnabled
+                                                ? Colors.white38
+                                                : Colors.grey.shade500,
                                         size: 15,
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
                                         'Tus sueños se encuentran a salvo.',
                                         style: RobotoTextStyle.small2TextStyle(
-                                          btnProvider.isButtonEnabled?Colors.white38:Colors.grey.shade500,
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white38
+                                              : Colors.grey.shade500,
                                         ),
                                       ),
                                     ],

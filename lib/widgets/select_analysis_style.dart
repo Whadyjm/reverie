@@ -317,7 +317,6 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                           ? 'mistico'
                           : 'hibrido',
                     );
-                    analysisSelected.analysisStyle = _selectedCardIndex == 0 ? 'psicologico' : _selectedCardIndex == 1 ? 'mistico' : 'hibrido';
                     analysisSelected.toggleAnalysisSelected();
                     analysisSelected.analysisStyle = _selectedCardIndex == 0
                         ? 'psicologico'
