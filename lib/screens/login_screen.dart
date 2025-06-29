@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                               TextButton(
                                 onPressed: () {
-                                  RegisterModalSheet.show(
+                                  RegisterModalSheet().show(
                                     context,
                                     nameController,
                                     emailController,

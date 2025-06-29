@@ -7,7 +7,7 @@ import '../custom_button.dart';
 import '../custom_textfield.dart';
 
 class RegisterModalSheet {
-  static void show(
+  void show(
     BuildContext context,
     TextEditingController nameController,
     TextEditingController emailController,
@@ -16,6 +16,9 @@ class RegisterModalSheet {
     Function setState,
     bool isLoading,
   ) {
+
+    String? selectedGender;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -26,9 +29,10 @@ class RegisterModalSheet {
       builder: (context) {
         return StatefulBuilder(
           builder: (
-            BuildContext context,
-            void Function(void Function()) setState,
-          ) {
+              BuildContext context,
+              void Function(void Function()) setState,
+              ) {
+
             return Padding(
               padding: EdgeInsets.only(
                 left: 20,
@@ -78,39 +82,94 @@ class RegisterModalSheet {
                     controller: passwordController,
                   ),
                   const SizedBox(height: 20),
+                  // Gender selection row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildGenderCard(
+                        context: context,
+                        isSelected: selectedGender == 'male',
+                        icon: Icons.male,
+                        iconColor: Colors.blue,
+                        onTap: () => setState(() => selectedGender = 'male'),
+                      ),
+                      _buildGenderCard(
+                        context: context,
+                        isSelected: selectedGender == 'female',
+                        icon: Icons.female,
+                        iconColor: Colors.pinkAccent,
+                        onTap: () => setState(() => selectedGender = 'female'),
+                      ),
+                      _buildGenderCard(
+                        context: context,
+                        isSelected: selectedGender == 'other',
+                        icon: Icons.transgender,
+                        iconColor: Colors.purple,
+                        onTap: () => setState(() => selectedGender = 'other'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   isLoading
                       ? SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 4,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.purple.shade300,
-                          ),
-                        ),
-                      )
-                      : CustomButton(
-                        text: 'Registrar',
-                        onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          AuthProcess.register(
-                            context,
-                            nameController,
-                            emailController,
-                            passwordController,
-                            setState,
-                            isLoading,
-                          );
-                        },
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.purple.shade300,
                       ),
+                    ),
+                  )
+                      : CustomButton(
+                    text: 'Registrar',
+                    onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      AuthProcess.register(
+                        context,
+                        nameController,
+                        emailController,
+                        passwordController,
+                        selectedGender,
+                        setState,
+                        isLoading,
+                      );
+                    },
+                  ),
                 ],
               ),
             );
           },
         );
       },
+    );
+  }
+
+  Widget _buildGenderCard({
+    required BuildContext context,
+    required bool isSelected,
+    required IconData icon,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.grey.shade600 : Colors.grey.shade800,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 30, color: iconColor),
+          ],
+        ),
+      ),
     );
   }
 }

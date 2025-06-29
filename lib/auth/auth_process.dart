@@ -14,6 +14,7 @@ class AuthProcess {
     TextEditingController nameController,
     TextEditingController emailController,
     TextEditingController passwordController,
+    String? selectedGender,
     setState,
     isLoading,
   ) async {
@@ -56,6 +57,7 @@ class AuthProcess {
         'userId': user.uid,
         'userSince': FieldValue.serverTimestamp(),
         'pinCreated': true,
+        'selectedGender': selectedGender ?? ''
       });
 
       String userPin = await FirebaseFirestore.instance
@@ -257,6 +259,7 @@ class AuthProcess {
               'userSince': FieldValue.serverTimestamp(),
               'pinCreated': true,
               'pin': '',
+              'selectedGender': '',
             });
           }
 
