@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? selectedGender = '';
   bool dontShowAgain = false;
   bool shouldShowDialog = false;
+  int dreamCount = 0;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getAnalysisStyle();
     getUserName();
     getUserSelectedGender();
+    getDreamCountByUser();
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
@@ -62,6 +64,27 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _dreamController.dispose();
     super.dispose();
+  }
+
+  Future<void> getDreamCountByUser() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final dreamsSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('dreams')
+            .get();
+
+        setState(() {
+          dreamCount = dreamsSnapshot.docs.length;
+        });
+
+        print('-----------------Dream count: $dreamCount-----------------');
+      }
+    } catch (e) {
+      print('Error getting dream count: $e');
+    }
   }
 
   Future<void> _checkPreferences() async {
@@ -439,41 +462,52 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor:
-                              btnProvider.isButtonEnabled
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.grey.shade200,
-                          child: StreamBuilder<User?>(
-                            stream: user,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData && snapshot.data != null) {
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(25),
-                                  child:
-                                      snapshot.data!.photoURL != null
-                                          ? Image.network(
-                                            snapshot.data!.photoURL ??
-                                                'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                          )
-                                          : Icon(
-                                            Icons.person,
-                                            color: Colors.grey,
-                                            size: 20,
-                                          ),
-                                );
-                              } else {
-                                return CircleAvatar(
-                                  backgroundColor:
-                                      btnProvider.isButtonEnabled
-                                          ? Colors.white.withOpacity(0.2)
-                                          : Colors.grey.shade200,
-                                  child: Icon(Icons.person, color: Colors.grey),
-                                );
-                              }
-                            },
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CircleAvatar(
+                              radius: 40,
+                              backgroundColor:
+                                  btnProvider.isButtonEnabled
+                                      ? Colors.white.withOpacity(0.2)
+                                      : Colors.grey.shade200,
+                              child: StreamBuilder<User?>(
+                                stream: user,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData && snapshot.data != null) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(25),
+                                      child:
+                                          snapshot.data!.photoURL != null
+                                              ? Image.network(
+                                                snapshot.data!.photoURL ??
+                                                    'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
+                                              )
+                                              : Icon(
+                                                Icons.person,
+                                                color: Colors.grey,
+                                                size: 20,
+                                              ),
+                                    );
+                                  } else {
+                                    return CircleAvatar(
+                                      backgroundColor:
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white.withOpacity(0.2)
+                                              : Colors.grey.shade200,
+                                      child: Icon(Icons.person, color: Colors.grey),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(dreamCount == 0 ? '':'🌙 $dreamCount Sueños', style: RobotoTextStyle.small2TextStyle(Colors.white),),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 12),
                         Row(

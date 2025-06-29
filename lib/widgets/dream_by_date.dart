@@ -3,10 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
-import '../provider/dream_provider.dart';
 import '../style/text_style.dart';
 import 'dream_card.dart' as dream_card;
 import 'dream_bottom_sheet.dart';
