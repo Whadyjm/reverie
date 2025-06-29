@@ -32,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   String analysisStyle = '';
   String name = '';
+  String? selectedGender = '';
 
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
     initializeButtonState();
     getAnalysisStyle();
     getUserName();
+    getUserSelectedGender();
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
@@ -57,6 +59,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _dreamController.dispose();
     super.dispose();
+  }
+
+  Future<void> getUserSelectedGender() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final fetchUserSelectedGender = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .then((value) => value.data()?['selectedGender'] ?? '');
+        setState(() {
+          selectedGender = fetchUserSelectedGender;
+        });
+      }
+      print('-----------------$selectedGender-----------------');
+    } catch (e) {
+    }
   }
 
   Future<void> getUserName() async {
@@ -959,6 +979,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 30),
                 FloatingActionButton(
                   onPressed: () async {
+
+                    if (selectedGender == '') {
+                      await showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return SelectGender();
+                          }
+                          );
+                    }
                     if (analysisStyleProvider.analysisStyle.isEmpty &&
                         analysisSelected == false) {
                       await showDialog(
@@ -1524,6 +1554,91 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+
+  Widget SelectGender() {
+    return StatefulBuilder(builder: (BuildContext context, void Function(void Function()) setState) {
+      return AlertDialog(
+        backgroundColor: Colors.grey.shade900,
+        title: Column(
+          children: [
+            Text('Selecciona tu género', style: RobotoTextStyle.subtitleStyle(Colors.white),),
+            const SizedBox(height: 8,),
+            Text('Esto nos permitirá personalizar tu experiencia', style: RobotoTextStyle.small2TextStyle(Colors.white),),
+          ],
+        ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildGenderCard(
+              context: context,
+              isSelected: selectedGender == 'male',
+              icon: Icons.male,
+              iconColor: Colors.blue,
+              onTap: () => setState(() => selectedGender = 'male'),
+            ),
+            _buildGenderCard(
+              context: context,
+              isSelected: selectedGender == 'female',
+              icon: Icons.female,
+              iconColor: Colors.pinkAccent,
+              onTap: () => setState(() => selectedGender = 'female'),
+            ),
+            _buildGenderCard(
+              context: context,
+              isSelected: selectedGender == 'other',
+              icon: Icons.transgender,
+              iconColor: Colors.purple,
+              onTap: () => setState(() => selectedGender = 'other'),
+            ),
+          ],
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('prefiero no hacerlo', style: TextStyle(color: Colors.grey),),),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Continuar', style: TextStyle(color: Colors.blue),),)
+            ],
+          ),
+        ],
+      );
+    },);
+
+  }
+}
+
+Widget _buildGenderCard({
+  required BuildContext context,
+  required bool isSelected,
+  required IconData icon,
+  required Color iconColor,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 70,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.grey.shade600 : Colors.grey.shade800,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 30, color: iconColor),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget _buildDrawerItem({
