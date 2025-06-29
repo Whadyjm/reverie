@@ -1210,6 +1210,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     ? analysisStyleProvider
                                                         .analysisStyle
                                                     : analysisStyle,
+                                                selectedGender!,
+                                                userName ?? name
                                               );
                                           FirebaseService().saveDream(
                                             context,
@@ -1446,6 +1448,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     ? analysisStyleProvider
                                                         .analysisStyle
                                                     : analysisStyle,
+                                                selectedGender!,
+                                                userName ?? name
                                               );
                                           FirebaseService().saveDream(
                                             context,

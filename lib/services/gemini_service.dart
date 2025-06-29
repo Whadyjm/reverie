@@ -7,7 +7,7 @@ class GeminiService {
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-  Future<String> generateTitle(String dreamText, String apiKey, String analysisStyle) async {
+  Future<String> generateTitle(String dreamText, String apiKey, String analysisStyle, String selectedGender, String userName) async {
     final url = Uri.parse('$_baseUrl?key=$apiKey');
     final response = await http.post(
       url,
@@ -25,7 +25,10 @@ class GeminiService {
                     "Clasifica el siguiente sueño $dreamText, como uno de los siguientes tipos: sueño convencional, sueño fragmentado, sueño narrativo, pesadilla o sueño lúcido. Responde SOLO con la etiqueta correspondiente, ningún otro texto antes o después.",
               },
               {
-                "text": '${analysisStyle == 'psicologico' ? Prompts.psychologicalExploration:analysisStyle == 'mistico' ? Prompts.mysticalExploration : Prompts.hybridExploration} $dreamText',
+                "text": 'Contexto:'
+                    'nombre: $userName, PROHIBIDO mostrarlo en el análisis.'
+                    'género: $selectedGender, PROHIBIDO mostrarlo en el análisis.'
+                    '${analysisStyle == 'psicologico' ? Prompts.psychologicalExploration:analysisStyle == 'mistico' ? Prompts.mysticalExploration : Prompts.hybridExploration} $dreamText',
               }
             ],
           },
