@@ -31,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController _dreamController = TextEditingController();
   bool isLoading = false;
   String analysisStyle = '';
+  String name = '';
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getAPIKeyFromFirestore();
     initializeButtonState();
     getAnalysisStyle();
+    getUserName();
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
@@ -55,6 +57,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _dreamController.dispose();
     super.dispose();
+  }
+
+  Future<void> getUserName() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final fetchUserName = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .then((value) => value.data()?['name'] ?? '');
+        setState(() {
+          name = fetchUserName;
+        });
+      }
+      print('-----------------$name-----------------');
+    } catch (e) {
+    }
   }
 
   Future<void> getAnalysisStyle() async {
@@ -428,7 +448,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          userName ?? 'User',
+                          userName ?? name,
                           style: Theme.of(
                             context,
                           ).textTheme.titleLarge?.copyWith(color: Colors.white),
@@ -822,7 +842,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 24, left: 15),
                           child: Text(
-                            'Hola, ${userName?.split(' ').first ?? 'Usuario'}  👋',
+                            'Hola, ${userName?.split(' ').first ?? name}  👋',
                             style: RobotoTextStyle.subtitleStyle(
                               btnProvider.isButtonEnabled
                                   ? Colors.white
