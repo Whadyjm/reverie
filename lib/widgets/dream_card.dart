@@ -1,6 +1,7 @@
 import 'package:blur/blur.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -12,8 +13,9 @@ import '../style/text_style.dart';
 import 'like_button.dart';
 
 class DreamCard extends StatelessWidget {
-  const DreamCard({super.key, required this.btnProvider, required this.dream});
+  const DreamCard({super.key, required this.btnProvider, required this.dream, required this.isLongPress});
 
+  final bool isLongPress;
   final ButtonProvider btnProvider;
   final QueryDocumentSnapshot<Object?> dream;
 
@@ -22,6 +24,8 @@ class DreamCard extends StatelessWidget {
 
     final analysisStyle = dream['analysisStyle'];
     final btnProvider = Provider.of<ButtonProvider>(context);
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -96,6 +100,45 @@ class DreamCard extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+            Visibility(
+              visible: isLongPress ? true : false,
+              child: GestureDetector(
+                onTap: () async {
+                  await firestore
+                      .collection('users')
+                      .doc(auth.currentUser?.uid)
+                      .collection('dreams')
+                      .doc(dream['dreamId'])
+                      .delete();
+                  print('Dream deleted');
+                },
+                child: Positioned(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.shade400,
+                                  blurRadius: 4,
+                                  offset: Offset(2, 1),
+                                ),
+                              ],
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Icon(Icons.remove_rounded, color: Colors.redAccent,),
+                          ),
+                        ],
+                      ),
+                    )),
               ),
             ),
             Positioned(

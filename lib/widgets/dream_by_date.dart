@@ -19,6 +19,7 @@ class DreamByDate extends StatefulWidget {
 
 class _DreamByDateState extends State<DreamByDate> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  bool isLongPress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class _DreamByDateState extends State<DreamByDate> {
                   final dream = dreams[index];
                   return GestureDetector(
                     onLongPress: () async {
-                      bool confirmDelete = await showDialog(
+                      /*bool confirmDelete = await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
@@ -112,9 +113,15 @@ class _DreamByDateState extends State<DreamByDate> {
                             .doc(dream['dreamId'])
                             .delete();
                         print('Dream deleted');
-                      }
+                      }*/
+                      setState(() {
+                        isLongPress = !isLongPress;
+                      });
                     },
                     onTap: () {
+                      setState(() {
+                        isLongPress = false;
+                      });
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -128,6 +135,7 @@ class _DreamByDateState extends State<DreamByDate> {
                     child: dream_card.DreamCard(
                       btnProvider: btnProvider,
                       dream: dream,
+                      isLongPress: isLongPress,
                     ),
                   );
                 },
