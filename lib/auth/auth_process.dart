@@ -96,7 +96,7 @@ class AuthProcess {
     }
   }
 
-  static void login(
+  static Future<void> login(
     BuildContext context,
     TextEditingController emailController,
     TextEditingController passwordController,
@@ -213,7 +213,7 @@ class AuthProcess {
     }
   }
 
-  static void googleSignIn (
+  static Future<void> googleSignIn (
     BuildContext context,
     setState,
     isLoading,
