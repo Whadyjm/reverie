@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pillow/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../style/gradients.dart';
+
 class OnboardingPage extends StatefulWidget {
   @override
   _OnboardingPageState createState() => _OnboardingPageState();
@@ -77,11 +79,7 @@ class _OnboardingPageState extends State<OnboardingPage>
           return Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF311B92), // Dark Indigo
-                  Color(0xFF512DA8), // Dark Purple
-                  Color(0xFF4A148C), // Deeper Purple
-                ],
+                colors: Gradients.onboardingBackground,
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

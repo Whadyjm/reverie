@@ -6,6 +6,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/style/text_style.dart';
 import 'package:pillow/widgets/custom_button.dart';
 
+import '../style/gradients.dart';
 import '../widgets/custom_textfield.dart';
 import 'home_screen.dart';
 
@@ -129,14 +130,7 @@ class _SecretPinState extends State<SecretPin> {
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
-            colors: [
-              Color(0xFF1A003F),
-              Color(0xFF2E1A5E),
-              Color(0xFF4A3A7C),
-              Color(0xFF6B5A9A),
-              Color(0xFF8C53D6),
-              Color(0xFFAD75F4),
-            ],
+            colors: Gradients.secretPinBackground,
           ),
         ),
         child: Center(

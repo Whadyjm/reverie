@@ -1,15 +1,14 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:pillow/style/gradients.dart';
 import 'package:pillow/widgets/orbe_loading.dart';
 import 'package:provider/provider.dart';
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 import '../widgets/dream_bottom_sheet.dart';
-import '../widgets/dream_list_empty.dart';
 import '../widgets/favorite_dream_card.dart' as FavoriteDreamCard;
 
 class FavoriteDreamsScreen extends StatelessWidget {
@@ -24,14 +23,7 @@ class FavoriteDreamsScreen extends StatelessWidget {
     final backgroundGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [
-        Color(0xFF1A003F),
-        Color(0xFF2E1A5E),
-        Color(0xFF4A3A7C),
-        Color(0xFF6B5A9A),
-        Color(0xFF8C53D6),
-        Color(0xFFAD75F4),
-      ],
+      colors: Gradients.favoriteBackground,
       stops: const [0.0, 0.2, 0.4, 0.5, 0.8, 1.0],
     );
 

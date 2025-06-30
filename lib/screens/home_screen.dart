@@ -13,6 +13,7 @@ import '../provider/dream_provider.dart';
 import '../services/auth_service.dart';
 import '../services/firebase_service.dart';
 import '../services/gemini_service.dart';
+import '../style/gradients.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
 import '../widgets/dream_by_date.dart';
@@ -885,25 +886,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ? LinearGradient(
                         begin: Alignment.bottomLeft,
                         end: Alignment.topRight,
-                        colors: [
-                          Color(0xFF1A003F),
-                          Color(0xFF2E1A5E),
-                          Color(0xFF4A3A7C),
-                          Color(0xFF6B5A9A),
-                          Color(0xFF8C53D6),
-                          Color(0xFFAD75F4),
-                        ],
+                        colors: Gradients.homeScreenDarkMode,
                       )
                       : LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white,
-                          Colors.white,
-                          Colors.white,
-                          Colors.purple.shade100,
-                          Colors.purple.shade200,
-                          Colors.indigo.shade400,
-                        ],
+                        colors: Gradients.homeScreenLightMode,
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
