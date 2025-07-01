@@ -215,7 +215,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: Text('Gestalt', style: TextStyle(color: textColor)),
                   onTap: () {
                     Navigator.pop(context);
-                    // Handle Gestalt selection
                   },
                 ),
               ],
@@ -897,46 +896,50 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const SizedBox(height: 12),
                 SizedBox(
                   height: 80,
                   width: MediaQuery.of(context).size.width,
                   child: Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.only(left: 15, right: 15),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Pillow',
-                          style: AppTextStyle.titleStyle(
-                            btnProvider.isButtonEnabled
-                                ? Colors.white
-                                : Colors.grey.shade800,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 24, left: 15),
-                          child: Text(
-                            'Hola, ${userName?.split(' ').first ?? name}  👋',
-                            style: RobotoTextStyle.subtitleStyle(
-                              btnProvider.isButtonEnabled
-                                  ? Colors.white
-                                  : Colors.grey.shade800,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pillow',
+                              style: AppTextStyle.titleStyle(
+                                btnProvider.isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
                             ),
-                          ),
+                            Text(
+                              '👋  Hola, ${userName?.split(' ').first ?? name}',
+                              style: RobotoTextStyle.subtitleStyle(
+                                btnProvider.isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey.shade800,
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(width: MediaQuery.sizeOf(context).width - 350),
                         user != null
-                            ? Builder(
-                              builder: (context) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      Scaffold.of(context).openEndDrawer();
-                                      FocusScope.of(context).unfocus();
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 15),
+                            ? Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: Builder(
+                                builder: (context) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        Scaffold.of(context).openEndDrawer();
+                                        FocusScope.of(context).unfocus();
+                                      });
+                                    },
                                     child: CircleAvatar(
                                       radius: 18,
                                       backgroundColor:
@@ -982,9 +985,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         },
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             )
                             : const SizedBox.shrink(),
                       ],

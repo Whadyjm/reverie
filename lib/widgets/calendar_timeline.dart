@@ -3,6 +3,7 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/provider/calendar_provider.dart';
 import 'package:pillow/style/text_style.dart';
 import 'package:provider/provider.dart';
@@ -51,8 +52,12 @@ Stream<int> fetchDreamCountByDate(DateTime date) {
       headerOptions: HeaderOptions(
           headerBuilder: (context, date, onTap){
             return Padding(
-              padding: const EdgeInsets.only(left: 15.0, top: 10.0, bottom: 10.0),
-              child: InkWell(onTap: onTap, child: Text(DateFormat.yMMMM().format(date), style: RobotoTextStyle.smallTextStyle(btnProvider.isButtonEnabled ? Colors.white:Colors.grey.shade700),)),
+              padding: const EdgeInsets.only(left: 15, top: 10.0, bottom: 10.0),
+              child: InkWell(onTap: onTap, child: Row(
+                children: [
+                  Text('📅  ${DateFormat.yMMMM('es_ES').format(date)}', style: RobotoTextStyle.smallTextStyle(btnProvider.isButtonEnabled ? Colors.white:Colors.grey.shade700),),
+                ],
+              )),
             );
           }
       ),
