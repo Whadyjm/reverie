@@ -480,17 +480,32 @@ class _MyHomePageState extends State<MyHomePage> {
                                       snapshot.data != null) {
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(25),
-                                      child:
-                                          snapshot.data!.photoURL != null
-                                              ? Image.network(
-                                                snapshot.data!.photoURL ??
-                                                    'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                              )
-                                              : Icon(
-                                                Icons.person,
-                                                color: Colors.grey,
-                                                size: 20,
-                                              ),
+                                      child: snapshot.data?.photoURL != null
+                                          ? Image.network(
+                                        snapshot.data!.photoURL!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Icon(
+                                            Icons.person,
+                                            color: Colors.grey,
+                                            size: 20,
+                                          );
+                                        },
+                                        loadingBuilder: (context, child, loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes != null
+                                                ? loadingProgress.cumulativeBytesLoaded /
+                                                loadingProgress.expectedTotalBytes!
+                                                : null,
+                                          );
+                                        },
+                                      )
+                                          : Icon(
+                                        Icons.person,
+                                        color: Colors.grey,
+                                        size: 20,
+                                      ),
                                     );
                                   } else {
                                     return CircleAvatar(
@@ -580,11 +595,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               const SizedBox(width: 5,),
-                              Spin(
-                                duration: Duration(seconds: 3),
-                                infinite: true,
-                                child: Icon(Icons.star_rounded, color: Colors.amber),
-                              )
+                              Icon(Icons.star_rounded, color: Colors.amber)
                             ],
                           ),
                         ),
@@ -986,22 +997,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                           if (snapshot.hasData &&
                                               snapshot.data != null) {
                                             return ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(25),
-                                              child:
-                                                  snapshot.data!.photoURL !=
-                                                          null
-                                                      ? Image.network(
-                                                        snapshot
-                                                                .data!
-                                                                .photoURL ??
-                                                            'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg',
-                                                      )
-                                                      : Icon(
-                                                        Icons.person,
-                                                        color: Colors.grey,
-                                                        size: 20,
-                                                      ),
+                                              borderRadius: BorderRadius.circular(25),
+                                              child: snapshot.data?.photoURL != null
+                                                  ? Image.network(
+                                                snapshot.data!.photoURL!,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error, stackTrace) {
+                                                  return Icon(
+                                                    Icons.person,
+                                                    color: Colors.grey,
+                                                    size: 20,
+                                                  );
+                                                },
+                                                loadingBuilder: (context, child, loadingProgress) {
+                                                  if (loadingProgress == null) return child;
+                                                  return CircularProgressIndicator(
+                                                    value: loadingProgress.expectedTotalBytes != null
+                                                        ? loadingProgress.cumulativeBytesLoaded /
+                                                        loadingProgress.expectedTotalBytes!
+                                                        : null,
+                                                  );
+                                                },
+                                              )
+                                                  : Icon(
+                                                Icons.person,
+                                                color: Colors.grey,
+                                                size: 20,
+                                              ),
                                             );
                                           } else {
                                             return CircleAvatar(
