@@ -67,15 +67,40 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  Stream<int> getDreamCountByMonth() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Stream.value(0); // Retorna un stream vacío si no hay usuario
+    }
+
+    final now = DateTime.now();
+    final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('dreams')
+        .where('timestamp', isGreaterThanOrEqualTo: firstDayOfMonth)
+        .where('timestamp', isLessThanOrEqualTo: lastDayOfMonth)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length)
+        .handleError((e) {
+          print('Error getting dream count: $e');
+          return 0;
+        });
+  }
+
   Future<void> getDreamCountByUser() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        final dreamsSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('dreams')
-            .get();
+        final dreamsSnapshot =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.uid)
+                .collection('dreams')
+                .get();
 
         setState(() {
           dreamCount = dreamsSnapshot.docs.length;
@@ -475,7 +500,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: StreamBuilder<User?>(
                                 stream: user,
                                 builder: (context, snapshot) {
-                                  if (snapshot.hasData && snapshot.data != null) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data != null) {
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(25),
                                       child:
@@ -496,7 +522,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                           btnProvider.isButtonEnabled
                                               ? Colors.white.withOpacity(0.2)
                                               : Colors.grey.shade200,
-                                      child: Icon(Icons.person, color: Colors.grey),
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.grey,
+                                      ),
                                     );
                                   }
                                 },
@@ -505,7 +534,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             const SizedBox(width: 12),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(dreamCount == 0 ? '':'🌙 $dreamCount Sueños', style: RobotoTextStyle.small2TextStyle(Colors.white),),
+                              child: Text(
+                                dreamCount == 0 ? '' : '🌙 $dreamCount Sueños',
+                                style: RobotoTextStyle.small2TextStyle(
+                                  Colors.white,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -521,13 +555,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             GestureDetector(
                               onTap: () async {
                                 await showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) {
-                                  return SelectGender();
-                                },
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return SelectGender();
+                                  },
                                 );
-                              } ,
+                              },
                               child: Icon(
                                 selectedGender == 'male'
                                     ? Icons.male_rounded
@@ -994,7 +1028,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                CalendarTimeline(),
+                CalendarTimeline(dreamCount: getDreamCountByMonth()),
                 DreamByDate(),
                 //TextAudioInput(apiKey: apiKey),
               ],
@@ -1200,7 +1234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         .analysisStyle
                                                     : analysisStyle,
                                                 selectedGender!,
-                                                userName ?? name
+                                                userName ?? name,
                                               );
                                           FirebaseService().saveDream(
                                             context,
@@ -1438,7 +1472,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         .analysisStyle
                                                     : analysisStyle,
                                                 selectedGender!,
-                                                userName ?? name
+                                                userName ?? name,
                                               );
                                           FirebaseService().saveDream(
                                             context,
@@ -1699,11 +1733,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     final userUid = FirebaseAuth.instance.currentUser!.uid;
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setBool('dontShowGenderDialog', dontShowAgain);
-                    await firestore.collection('users').doc(userUid).update(
-                      {
-                        'selectedGender': selectedGender,
-                      },
-                    );
+                    await firestore.collection('users').doc(userUid).update({
+                      'selectedGender': selectedGender,
+                    });
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -1787,9 +1819,9 @@ void _logout(BuildContext context) {
               children: [
                 Text(
                   'Cerrar sesión',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -1836,8 +1868,10 @@ void _logout(BuildContext context) {
                           AuthService().signOut();
                           Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginScreen()),
-                                (route) => false,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                            (route) => false,
                           );
                         },
                         child: const Text(
@@ -1851,6 +1885,6 @@ void _logout(BuildContext context) {
               ],
             ),
           ),
-        )
+        ),
   );
 }

@@ -7,9 +7,12 @@ import 'package:pillow/provider/calendar_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../provider/button_provider.dart';
+import '../style/text_style.dart';
 
 class CalendarTimeline extends StatefulWidget {
-  CalendarTimeline({super.key});
+  CalendarTimeline({super.key, required this.dreamCount});
+
+  final Stream<int> dreamCount;
 
   @override
   State<CalendarTimeline> createState() => _CalendarTimelineState();
@@ -351,6 +354,22 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                           btnProvider.isButtonEnabled
                               ? Colors.white
                               : Colors.grey.shade700,
+                    ),
+                    const SizedBox(width: 150,),
+                    StreamBuilder<int>(
+                      stream: widget.dreamCount,
+                      builder: (context, snapshot) {
+                        final dreamCount = snapshot.data ?? 0;
+
+                        return Text(
+                          dreamCount > 0
+                              ? '🌙 $dreamCount ${dreamCount == 1 ? "Sueño" : "Sueños"}'
+                              : '',
+                          style: RobotoTextStyle.small2TextStyle(
+                            Colors.white,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
