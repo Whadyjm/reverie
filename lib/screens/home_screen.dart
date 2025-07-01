@@ -898,7 +898,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 const SizedBox(height: 12),
                 SizedBox(
-                  height: 80,
+                  height: 60,
                   width: MediaQuery.of(context).size.width,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15, right: 15),
@@ -917,14 +917,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                     : Colors.grey.shade800,
                               ),
                             ),
-                            Text(
+                            /*Text(
                               '👋  Hola, ${userName?.split(' ').first ?? name}',
                               style: RobotoTextStyle.subtitleStyle(
                                 btnProvider.isButtonEnabled
                                     ? Colors.white
                                     : Colors.grey.shade800,
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                         SizedBox(width: MediaQuery.sizeOf(context).width - 350),
