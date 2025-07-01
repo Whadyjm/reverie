@@ -20,6 +20,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   DateTime _currentDisplayedMonth = DateTime.now();
+  bool _isMonthSelection = false;
 
   Stream<int> getDreamCountByMonth(DateTime month) {
     final user = FirebaseAuth.instance.currentUser;
@@ -65,6 +66,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
     DateTime selectedDate = initialDate;
     bool isYearPicker = false;
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    final calendarProvider = Provider.of<CalendarProvider>(context, listen: false);
 
     final DateTime? pickedDate = await showDialog<DateTime>(
       context: context,
@@ -108,11 +110,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                               },
                             ),
                             InkWell(
-                              onTap: () => setState(() => isYearPicker = !isYearPicker),
-                              child: Text(
-                                isYearPicker
-                                    ? selectedDate.year.toString()
-                                    : DateFormat('MMMM y', 'es_ES').format(selectedDate),
+                              child: Text(DateFormat('MMMM y', 'es_ES').format(selectedDate),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -146,7 +144,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                         _buildYearGrid(selectedDate, setState, context)
                       else
                         _buildMonthGrid(selectedDate, (newDate) {
-                          Navigator.pop(context, newDate);
+                          Navigator.pop(context, DateTime(newDate.year, newDate.month, 1));
                         }, context),
                     ],
                   ),
@@ -161,8 +159,9 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
     if (pickedDate != null) {
       setState(() {
         _currentDisplayedMonth = pickedDate;
+        _isMonthSelection = true;
       });
-      Provider.of<CalendarProvider>(context, listen: false).setSelectedDate(pickedDate);
+      calendarProvider.setSelectedDate(pickedDate);
     }
   }
 
@@ -302,7 +301,6 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       locale: Locale('es', 'ES'),
       headerOptions: HeaderOptions(
         headerBuilder: (context, date, onTap) {
-          // Update displayed month when scrolling
           if (_currentDisplayedMonth.month != date.month ||
               _currentDisplayedMonth.year != date.year) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -386,7 +384,9 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       ),
       firstDate: DateTime(2025, 1, 1),
       lastDate: DateTime.now(),
-      focusedDate: selectedDate,
+      focusedDate: _isMonthSelection
+          ? DateTime(_currentDisplayedMonth.year, _currentDisplayedMonth.month, 1)
+          : selectedDate,
       itemExtent: 100,
       itemBuilder: (context, date, isSelected, isDisabled, isToday, onTap) {
         return Padding(
@@ -523,6 +523,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       onDateChange: (date) {
         setState(() {
           _currentDisplayedMonth = date;
+          _isMonthSelection = false;
         });
         Provider.of<CalendarProvider>(context, listen: false).setSelectedDate(date);
       },

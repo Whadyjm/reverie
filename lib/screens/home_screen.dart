@@ -568,6 +568,30 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       InkWell(
                         borderRadius: BorderRadius.circular(12),
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Premium',
+                                style: RobotoTextStyle.smallTextStyle(
+                                  Colors.grey.shade800,
+                                ),
+                              ),
+                              const SizedBox(width: 5,),
+                              Spin(
+                                duration: Duration(seconds: 3),
+                                infinite: true,
+                                child: Icon(Icons.star_rounded, color: Colors.amber),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 20, thickness: 1),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
                         onTap: () {
                           Navigator.push(
                             context,
