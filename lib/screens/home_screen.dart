@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:pillow/screens/favorite_screen.dart';
 import 'package:pillow/screens/login_screen.dart';
+import 'package:pillow/screens/plan_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
@@ -16,6 +17,7 @@ import '../services/gemini_service.dart';
 import '../style/gradients.dart';
 import '../style/text_style.dart';
 import '../widgets/calendar_timeline.dart';
+import '../widgets/dialogs/pricing_dialog.dart';
 import '../widgets/dream_by_date.dart';
 import '../widgets/select_analysis_style.dart';
 
@@ -583,7 +585,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       InkWell(
                         borderRadius: BorderRadius.circular(12),
-                        onTap: () {},
+                        onTap: () => SubscriptionBottomSheet.show(context),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                           child: Row(

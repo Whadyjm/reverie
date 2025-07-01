@@ -12,17 +12,22 @@ import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 import 'like_button.dart';
 
-class DreamCard extends StatelessWidget {
-  const DreamCard({super.key, required this.btnProvider, required this.dream, required this.isLongPress});
+class DreamCard extends StatefulWidget {
+  DreamCard({super.key, required this.btnProvider, required this.dream, required this.isLongPress});
 
-  final bool isLongPress;
+  bool isLongPress;
   final ButtonProvider btnProvider;
   final QueryDocumentSnapshot<Object?> dream;
 
   @override
+  State<DreamCard> createState() => _DreamCardState();
+}
+
+class _DreamCardState extends State<DreamCard> {
+  @override
   Widget build(BuildContext context) {
 
-    final analysisStyle = dream['analysisStyle'];
+    final analysisStyle = widget.dream['analysisStyle'];
     final btnProvider = Provider.of<ButtonProvider>(context);
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -61,7 +66,7 @@ class DreamCard extends StatelessWidget {
                           colorOpacity: 0,
                           blur: btnProvider.isTextBlurred ? 2.5:0,
                           child: Text(
-                            dream['title'],
+                            widget.dream['title'],
                             style: AppTextStyle.subtitleStyle(
                               Colors.grey.shade600,
                             ),
@@ -77,7 +82,7 @@ class DreamCard extends StatelessWidget {
                       colorOpacity: 0,
                       blur: btnProvider.isTextBlurred ? 2.5:0,
                       child: Text(
-                        dream['text'],
+                        widget.dream['text'],
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -103,14 +108,14 @@ class DreamCard extends StatelessWidget {
               ),
             ),
             Visibility(
-              visible: isLongPress ? true : false,
+              visible: widget.isLongPress ? true : false,
               child: GestureDetector(
                 onTap: () async {
                   await firestore
                       .collection('users')
                       .doc(auth.currentUser?.uid)
                       .collection('dreams')
-                      .doc(dream['dreamId'])
+                      .doc(widget.dream['dreamId'])
                       .delete();
                   print('Dream deleted');
                 },
@@ -149,7 +154,7 @@ class DreamCard extends StatelessWidget {
                 children: [
                   AnalysisStyleTag(analysisStyle: analysisStyle,),
                   const SizedBox(width: 20),
-                  LikeButton(isLiked: dream['isLiked'], dreamId: dream['dreamId'],),
+                  LikeButton(isLiked: widget.dream['isLiked'], dreamId: widget.dream['dreamId'],),
                   const SizedBox(width: 20),
                   Chip(
                     label: Blur(
@@ -157,16 +162,16 @@ class DreamCard extends StatelessWidget {
                       colorOpacity: 0.01,
                       blur: btnProvider.isTextBlurred ? 2.5:0,
                       child: Text(
-                        dream['classification'],
+                        widget.dream['classification'],
                         style: RobotoTextStyle.smallTextStyle(Colors.white),
                       ),
                     ),
                     backgroundColor:
-                        dream['classification'] == 'Pesadilla'
+                        widget.dream['classification'] == 'Pesadilla'
                             ? Colors.purple.shade600
                             : Colors.purple.shade300,
                     avatar: Icon(
-                      dream['classification'] == 'Pesadilla'
+                      widget.dream['classification'] == 'Pesadilla'
                           ? Iconsax.emoji_sad
                           : Iconsax.happyemoji,
                       color: Colors.white,

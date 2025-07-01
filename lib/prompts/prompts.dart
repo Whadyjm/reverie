@@ -6,6 +6,8 @@ Explora el siguiente sueño desde una perspectiva psicológica profunda, sin usa
 Usa un tono introspectivo y terapéutico, ayudando a quien lo soñó a comprender qué aspectos de sí mismo podrían estar reflejados. Considera posibles conflictos, deseos, miedos o necesidades emocionales no expresadas.
 
 No des una interpretación absoluta; ofrece caminos posibles de reflexión y crecimiento interior. Usa lenguaje claro, humano y empático.
+
+Evita ABSOLUTAMENTE texto entre asteriscos.
 ''';
 
   // Prompt para análisis místico o espiritual
@@ -15,6 +17,8 @@ Interpreta el siguiente sueño desde una perspectiva mística y espiritual. Expl
 Usa simbología ancestral, elementos del tarot, astrología o arquetipos espirituales si es relevante. Relaciona los símbolos con posibles sincronicidades, guías internas o aprendizajes del alma.
 
 Tu tono debe ser evocador, intuitivo y respetuoso. No des una verdad absoluta, sino una lectura abierta que invite a la introspección espiritual y la conexión con lo invisible.
+
+Evita ABSOLUTAMENTE texto entre asteriscos.
 ''';
 
   // Prompt para análisis híbrido
