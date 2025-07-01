@@ -67,30 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  Stream<int> getDreamCountByMonth() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return Stream.value(0); // Retorna un stream vacío si no hay usuario
-    }
-
-    final now = DateTime.now();
-    final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
-
-    return FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('dreams')
-        .where('timestamp', isGreaterThanOrEqualTo: firstDayOfMonth)
-        .where('timestamp', isLessThanOrEqualTo: lastDayOfMonth)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length)
-        .handleError((e) {
-          print('Error getting dream count: $e');
-          return 0;
-        });
-  }
-
   Future<void> getDreamCountByUser() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -1028,7 +1004,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                CalendarTimeline(dreamCount: getDreamCountByMonth()),
+                CalendarTimeline(),
                 DreamByDate(),
                 //TextAudioInput(apiKey: apiKey),
               ],
