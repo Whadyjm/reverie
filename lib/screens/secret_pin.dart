@@ -34,6 +34,10 @@ class _SecretPinState extends State<SecretPin> {
       _controllers.add(TextEditingController());
       _focusNodes.add(FocusNode());
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_focusNodes[0]);
+    });
   }
 
   @override

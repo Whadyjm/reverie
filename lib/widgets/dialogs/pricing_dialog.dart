@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../style/gradients.dart';
+import '../../style/text_style.dart';
 
 class SubscriptionBottomSheet {
   static void show(BuildContext context) {
@@ -41,9 +42,9 @@ class _BottomSheetContent extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              const Text(
+              Text(
                 "Elige tu plan de suscripción",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                style: RobotoTextStyle.titleStyle(Colors.white)
               ),
               const SizedBox(height: 24),
               _buildPlanCard(
@@ -181,21 +182,12 @@ class _BottomSheetContent extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   title.toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: textColor,
-                    letterSpacing: 1.2,
-                  ),
+                  style: RobotoTextStyle.titleStyle(textColor),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   price,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: textColor.withOpacity(0.75),
-                  ),
+                  style: RobotoTextStyle.subtitleStyle(textColor),
                 ),
                 const SizedBox(height: 20),
                 _feature(features[0]),
@@ -232,12 +224,7 @@ class _BottomSheetContent extends StatelessWidget {
                       ),
                       child: Text(
                         buttonText,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          letterSpacing: 1.1,
-                        ),
+                        style: RobotoTextStyle.smallTextStyle(Colors.white)
                       ),
                     ),
                   ),
@@ -258,10 +245,7 @@ class _BottomSheetContent extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black87,
-            ),
+            style: RobotoTextStyle.small2TextStyle(Colors.black87)
           ),
         ),
       ],
