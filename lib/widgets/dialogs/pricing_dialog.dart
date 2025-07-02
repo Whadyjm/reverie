@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import '../../style/gradients.dart';
 import '../../style/text_style.dart';
 
 class SubscriptionBottomSheet {
@@ -43,24 +41,26 @@ class _BottomSheetContent extends StatelessWidget {
                 ),
               ),
               Text(
-                "Elige tu plan de suscripción",
-                style: RobotoTextStyle.titleStyle(Colors.white)
+                  "Elige tu plan de suscripción",
+                  style: RobotoTextStyle.titleStyle(Colors.white)
               ),
               const SizedBox(height: 24),
               _buildPlanCard(
                 context,
-                title: "Pro Visionario",
-                price: "\$5.99/mes · \$29.99/año · \$49.99 vitalicio",
+                title: "Pillow Premium",
+                price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
                 gradientColors: [Colors.deepPurple.shade100, Colors.deepPurple.shade50],
                 textColor: Colors.deepPurple.shade900,
                 buttonColor: Colors.deepPurple.shade400,
                 buttonText: "Explorar Premium",
                 features: const [
-                  "Interpretación guiada",
-                  "Sonidos y meditaciones",
-                  "Análisis junguiano",
-                  "Exportación PDF",
+                  "Registro ilimitado",
+                  "Análisis avanzado",
+                  "Estadísticas detalladas",
                   "Resumen mensual por correo",
+                  "Comparte tu sueño y/o análisis",
+                  "Etiquetas avanzadas",
+                  "Backup en la nube",
                 ],
               ),
               const SizedBox(height: 24),
@@ -73,11 +73,11 @@ class _BottomSheetContent extends StatelessWidget {
                 buttonColor: Colors.indigo.shade700,
                 buttonText: "Prueba 7 días",
                 features: const [
-                  "Análisis IA avanzado",
+                  "Registro ilimitado",
+                  "Análisis avanzado",
                   "Estadísticas detalladas",
+                  "Etiquetas simples",
                   "Backup en la nube",
-                  "Personalización visual",
-                  "Diario guiado",
                 ],
                 isRecommended: true,
               ),
@@ -92,10 +92,9 @@ class _BottomSheetContent extends StatelessWidget {
                 buttonText: "Comenzar",
                 features: const [
                   "Registro ilimitado",
-                  "Análisis IA básico",
-                  "Estadísticas semanales",
+                  "Análisis básico",
+                  "Estadísticas mensuales",
                   "Etiquetas simples",
-                  "Sincronización local",
                 ],
               ),
               const SizedBox(height: 24),
@@ -163,7 +162,8 @@ class _BottomSheetContent extends StatelessWidget {
                   Align(
                     alignment: Alignment.topRight,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(16),
@@ -179,7 +179,7 @@ class _BottomSheetContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 12),
+                SizedBox(height: isRecommended ? 12 : 0),
                 Text(
                   title.toUpperCase(),
                   style: RobotoTextStyle.titleStyle(textColor),
@@ -190,15 +190,7 @@ class _BottomSheetContent extends StatelessWidget {
                   style: RobotoTextStyle.subtitleStyle(textColor),
                 ),
                 const SizedBox(height: 20),
-                _feature(features[0]),
-                const SizedBox(height: 6),
-                _feature(features[1]),
-                const SizedBox(height: 6),
-                _feature(features[2]),
-                const SizedBox(height: 6),
-                _feature(features[3]),
-                const SizedBox(height: 6),
-                _feature(features[4]),
+                ..._buildFeatureList(features),
                 const SizedBox(height: 28),
                 Center(
                   child: GestureDetector(
@@ -210,7 +202,8 @@ class _BottomSheetContent extends StatelessWidget {
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 36, vertical: 14),
                       decoration: BoxDecoration(
                         color: buttonColor,
                         borderRadius: BorderRadius.circular(32),
@@ -223,8 +216,8 @@ class _BottomSheetContent extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        buttonText,
-                        style: RobotoTextStyle.smallTextStyle(Colors.white)
+                          buttonText,
+                          style: RobotoTextStyle.smallTextStyle(Colors.white)
                       ),
                     ),
                   ),
@@ -237,22 +230,31 @@ class _BottomSheetContent extends StatelessWidget {
     );
   }
 
+  List<Widget> _buildFeatureList(List<String> features) {
+    return features
+        .map((feature) => Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: _feature(feature),
+    ))
+        .toList();
+  }
+
   Widget _feature(String text) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.star_rounded, size: 20, color: Colors.indigoAccent),
+        const Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Icon(Icons.star_rounded, size: 18, color: Colors.indigoAccent),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            text,
-            style: RobotoTextStyle.small2TextStyle(Colors.black87)
+              text,
+              style: RobotoTextStyle.small2TextStyle(Colors.black87)
           ),
         ),
       ],
     );
   }
-
-
-
-  Widget icon() => const Icon(Icons.check_circle, size: 18, color: Colors.green);
 }

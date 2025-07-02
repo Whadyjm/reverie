@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../provider/button_provider.dart';
 import '../provider/dream_provider.dart';
+import 'dialogs/pricing_dialog.dart';
 
 class SelectAnalysisStyle extends StatefulWidget {
   const SelectAnalysisStyle({super.key});
@@ -56,9 +57,10 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
         
             GestureDetector(
               onTap: () {
-                setState(() {
+                /*setState(() {
                   _selectedCardIndex = 0;
-                });
+                });*/
+                SubscriptionBottomSheet.show(context);
               },
               child: Card(
                 elevation: 8,
@@ -112,6 +114,18 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                         ],
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        height: 30,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.deepPurple.shade700
+                        ),
+                        child: Center(child: Text('Plus', style: RobotoTextStyle.smallTextStyle(Colors.white),)),
+                      ),
+                    )
                   ],
                 ),
               ),

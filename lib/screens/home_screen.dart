@@ -753,7 +753,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(height: 12),
                       GestureDetector(
                         onTap: () async {
-                          setState(() {
+                          /*setState(() {
                             analysisStyle = 'cientifico';
                             analysisStyleProvider.analysisStyle = 'cientifico';
                           });
@@ -764,47 +764,64 @@ class _MyHomePageState extends State<MyHomePage> {
                               .update({'analysisStyle': 'cientifico'});
 
                           final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('analysisStyle', 'cientifico');
+                          await prefs.setString('analysisStyle', 'cientifico')*/
+                          SubscriptionBottomSheet.show(context);
                         },
-                        child: Card(
-                          color:
-                          analysisStyleProvider.analysisStyle ==
-                              'cientifico'
-                              ? Colors.purple.shade100
-                              : Colors.white,
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      '🧬 Científico',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        color: Colors.grey.shade800,
+                        child: Stack(
+                          children:[
+                            Card(
+                            color:
+                            analysisStyleProvider.analysisStyle ==
+                                'cientifico'
+                                ? Colors.purple.shade100
+                                : Colors.white,
+                            elevation: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '🧬 Científico',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                          color: Colors.grey.shade800,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Analiza a través de la neurociencia.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade800,
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Analiza a través de la neurociencia.',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                height: 30,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.deepPurple.shade700
+                                ),
+                                child: Center(child: Text('Plus', style: RobotoTextStyle.smallTextStyle(Colors.white),)),
+                              ),
+                            )
+                          ],
                         ),
                       ),
 
@@ -1927,15 +1944,13 @@ void _logout(BuildContext context) {
               children: [
                 Text(
                   'Cerrar sesión',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: RobotoTextStyle.titleStyle(Colors.grey.shade800)
                 ),
                 const SizedBox(height: 12),
                 Text(
                   '¿Estás seguro de que quieres cerrar tu sesión?',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700)
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -1955,7 +1970,7 @@ void _logout(BuildContext context) {
                         onPressed: () => Navigator.pop(ctx),
                         child: Text(
                           'Cancelar',
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700)
                         ),
                       ),
                     ),
@@ -1982,9 +1997,9 @@ void _logout(BuildContext context) {
                             (route) => false,
                           );
                         },
-                        child: const Text(
+                        child: Text(
                           'Salir',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: RobotoTextStyle.smallTextStyle(Colors.white)
                         ),
                       ),
                     ),
