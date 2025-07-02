@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pillow/style/text_style.dart';
-import 'package:pillow/widgets/dream_textfield_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,229 +49,296 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
           ),
         ],
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Psychological Option
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCardIndex = 0;
-              });
-            },
-            child: Card(
-              elevation: 8,
-              shadowColor:
-              isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side:
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+        
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedCardIndex = 0;
+                });
+              },
+              child: Card(
+                elevation: 8,
+                shadowColor:
+                isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side:
+                  _selectedCardIndex == 0
+                      ? BorderSide(color: selectedBorderColor, width: 2)
+                      : BorderSide.none,
+                ),
+                color:
                 _selectedCardIndex == 0
-                    ? BorderSide(color: selectedBorderColor, width: 2)
-                    : BorderSide.none,
-              ),
-              color:
-              _selectedCardIndex == 0
-                  ? selectedCardColor
-                  : unselectedCardColor,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                        'assets/card1.png',
-                        opacity: const AlwaysStoppedAnimation(0.4),
-                        fit: BoxFit.fitWidth,
-                        width: MediaQuery.of(context).size.width,
-                        height: 120
+                    ? selectedCardColor
+                    : unselectedCardColor,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                          'assets/card4.png',
+                          opacity: const AlwaysStoppedAnimation(0.4),
+                          fit: BoxFit.fitWidth,
+                          width: MediaQuery.of(context).size.width,
+                          height: 120
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '🧠 Exploración Psicológica',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: textColor,
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '🧬 Exploración Científica',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: textColor,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Conecta tu sueño con emociones, partes de ti mismo y símbolos internos.',
-                          style: TextStyle(color: textColor),
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Descubre los significados de tus sueños a través de la neurociencia.',
+                            style: TextStyle(color: textColor),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Mystical Option
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCardIndex = 1;
-              });
-            },
-            child: Card(
-              elevation: 8,
-              shadowColor:
-              isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side:
+        
+            const SizedBox(height: 16),
+            // Psychological Option
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedCardIndex = 1;
+                });
+              },
+              child: Card(
+                elevation: 8,
+                shadowColor:
+                isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side:
+                  _selectedCardIndex == 1
+                      ? BorderSide(color: selectedBorderColor, width: 2)
+                      : BorderSide.none,
+                ),
+                color:
                 _selectedCardIndex == 1
-                    ? BorderSide(color: selectedBorderColor, width: 2)
-                    : BorderSide.none,
-              ),
-              color:
-              _selectedCardIndex == 1
-                  ? selectedCardColor
-                  : unselectedCardColor,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                        'assets/card2.png',
-                        opacity: const AlwaysStoppedAnimation(0.4),
-                        fit: BoxFit.fitWidth,
-                        width: MediaQuery.of(context).size.width,
-                        height: 120
+                    ? selectedCardColor
+                    : unselectedCardColor,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                          'assets/card1.png',
+                          opacity: const AlwaysStoppedAnimation(0.4),
+                          fit: BoxFit.fitWidth,
+                          width: MediaQuery.of(context).size.width,
+                          height: 120
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage('assets/card2.png'),
-                                  fit: BoxFit.cover,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black.withOpacity(0.4),
-                                    BlendMode.darken,
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '🧠 Exploración Psicológica',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: textColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Conecta tu sueño con emociones, partes de ti mismo y símbolos internos.',
+                            style: TextStyle(color: textColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        
+            const SizedBox(height: 16),
+        
+            // Mystical Option
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedCardIndex = 2;
+                });
+              },
+              child: Card(
+                elevation: 8,
+                shadowColor:
+                isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side:
+                  _selectedCardIndex == 2
+                      ? BorderSide(color: selectedBorderColor, width: 2)
+                      : BorderSide.none,
+                ),
+                color:
+                _selectedCardIndex == 2
+                    ? selectedCardColor
+                    : unselectedCardColor,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                          'assets/card2.png',
+                          opacity: const AlwaysStoppedAnimation(0.4),
+                          fit: BoxFit.fitWidth,
+                          width: MediaQuery.of(context).size.width,
+                          height: 120
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/card2.png'),
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black.withOpacity(0.4),
+                                      BlendMode.darken,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Text(
-                              '🔮 Exploración Mística',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: textColor,
+                              Text(
+                                '🔮 Exploración Mística',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: textColor,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Descubre si tu sueño trae un mensaje del alma, una señal del universo o una energía especial.',
-                          style: TextStyle(color: textColor),
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Descubre si tu sueño trae un mensaje del alma, una señal del universo o una energía especial.',
+                            style: TextStyle(color: textColor),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Hybrid Option
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCardIndex = 2;
-              });
-            },
-            child: Card(
-              elevation: 8,
-              shadowColor:
-              isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side:
-                _selectedCardIndex == 2
-                    ? BorderSide(color: selectedBorderColor, width: 2)
-                    : BorderSide.none,
-              ),
-              color:
-              _selectedCardIndex == 2
-                  ? selectedCardColor
-                  : unselectedCardColor,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                        'assets/card3.png',
-                        opacity: const AlwaysStoppedAnimation(0.4),
-                        fit: BoxFit.fitWidth,
-                        width: MediaQuery.of(context).size.width,
-                        height: 120
+        
+            const SizedBox(height: 16),
+        
+            // Hybrid Option
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedCardIndex = 3;
+                });
+              },
+              child: Card(
+                elevation: 8,
+                shadowColor:
+                isDarkMode ? Colors.black54 : Colors.grey.withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side:
+                  _selectedCardIndex == 3
+                      ? BorderSide(color: selectedBorderColor, width: 2)
+                      : BorderSide.none,
+                ),
+                color:
+                _selectedCardIndex == 3
+                    ? selectedCardColor
+                    : unselectedCardColor,
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                          'assets/card3.png',
+                          opacity: const AlwaysStoppedAnimation(0.4),
+                          fit: BoxFit.fitWidth,
+                          width: MediaQuery.of(context).size.width,
+                          height: 120
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/card3.png'),
-                              fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(
-                                Colors.black.withOpacity(0.4),
-                                BlendMode.darken,
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/card3.png'),
+                                fit: BoxFit.cover,
+                                colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(0.4),
+                                  BlendMode.darken,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '🌀 Ambas cosas (Híbrido)',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: textColor,
+                          Row(
+                            children: [
+                              Text(
+                                '🌀 Ambas cosas (Híbrido)',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: textColor,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Combina ambos enfoques para una visión más completa.',
-                          style: TextStyle(color: textColor),
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Combina los enfoques psicológicos y místicos para una visión más completa.',
+                            style: TextStyle(color: textColor),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         _selectedCardIndex != null
@@ -302,8 +368,10 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                         .update({
                       'analysisStyle':
                       _selectedCardIndex == 0
-                          ? 'psicologico'
+                          ? 'cientifico'
                           : _selectedCardIndex == 1
+                          ? 'psicologico'
+                          : _selectedCardIndex == 2
                           ? 'mistico'
                           : 'hibrido',
                     });
@@ -312,15 +380,19 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                     await prefs.setString(
                       'analysisStyle',
                       _selectedCardIndex == 0
-                          ? 'psicologico'
+                          ? 'cientifico'
                           : _selectedCardIndex == 1
+                          ? 'psicologico'
+                          : _selectedCardIndex == 2
                           ? 'mistico'
                           : 'hibrido',
                     );
                     analysisSelected.toggleAnalysisSelected();
                     analysisSelected.analysisStyle = _selectedCardIndex == 0
-                        ? 'psicologico'
+                        ? 'cientifico'
                         : _selectedCardIndex == 1
+                        ? 'psicologico'
+                        : _selectedCardIndex == 2
                         ? 'mistico'
                         : 'hibrido';
                     Navigator.pop(context, _selectedCardIndex);

@@ -346,6 +346,25 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  _buildAnalysisCard(
+                    context,
+                    icon: '🧬',
+                    title: 'Exploración Científica',
+                    description:
+                    'Observa tu sueño a través de la neurociencia. Explora cómo las emociones, recuerdos y experiencias se entrelazan mientras duermes.',
+                    idealFor:
+                    'Autoconocimiento basado en la ciencia, patrones de sueño y bienestar mental.',
+                    styles: 'Análisis neurocognitivo, patrones REM, interpretación basada en contexto de vida.',
+                    buttonText: 'Interpretación Científica',
+                    textColor: textColor,
+                    cardColor: cardColor,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _showPsychologicalSchools(context);
+                    },
+                  ),
+
+                  const SizedBox(height: 20),
                   // Psychological Option
                   _buildAnalysisCard(
                     context,
@@ -732,6 +751,63 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () async {
+                          setState(() {
+                            analysisStyle = 'cientifico';
+                            analysisStyleProvider.analysisStyle = 'cientifico';
+                          });
+                          final user = FirebaseAuth.instance.currentUser;
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user!.uid)
+                              .update({'analysisStyle': 'cientifico'});
+
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('analysisStyle', 'cientifico');
+                        },
+                        child: Card(
+                          color:
+                          analysisStyleProvider.analysisStyle ==
+                              'cientifico'
+                              ? Colors.purple.shade100
+                              : Colors.white,
+                          elevation: 4,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      '🧬 Científico',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Analiza a través de la neurociencia.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
                       GestureDetector(
                         onTap: () async {
                           setState(() {
@@ -1159,6 +1235,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 .isEmpty
                                             ? ''
                                             : analysisStyleProvider
+                                            .analysisStyle ==
+                                            'cientifico'
+                                            ? '🧬'
+                                            : analysisStyleProvider
                                                     .analysisStyle ==
                                                 'psicologico'
                                             ? '🧠'
@@ -1393,28 +1473,32 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                       Text(
                                         analysisStyleProvider
-                                                .analysisStyle
-                                                .isEmpty
+                                            .analysisStyle
+                                            .isEmpty
                                             ? ''
                                             : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'psicologico'
+                                            .analysisStyle ==
+                                            'cientifico'
+                                            ? '🧬'
+                                            : analysisStyleProvider
+                                            .analysisStyle ==
+                                            'psicologico'
                                             ? '🧠'
                                             : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'mistico'
+                                            .analysisStyle ==
+                                            'mistico'
                                             ? '🔮'
                                             : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'hibrido'
+                                            .analysisStyle ==
+                                            'hibrido'
                                             ? '🌀'
                                             : '',
                                         style: TextStyle(
                                           fontSize: 25,
                                           color:
-                                              btnProvider.isButtonEnabled
-                                                  ? Colors.white
-                                                  : Colors.grey.shade700,
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white
+                                              : Colors.grey.shade700,
                                         ),
                                       ),
                                     ],

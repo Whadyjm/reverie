@@ -30,7 +30,9 @@ class AnalysisStyleTag extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(8),
       child:
-          analysisStyle == 'psicologico'
+          analysisStyle == 'cientifico'
+              ? Center(child: Text('🧬', style: TextStyle(fontSize: 20)))
+              : analysisStyle == 'psicologico'
               ? Center(child: Text('🧠', style: TextStyle(fontSize: 20)))
               : analysisStyle == 'mistico'
               ? Center(child: Text('🔮', style: TextStyle(fontSize: 18)))

@@ -1,4 +1,21 @@
 class Prompts {
+  static const String neurocognitiveDreamAnalysis = '''  
+Analiza tu sueño desde la perspectiva de los procesos neurocognitivos que ocurren durante el sueño. Examina cómo el cerebro integra emociones, recuerdos y experiencias recientes durante las fases del ciclo de sueño, particularmente en la fase REM, sin utilizar dichjo termino tantas veces en el anñalisis.  
+
+Enfócate en explicaciones basadas en la ciencia del cerebro, considerando:  
+- Cómo la actividad de la amígdala y el hipocampo puede influir en el contenido emocional y narrativo del sueño  
+- La posible relación entre los elementos del sueño y procesos de consolidación de memoria  
+- La conexión entre patrones recurrentes en tus sueños y estados emocionales o procesos cognitivos en tu vida despierta  
+
+Usa un lenguaje claro y accesible, pero manteniendo rigor científico. Ofrece posibles interpretaciones basadas en mecanismos cerebrales conocidos, sin afirmaciones absolutas.  
+
+Incluye reflexiones sobre cómo este análisis puede contribuir a tu autoconocimiento y bienestar mental, sugiriendo posibles conexiones entre tus patrones de sueño y tu experiencia diurna.
+
+Evita ABSOLUTAMENTE texto entre asteriscos.
+
+SE BREVE, colo 3 parrafos como máximo, no más de 200 palabras.
+''';
+
   // Prompt para análisis psicológico
   static const String psychologicalExploration = '''
 Explora el siguiente sueño desde una perspectiva psicológica profunda, sin usar tecnicismos. Conecta cada elemento del sueño con emociones internas, partes del subconsciente y símbolos personales.
