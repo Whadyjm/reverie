@@ -10,9 +10,6 @@ class GeminiService {
   Future<String> generateTitle(
     String dreamText,
     String apiKey,
-    String analysisStyle,
-    String selectedGender,
-    String userName,
   ) async {
     final url = Uri.parse('$_baseUrl?key=$apiKey');
     final response = await http.post(
@@ -24,24 +21,83 @@ class GeminiService {
             "parts": [
               {
                 "text":
-                    "Genera un título corto (puedes usar el humor si lo consideras necesario, evita usar dos puntos, pero que el titulo no parezca de pelicula, no mas de 6 palabras) para el siguiente sueño: $dreamText, responde SOLO con el titulo, ningun otro texto antes o despues.",
+                    "(Agrega acá un icono unicode com prefijo relacionado al contenido del sueño)Genera un título corto (puedes usar el humor si lo consideras necesario, evita usar dos puntos, pero que el titulo no parezca de pelicula, no mas de 6 palabras) para el siguiente sueño: $dreamText, responde SOLO con el titulo, ningun otro texto antes o despues.",
               },
+            ],
+          },
+        ],
+      }),
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['candidates'][0]['content']['parts'][0]['text'].trim();
+    } else {
+      throw Exception('Failed to generate title: ${response.body}');
+    }
+  }
+
+  Future<String> generateAnalysis(
+      String dreamText,
+      String apiKey,
+      String analysisStyle,
+      String selectedGender,
+      String userName,
+      ) async {
+    final url = Uri.parse('$_baseUrl?key=$apiKey');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "contents": [
+          {
+            "parts": [
               {
                 "text":
-                    "Clasifica el siguiente sueño $dreamText, como uno de los siguientes tipos: sueño convencional, sueño fragmentado, sueño narrativo, pesadilla o sueño lúcido. Responde SOLO con la etiqueta correspondiente, ningún otro texto antes o después.",
-              },
-              {
-                "text":
-                    'Contexto:'
+                'Contexto:'
                     'nombre: $userName, PROHIBIDO mostrarlo en el análisis.'
                     'género: $selectedGender, PROHIBIDO mostrarlo en el análisis.'
                     '${analysisStyle == 'cientifico'
-                        ? Prompts.neurocognitiveDreamAnalysis
-                        : analysisStyle == 'psicologico'
-                        ? Prompts.psychologicalExploration
-                        : analysisStyle == 'mistico'
-                        ? Prompts.mysticalExploration
-                        : Prompts.hybridExploration} $dreamText',
+                    ? Prompts.neurocognitiveDreamAnalysis
+                    : analysisStyle == 'psicologico'
+                    ? Prompts.psychologicalExploration
+                    : analysisStyle == 'mistico'
+                    ? Prompts.mysticalExploration
+                    : Prompts.hybridExploration} $dreamText',
+              },
+            ],
+          },
+        ],
+      }),
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['candidates'][0]['content']['parts'][0]['text'].trim();
+    } else {
+      throw Exception('Failed to generate title: ${response.body}');
+    }
+  }
+
+  Future<String> generateTag(
+      String dreamText,
+      String apiKey,
+      ) async {
+    final url = Uri.parse('$_baseUrl?key=$apiKey');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "contents": [
+          {
+            "parts": [
+              {
+                "text":
+                "Clasifica el siguiente sueño $dreamText, como uno de los siguientes tipos: sueño convencional, sueño fragmentado, sueño narrativo, pesadilla o sueño lúcido. Responde SOLO con la etiqueta correspondiente, ningún otro texto antes o después.",
               },
             ],
           },

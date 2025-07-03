@@ -1348,23 +1348,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                           );
                                           final title = await GeminiService()
                                               .generateTitle(
-                                                _dreamController.text,
-                                                apiKey,
-                                                analysisStyle == ''
-                                                    ? analysisStyleProvider
-                                                        .analysisStyle
-                                                    : analysisStyle,
-                                                selectedGender!,
-                                                userName ?? name,
-                                              );
+                                            _dreamController.text,
+                                            apiKey,
+                                          );
+                                          final analysis = await GeminiService().generateAnalysis(_dreamController.text, apiKey,
+                                              analysisStyle == ''
+                                                  ? analysisStyleProvider
+                                                  .analysisStyle
+                                                  : analysisStyle, selectedGender!, userName!);
+                                          final tag = await GeminiService().generateTag(_dreamController.text, apiKey);
                                           FirebaseService().saveDream(
                                             context,
                                             _dreamController,
                                             _selectedDate,
                                             title,
+                                            analysis,
+                                            tag,
                                             analysisStyle == ''
                                                 ? analysisStyleProvider
-                                                    .analysisStyle
+                                                .analysisStyle
                                                 : analysisStyle,
                                           );
                                         } catch (e) {
@@ -1592,18 +1594,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                               .generateTitle(
                                                 _dreamController.text,
                                                 apiKey,
-                                                analysisStyle == ''
-                                                    ? analysisStyleProvider
-                                                        .analysisStyle
-                                                    : analysisStyle,
-                                                selectedGender!,
-                                                userName ?? name,
                                               );
+                                          final analysis = await GeminiService().generateAnalysis(_dreamController.text, apiKey,
+                                              analysisStyle == ''
+                                                  ? analysisStyleProvider
+                                                  .analysisStyle
+                                                  : analysisStyle, selectedGender!, userName!);
+                                          final tag = await GeminiService().generateTag(_dreamController.text, apiKey);
                                           FirebaseService().saveDream(
                                             context,
                                             _dreamController,
                                             _selectedDate,
                                             title,
+                                            analysis,
+                                            tag,
                                             analysisStyle == ''
                                                 ? analysisStyleProvider
                                                     .analysisStyle
