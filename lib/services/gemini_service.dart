@@ -7,10 +7,7 @@ class GeminiService {
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-  Future<String> generateTitle(
-    String dreamText,
-    String apiKey,
-  ) async {
+  Future<String> generateTitle(String dreamText, String apiKey) async {
     final url = Uri.parse('$_baseUrl?key=$apiKey');
     final response = await http.post(
       url,
@@ -40,12 +37,12 @@ class GeminiService {
   }
 
   Future<String> generateAnalysis(
-      String dreamText,
-      String apiKey,
-      String analysisStyle,
-      String selectedGender,
-      String userName,
-      ) async {
+    String dreamText,
+    String apiKey,
+    String analysisStyle,
+    String selectedGender,
+    String userName,
+  ) async {
     final url = Uri.parse('$_baseUrl?key=$apiKey');
     final response = await http.post(
       url,
@@ -56,16 +53,16 @@ class GeminiService {
             "parts": [
               {
                 "text":
-                'Contexto:'
+                    'Contexto:'
                     'nombre: $userName, PROHIBIDO mostrarlo en el análisis.'
                     'género: $selectedGender, PROHIBIDO mostrarlo en el análisis.'
                     '${analysisStyle == 'cientifico'
-                    ? Prompts.neurocognitiveDreamAnalysis
-                    : analysisStyle == 'psicologico'
-                    ? Prompts.psychologicalExploration
-                    : analysisStyle == 'mistico'
-                    ? Prompts.mysticalExploration
-                    : Prompts.hybridExploration} $dreamText',
+                        ? Prompts.neurocognitiveDreamAnalysis
+                        : analysisStyle == 'psicologico'
+                        ? Prompts.psychologicalExploration
+                        : analysisStyle == 'mistico'
+                        ? Prompts.mysticalExploration
+                        : Prompts.hybridExploration} $dreamText',
               },
             ],
           },
@@ -83,10 +80,7 @@ class GeminiService {
     }
   }
 
-  Future<String> generateTag(
-      String dreamText,
-      String apiKey,
-      ) async {
+  Future<String> generateTag(String dreamText, String apiKey) async {
     final url = Uri.parse('$_baseUrl?key=$apiKey');
     final response = await http.post(
       url,
@@ -97,7 +91,39 @@ class GeminiService {
             "parts": [
               {
                 "text":
-                "Clasifica el siguiente sueño $dreamText, como uno de los siguientes tipos: sueño convencional, sueño fragmentado, sueño narrativo, pesadilla o sueño lúcido. Responde SOLO con la etiqueta correspondiente, ningún otro texto antes o después.",
+                    "Clasifica el siguiente sueño $dreamText, como uno de los siguientes tipos: sueño convencional, sueño fragmentado, sueño narrativo, pesadilla o sueño lúcido. Responde SOLO con la etiqueta correspondiente, ningún otro texto antes o después.",
+              },
+            ],
+          },
+        ],
+      }),
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['candidates'][0]['content']['parts'][0]['text'].trim();
+    } else {
+      throw Exception('Failed to generate title: ${response.body}');
+    }
+  }
+
+  Future<String> generateEmotion(String dreamText, String apiKey) async {
+    final url = Uri.parse('$_baseUrl?key=$apiKey');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "contents": [
+          {
+            "parts": [
+              {
+                "text":
+                    "$dreamText Detecta y nombra las emociones predominantes presentes en el siguiente sueño."
+                    "Sé específico y directo. Solo nombra 3 palabras que representen el sueño. Responde SOLO con las palabras, ningún otro texto antes o después."
+                    "Muestra cada palabra con su icono como prefijo, una al lado de la otra separadas por dos espacios"
+                    "Agrega ademas un icono unicode com prefijo relacionado con cada palabra.",
               },
             ],
           },

@@ -3,11 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseService {
-  void saveDream(context, controller, selectedDate, title, analysis, tag, analysisStyle) async {
+  void saveDream(
+    context,
+    controller,
+    selectedDate,
+    title,
+    analysis,
+    tag,
+    emotions,
+    analysisStyle,
+  ) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
     try {
-      var dreamsCollection = firestore.collection('users')
+      var dreamsCollection = firestore
+          .collection('users')
           .doc(auth.currentUser?.uid)
           .collection('dreams');
 
@@ -18,6 +28,7 @@ class FirebaseService {
         'title': title,
         'classification': tag,
         'analysis': analysis,
+        'emotions': emotions,
         'analysisStyle': analysisStyle,
         'text': controller.text.trim(),
         'isLiked': false,
@@ -32,9 +43,9 @@ class FirebaseService {
       // Actualizar el documento con el dreamId
       await documentRef.update({'dreamId': documentRef.id});
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al enviar el sueño.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al enviar el sueño.')));
     } finally {
       controller.clear();
       FocusScope.of(context).unfocus();

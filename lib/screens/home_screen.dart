@@ -351,10 +351,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: '🧬',
                     title: 'Exploración Científica',
                     description:
-                    'Observa tu sueño a través de la neurociencia. Explora cómo las emociones, recuerdos y experiencias se entrelazan mientras duermes.',
+                        'Observa tu sueño a través de la neurociencia. Explora cómo las emociones, recuerdos y experiencias se entrelazan mientras duermes.',
                     idealFor:
-                    'Autoconocimiento basado en la ciencia, patrones de sueño y bienestar mental.',
-                    styles: 'Análisis neurocognitivo, patrones REM, interpretación basada en contexto de vida.',
+                        'Autoconocimiento basado en la ciencia, patrones de sueño y bienestar mental.',
+                    styles:
+                        'Análisis neurocognitivo, patrones REM, interpretación basada en contexto de vida.',
                     buttonText: 'Interpretación Científica',
                     textColor: textColor,
                     cardColor: cardColor,
@@ -501,32 +502,47 @@ class _MyHomePageState extends State<MyHomePage> {
                                       snapshot.data != null) {
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(25),
-                                      child: snapshot.data?.photoURL != null
-                                          ? Image.network(
-                                        snapshot.data!.photoURL!,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Icon(
-                                            Icons.person,
-                                            color: Colors.grey,
-                                            size: 20,
-                                          );
-                                        },
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return CircularProgressIndicator(
-                                            value: loadingProgress.expectedTotalBytes != null
-                                                ? loadingProgress.cumulativeBytesLoaded /
-                                                loadingProgress.expectedTotalBytes!
-                                                : null,
-                                          );
-                                        },
-                                      )
-                                          : Icon(
-                                        Icons.person,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
+                                      child:
+                                          snapshot.data?.photoURL != null
+                                              ? Image.network(
+                                                snapshot.data!.photoURL!,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) {
+                                                  return Icon(
+                                                    Icons.person,
+                                                    color: Colors.grey,
+                                                    size: 20,
+                                                  );
+                                                },
+                                                loadingBuilder: (
+                                                  context,
+                                                  child,
+                                                  loadingProgress,
+                                                ) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return CircularProgressIndicator(
+                                                    value:
+                                                        loadingProgress
+                                                                    .expectedTotalBytes !=
+                                                                null
+                                                            ? loadingProgress
+                                                                    .cumulativeBytesLoaded /
+                                                                loadingProgress
+                                                                    .expectedTotalBytes!
+                                                            : null,
+                                                  );
+                                                },
+                                              )
+                                              : Icon(
+                                                Icons.person,
+                                                color: Colors.grey,
+                                                size: 20,
+                                              ),
                                     );
                                   } else {
                                     return CircleAvatar(
@@ -615,8 +631,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Colors.grey.shade800,
                                 ),
                               ),
-                              const SizedBox(width: 5,),
-                              Icon(Icons.star_rounded, color: Colors.amber)
+                              const SizedBox(width: 5),
+                              Icon(Icons.star_rounded, color: Colors.amber),
                             ],
                           ),
                         ),
@@ -768,59 +784,66 @@ class _MyHomePageState extends State<MyHomePage> {
                           SubscriptionBottomSheet.show(context);
                         },
                         child: Stack(
-                          children:[
+                          children: [
                             Card(
-                            color:
-                            analysisStyleProvider.analysisStyle ==
-                                'cientifico'
-                                ? Colors.purple.shade100
-                                : Colors.white,
-                            elevation: 4,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        '🧬 Científico',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                          color: Colors.grey.shade800,
+                              color:
+                                  analysisStyleProvider.analysisStyle ==
+                                          'cientifico'
+                                      ? Colors.purple.shade100
+                                      : Colors.white,
+                              elevation: 4,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '🧬 Científico',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.grey.shade800,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    'Analiza a través de la neurociencia.',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade800,
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Analiza a través de la neurociencia.',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
                             Align(
                               alignment: Alignment.topRight,
                               child: Container(
                                 height: 30,
                                 width: 50,
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.deepPurple.shade700
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.deepPurple.shade700,
                                 ),
-                                child: Center(child: Text('Plus', style: RobotoTextStyle.smallTextStyle(Colors.white),)),
+                                child: Center(
+                                  child: Text(
+                                    'Plus',
+                                    style: RobotoTextStyle.smallTextStyle(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -1092,33 +1115,53 @@ class _MyHomePageState extends State<MyHomePage> {
                                           if (snapshot.hasData &&
                                               snapshot.data != null) {
                                             return ClipRRect(
-                                              borderRadius: BorderRadius.circular(25),
-                                              child: snapshot.data?.photoURL != null
-                                                  ? Image.network(
-                                                snapshot.data!.photoURL!,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (context, error, stackTrace) {
-                                                  return Icon(
-                                                    Icons.person,
-                                                    color: Colors.grey,
-                                                    size: 20,
-                                                  );
-                                                },
-                                                loadingBuilder: (context, child, loadingProgress) {
-                                                  if (loadingProgress == null) return child;
-                                                  return CircularProgressIndicator(
-                                                    value: loadingProgress.expectedTotalBytes != null
-                                                        ? loadingProgress.cumulativeBytesLoaded /
-                                                        loadingProgress.expectedTotalBytes!
-                                                        : null,
-                                                  );
-                                                },
-                                              )
-                                                  : Icon(
-                                                Icons.person,
-                                                color: Colors.grey,
-                                                size: 20,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(25),
+                                              child:
+                                                  snapshot.data?.photoURL !=
+                                                          null
+                                                      ? Image.network(
+                                                        snapshot
+                                                            .data!
+                                                            .photoURL!,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Icon(
+                                                            Icons.person,
+                                                            color: Colors.grey,
+                                                            size: 20,
+                                                          );
+                                                        },
+                                                        loadingBuilder: (
+                                                          context,
+                                                          child,
+                                                          loadingProgress,
+                                                        ) {
+                                                          if (loadingProgress ==
+                                                              null)
+                                                            return child;
+                                                          return CircularProgressIndicator(
+                                                            value:
+                                                                loadingProgress
+                                                                            .expectedTotalBytes !=
+                                                                        null
+                                                                    ? loadingProgress
+                                                                            .cumulativeBytesLoaded /
+                                                                        loadingProgress
+                                                                            .expectedTotalBytes!
+                                                                    : null,
+                                                          );
+                                                        },
+                                                      )
+                                                      : Icon(
+                                                        Icons.person,
+                                                        color: Colors.grey,
+                                                        size: 20,
+                                                      ),
                                             );
                                           } else {
                                             return CircleAvatar(
@@ -1252,8 +1295,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 .isEmpty
                                             ? ''
                                             : analysisStyleProvider
-                                            .analysisStyle ==
-                                            'cientifico'
+                                                    .analysisStyle ==
+                                                'cientifico'
                                             ? '🧬'
                                             : analysisStyleProvider
                                                     .analysisStyle ==
@@ -1348,15 +1391,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                           );
                                           final title = await GeminiService()
                                               .generateTitle(
-                                            _dreamController.text,
-                                            apiKey,
-                                          );
-                                          final analysis = await GeminiService().generateAnalysis(_dreamController.text, apiKey,
-                                              analysisStyle == ''
-                                                  ? analysisStyleProvider
-                                                  .analysisStyle
-                                                  : analysisStyle, selectedGender!, userName!);
-                                          final tag = await GeminiService().generateTag(_dreamController.text, apiKey);
+                                                _dreamController.text,
+                                                apiKey,
+                                              );
+                                          final analysis = await GeminiService()
+                                              .generateAnalysis(
+                                                _dreamController.text,
+                                                apiKey,
+                                                analysisStyle == ''
+                                                    ? analysisStyleProvider
+                                                        .analysisStyle
+                                                    : analysisStyle,
+                                                selectedGender!,
+                                                userName!,
+                                              );
+                                          final tag = await GeminiService()
+                                              .generateTag(
+                                                _dreamController.text,
+                                                apiKey,
+                                              );
+                                          final emotions = await GeminiService()
+                                              .generateEmotion(
+                                                _dreamController.text,
+                                                apiKey,
+                                              );
                                           FirebaseService().saveDream(
                                             context,
                                             _dreamController,
@@ -1364,9 +1422,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                             title,
                                             analysis,
                                             tag,
+                                            emotions,
                                             analysisStyle == ''
                                                 ? analysisStyleProvider
-                                                .analysisStyle
+                                                    .analysisStyle
                                                 : analysisStyle,
                                           );
                                         } catch (e) {
@@ -1492,32 +1551,32 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                       Text(
                                         analysisStyleProvider
-                                            .analysisStyle
-                                            .isEmpty
+                                                .analysisStyle
+                                                .isEmpty
                                             ? ''
                                             : analysisStyleProvider
-                                            .analysisStyle ==
-                                            'cientifico'
+                                                    .analysisStyle ==
+                                                'cientifico'
                                             ? '🧬'
                                             : analysisStyleProvider
-                                            .analysisStyle ==
-                                            'psicologico'
+                                                    .analysisStyle ==
+                                                'psicologico'
                                             ? '🧠'
                                             : analysisStyleProvider
-                                            .analysisStyle ==
-                                            'mistico'
+                                                    .analysisStyle ==
+                                                'mistico'
                                             ? '🔮'
                                             : analysisStyleProvider
-                                            .analysisStyle ==
-                                            'hibrido'
+                                                    .analysisStyle ==
+                                                'hibrido'
                                             ? '🌀'
                                             : '',
                                         style: TextStyle(
                                           fontSize: 25,
                                           color:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade700,
+                                              btnProvider.isButtonEnabled
+                                                  ? Colors.white
+                                                  : Colors.grey.shade700,
                                         ),
                                       ),
                                     ],
@@ -1595,12 +1654,27 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 _dreamController.text,
                                                 apiKey,
                                               );
-                                          final analysis = await GeminiService().generateAnalysis(_dreamController.text, apiKey,
-                                              analysisStyle == ''
-                                                  ? analysisStyleProvider
-                                                  .analysisStyle
-                                                  : analysisStyle, selectedGender!, userName!);
-                                          final tag = await GeminiService().generateTag(_dreamController.text, apiKey);
+                                          final analysis = await GeminiService()
+                                              .generateAnalysis(
+                                                _dreamController.text,
+                                                apiKey,
+                                                analysisStyle == ''
+                                                    ? analysisStyleProvider
+                                                        .analysisStyle
+                                                    : analysisStyle,
+                                                selectedGender!,
+                                                userName!,
+                                              );
+                                          final tag = await GeminiService()
+                                              .generateTag(
+                                                _dreamController.text,
+                                                apiKey,
+                                              );
+                                          final emotions = await GeminiService()
+                                              .generateEmotion(
+                                                _dreamController.text,
+                                                apiKey,
+                                              );
                                           FirebaseService().saveDream(
                                             context,
                                             _dreamController,
@@ -1608,6 +1682,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             title,
                                             analysis,
                                             tag,
+                                            emotions,
                                             analysisStyle == ''
                                                 ? analysisStyleProvider
                                                     .analysisStyle
@@ -1948,13 +2023,13 @@ void _logout(BuildContext context) {
               children: [
                 Text(
                   'Cerrar sesión',
-                  style: RobotoTextStyle.titleStyle(Colors.grey.shade800)
+                  style: RobotoTextStyle.titleStyle(Colors.grey.shade800),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   '¿Estás seguro de que quieres cerrar tu sesión?',
                   textAlign: TextAlign.center,
-                  style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700)
+                  style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -1974,7 +2049,9 @@ void _logout(BuildContext context) {
                         onPressed: () => Navigator.pop(ctx),
                         child: Text(
                           'Cancelar',
-                          style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700)
+                          style: RobotoTextStyle.smallTextStyle(
+                            Colors.grey.shade700,
+                          ),
                         ),
                       ),
                     ),
@@ -2003,7 +2080,7 @@ void _logout(BuildContext context) {
                         },
                         child: Text(
                           'Salir',
-                          style: RobotoTextStyle.smallTextStyle(Colors.white)
+                          style: RobotoTextStyle.smallTextStyle(Colors.white),
                         ),
                       ),
                     ),
