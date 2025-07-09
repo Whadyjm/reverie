@@ -1073,7 +1073,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pillow',
+                              'Reverie',
                               style: AppTextStyle.titleStyle(
                                 btnProvider.isButtonEnabled
                                     ? Colors.white

@@ -68,12 +68,16 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                               : null,
                     ),
                   ),
-                  Text(
-                    widget.dream['title'],
-                    style: AppTextStyle.subtitleStyle(
-                      widget.btnProvider.isButtonEnabled
-                          ? Colors.white
-                          : Colors.grey.shade700,
+                  Flexible(
+                    child: Text(
+                      widget.dream['title'],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.subtitleStyle(
+                        widget.btnProvider.isButtonEnabled
+                            ? Colors.white
+                            : Colors.grey.shade700,
+                      ),
                     ),
                   ),
                 ],

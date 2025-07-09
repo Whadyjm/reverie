@@ -22,7 +22,7 @@ class FirebaseService {
           .collection('dreams');
 
       final dreamId = FirebaseFirestore.instance.collection('dreams').doc().id;
-      // Agregar el documento y obtener la referencia
+
       var documentRef = await dreamsCollection.add({
         'dreamId': dreamId,
         'title': title,
@@ -40,7 +40,6 @@ class FirebaseService {
         ),
       });
 
-      // Actualizar el documento con el dreamId
       await documentRef.update({'dreamId': documentRef.id});
     } catch (e) {
       ScaffoldMessenger.of(
