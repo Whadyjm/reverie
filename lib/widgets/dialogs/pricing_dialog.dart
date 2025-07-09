@@ -56,7 +56,7 @@ class _BottomSheetContent extends StatelessWidget {
                   const SizedBox(height: 28),
                   _buildPlanCard(
                     context,
-                    title: "Pillow Premium",
+                    title: "Premium",
                     price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
                     gradientColors: [Colors.deepPurple.shade800, Colors.deepPurple.shade600],
                     textColor: Colors.white,
@@ -70,6 +70,7 @@ class _BottomSheetContent extends StatelessWidget {
                       "Comparte tu sueño y/o análisis",
                       "Etiquetas avanzadas",
                       "Backup en la nube",
+                      "Sin Ads"
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -87,6 +88,7 @@ class _BottomSheetContent extends StatelessWidget {
                       "Estadísticas detalladas",
                       "Etiquetas simples",
                       "Backup en la nube",
+                      "Sin Ads"
                     ],
                     isRecommended: true,
                   ),
