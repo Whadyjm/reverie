@@ -36,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String analysisStyle = '';
   String name = '';
   String? selectedGender = '';
+  String? suscription = '';
   bool dontShowAgain = false;
   bool shouldShowDialog = false;
   int dreamCount = 0;
@@ -50,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getUserName();
     getUserSelectedGender();
     getDreamCountByUser();
+    getUserSuscription();
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
@@ -113,6 +115,23 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
       print('-----------------$selectedGender-----------------');
+    } catch (e) {}
+  }
+
+  Future<void> getUserSuscription() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final fetchUserSuscription = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .then((value) => value.data()?['suscription'] ?? '');
+        setState(() {
+          suscription = fetchUserSuscription;
+        });
+      }
+      print('-----------------$suscription-----------------');
     } catch (e) {}
   }
 
@@ -1090,6 +1109,55 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),*/
                           ],
                         ),
+                        suscription == 'free'
+                            ? GestureDetector(
+                              onTap: () {
+                                SubscriptionBottomSheet.show(context);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 25,
+                                  top: 16.0,
+                                ),
+                                child: Container(
+                                  height: 30,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.deepPurple,
+                                    boxShadow:
+                                        btnProvider.isButtonEnabled
+                                            ? [
+                                              BoxShadow(
+                                                color: Colors.white.withOpacity(
+                                                  0.5,
+                                                ),
+                                                blurRadius: 10,
+                                                offset: Offset(0, 0),
+                                              ),
+                                            ]
+                                            : [
+                                              BoxShadow(
+                                                color: Colors.amber.withOpacity(
+                                                  0.5,
+                                                ),
+                                                blurRadius: 10,
+                                                offset: Offset(0, 0),
+                                              ),
+                                            ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'Obtén PLUS ✨',
+                                      style: RobotoTextStyle.smallTextStyle(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                            : const SizedBox.shrink(),
                         SizedBox(width: MediaQuery.sizeOf(context).width - 350),
                         user != null
                             ? Padding(

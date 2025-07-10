@@ -57,7 +57,8 @@ class AuthProcess {
         'userId': user.uid,
         'userSince': FieldValue.serverTimestamp(),
         'pinCreated': true,
-        'selectedGender': selectedGender ?? ''
+        'selectedGender': selectedGender ?? '',
+        'suscription': 'free',
       });
 
       String userPin = await FirebaseFirestore.instance
@@ -260,6 +261,7 @@ class AuthProcess {
               'pinCreated': true,
               'pin': '',
               'selectedGender': '',
+              'suscription': 'free',
             });
           }
 
