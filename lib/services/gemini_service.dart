@@ -36,6 +36,51 @@ class GeminiService {
     }
   }
 
+  Future<String> generateShortAnalysis(
+      String dreamText,
+      String apiKey,
+      String analysisStyle,
+      String selectedGender,
+      String userName,
+      ) async {
+    final url = Uri.parse('$_baseUrl?key=$apiKey');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "contents": [
+          {
+            "parts": [
+              {
+                "text":
+                'Contexto:'
+                    'nombre: $userName, PROHIBIDO mostrarlo en el análisis.'
+                    'género: $selectedGender, PROHIBIDO mostrarlo en el análisis.'
+                    '${analysisStyle == 'cientifico'
+                    ? Prompts.neurocognitiveDreamAnalysis
+                    : analysisStyle == 'psicologico'
+                    ? Prompts.psychologicalExploration
+                    : analysisStyle == 'mistico'
+                    ? Prompts.mysticalExploration
+                    : Prompts.hybridExploration} $dreamText'
+                    'El analisis debe ser breve, no PASES de 2 párrafos.',
+              },
+            ],
+          },
+        ],
+      }),
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['candidates'][0]['content']['parts'][0]['text'].trim();
+    } else {
+      throw Exception('Failed to generate title: ${response.body}');
+    }
+  }
+
   Future<String> generateAnalysis(
     String dreamText,
     String apiKey,

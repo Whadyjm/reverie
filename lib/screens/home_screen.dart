@@ -1462,17 +1462,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 _dreamController.text,
                                                 apiKey,
                                               );
-                                          final analysis = await GeminiService()
-                                              .generateAnalysis(
-                                                _dreamController.text,
-                                                apiKey,
-                                                analysisStyle == ''
-                                                    ? analysisStyleProvider
-                                                        .analysisStyle
-                                                    : analysisStyle,
-                                                selectedGender!,
-                                                userName!,
-                                              );
+                                          final analysis =
+                                              await suscription != 'free'
+                                                  ? GeminiService()
+                                                      .generateAnalysis(
+                                                        _dreamController.text,
+                                                        apiKey,
+                                                        analysisStyle == ''
+                                                            ? analysisStyleProvider
+                                                                .analysisStyle
+                                                            : analysisStyle,
+                                                        selectedGender!,
+                                                        userName!,
+                                                      )
+                                                  : GeminiService()
+                                                      .generateShortAnalysis(
+                                                        _dreamController.text,
+                                                        apiKey,
+                                                        analysisStyle == ''
+                                                            ? analysisStyleProvider
+                                                                .analysisStyle
+                                                            : analysisStyle,
+                                                        selectedGender!,
+                                                        userName!,
+                                                      );
                                           final tag = await GeminiService()
                                               .generateTag(
                                                 _dreamController.text,
@@ -1722,17 +1735,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 _dreamController.text,
                                                 apiKey,
                                               );
-                                          final analysis = await GeminiService()
-                                              .generateAnalysis(
-                                                _dreamController.text,
-                                                apiKey,
-                                                analysisStyle == ''
-                                                    ? analysisStyleProvider
-                                                        .analysisStyle
-                                                    : analysisStyle,
-                                                selectedGender!,
-                                                userName!,
-                                              );
+                                          final analysis =
+                                              await suscription != 'free'
+                                                  ? GeminiService()
+                                                      .generateAnalysis(
+                                                        _dreamController.text,
+                                                        apiKey,
+                                                        analysisStyle == ''
+                                                            ? analysisStyleProvider
+                                                                .analysisStyle
+                                                            : analysisStyle,
+                                                        selectedGender!,
+                                                        userName!,
+                                                      )
+                                                  : GeminiService()
+                                                      .generateShortAnalysis(
+                                                        _dreamController.text,
+                                                        apiKey,
+                                                        analysisStyle == ''
+                                                            ? analysisStyleProvider
+                                                                .analysisStyle
+                                                            : analysisStyle,
+                                                        selectedGender!,
+                                                        userName!,
+                                                      );
                                           final tag = await GeminiService()
                                               .generateTag(
                                                 _dreamController.text,
