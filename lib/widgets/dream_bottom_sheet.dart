@@ -16,10 +16,12 @@ class DreamBottomSheet extends StatefulWidget {
     super.key,
     required this.btnProvider,
     required this.dream,
+    this.suscription,
   });
 
   final ButtonProvider btnProvider;
   final QueryDocumentSnapshot<Object?> dream;
+  final String? suscription;
 
   @override
   State<DreamBottomSheet> createState() => _DreamBottomSheetState();
@@ -196,96 +198,109 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                             ),
                                           ),
                                           const SizedBox(height: 16),
-                                          SizedBox(
-                                            height: 70,
-                                            width:
-                                                MediaQuery.sizeOf(
-                                                  context,
-                                                ).width -
-                                                32,
-                                            child: ElevatedButton(
-                                              onPressed: () async {
-                                                SubscriptionBottomSheet.show(
-                                                  context,
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                    ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                shadowColor: Colors.transparent,
-                                              ),
-                                              child: Ink(
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    colors: [
-                                                      Colors.purple.shade400,
-                                                      Colors.purple.shade600,
-                                                      Colors.indigo.shade400,
-                                                    ],
-                                                    begin: Alignment.topLeft,
-                                                    end: Alignment.bottomRight,
+                                          Visibility(
+                                            visible:
+                                                widget.suscription == 'free'
+                                                    ? true
+                                                    : false,
+                                            child: SizedBox(
+                                              height: 70,
+                                              width:
+                                                  MediaQuery.sizeOf(
+                                                    context,
+                                                  ).width -
+                                                  32,
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  SubscriptionBottomSheet.show(
+                                                    context,
+                                                  );
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
                                                   ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  shadowColor:
+                                                      Colors.transparent,
                                                 ),
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  child:
-                                                      isLoading
-                                                          ? SizedBox(
-                                                            width: 25,
-                                                            height: 25,
-                                                            child: CircularProgressIndicator(
-                                                              strokeWidth: 4,
-                                                              valueColor:
-                                                                  AlwaysStoppedAnimation<
-                                                                    Color
-                                                                  >(
-                                                                    Colors
-                                                                        .white,
-                                                                  ),
-                                                            ),
-                                                          )
-                                                          : Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Text(
-                                                                'Ver análisis mas detallado',
-                                                                style: TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontFamily:
-                                                                      'roboto',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
+                                                child: Ink(
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Colors.purple.shade400,
+                                                        Colors.purple.shade600,
+                                                        Colors.indigo.shade400,
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    child:
+                                                        isLoading
+                                                            ? SizedBox(
+                                                              width: 25,
+                                                              height: 25,
+                                                              child: CircularProgressIndicator(
+                                                                strokeWidth: 4,
+                                                                valueColor:
+                                                                    AlwaysStoppedAnimation<
+                                                                      Color
+                                                                    >(
                                                                       Colors
                                                                           .white,
+                                                                    ),
+                                                              ),
+                                                            )
+                                                            : Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Text(
+                                                                  'Ver análisis mas detallado',
+                                                                  style: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontFamily:
+                                                                        'roboto',
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        Colors
+                                                                            .white,
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                              const SizedBox(
-                                                                width: 10,
-                                                              ),
-                                                              Icon(
-                                                                Iconsax
-                                                                    .magic_star,
-                                                                color:
-                                                                    Colors
-                                                                        .amber,
-                                                                size: 20,
-                                                              ),
-                                                            ],
-                                                          ),
+                                                                const SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Icon(
+                                                                  Iconsax
+                                                                      .magic_star,
+                                                                  color:
+                                                                      Colors
+                                                                          .amber,
+                                                                  size: 20,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -295,9 +310,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               ElevatedButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
+                                                onPressed: () {},
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor:
                                                       Colors.purple.shade400,
@@ -309,7 +322,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                                   ),
                                                 ),
                                                 child: Text(
-                                                  'Cerrar',
+                                                  'Compartir',
                                                   style:
                                                       RobotoTextStyle.smallTextStyle(
                                                         Colors.white,
@@ -358,7 +371,6 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                                 initialRating: currentRating,
                                                 maxRating: 5,
                                               ),
-                                              const SizedBox(width: 20),
                                             ],
                                           ),
                                         ],

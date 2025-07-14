@@ -9,8 +9,9 @@ import 'dream_bottom_sheet.dart';
 import 'dream_list_empty.dart';
 
 class DreamByDate extends StatefulWidget {
-  const DreamByDate({super.key});
+  const DreamByDate({super.key, this.suscription});
 
+  final String? suscription;
   @override
   State<DreamByDate> createState() => _DreamByDateState();
 }
@@ -130,6 +131,7 @@ class _DreamByDateState extends State<DreamByDate> {
                           return DreamBottomSheet(
                             btnProvider: btnProvider,
                             dream: dream,
+                            suscription: widget.suscription,
                           );
                         },
                       );

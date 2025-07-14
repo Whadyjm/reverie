@@ -1257,7 +1257,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 CalendarTimeline(),
-                DreamByDate(),
+                DreamByDate(suscription: suscription),
                 //TextAudioInput(apiKey: apiKey),
               ],
             ),
