@@ -35,64 +35,74 @@ class _BottomSheetContent extends StatelessWidget {
             initialChildSize: 0.85,
             minChildSize: 0.4,
             maxChildSize: 0.95,
-            builder: (_, controller) => SingleChildScrollView(
-              controller: controller,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-              child: Column(
-                children: [
-                  Container(
-                    height: 5,
-                    width: 50,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade700,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+            builder:
+                (_, controller) => SingleChildScrollView(
+                  controller: controller,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 24,
                   ),
-                  Text(
-                    "Elige tu plan de suscripción",
-                    style: RobotoTextStyle.titleStyle(Colors.white),
-                  ),
-                  const SizedBox(height: 28),
-                  _buildPlanCard(
-                    context,
-                    title: "Premium",
-                    price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
-                    gradientColors: [Colors.deepPurple.shade800, Colors.deepPurple.shade600],
-                    textColor: Colors.white,
-                    buttonColor: Colors.deepPurpleAccent.shade200,
-                    buttonText: "Explorar Premium",
-                    features: const [
-                      "Registro ilimitado",
-                      "Análisis avanzado",
-                      "Estadísticas detalladas",
-                      "Resumen mensual por correo",
-                      "Comparte tu sueño y/o análisis",
-                      "Etiquetas avanzadas",
-                      "Backup en la nube",
-                      "Sin Ads"
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  _buildPlanCard(
-                    context,
-                    title: "Plus",
-                    price: "\$2.99/mes · \$14.99/año",
-                    gradientColors: [Colors.indigo.shade800, Colors.indigo.shade600],
-                    textColor: Colors.white,
-                    buttonColor: Colors.indigoAccent.shade200,
-                    buttonText: "Prueba 7 días",
-                    features: const [
-                      "Registro ilimitado",
-                      "Análisis avanzado",
-                      "Estadísticas detalladas",
-                      "Etiquetas simples",
-                      "Backup en la nube",
-                      "Sin Ads"
-                    ],
-                    isRecommended: true,
-                  ),
-                  const SizedBox(height: 20),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 5,
+                        width: 50,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade700,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      Text(
+                        "Elige tu plan de suscripción",
+                        style: RobotoTextStyle.titleStyle(Colors.white),
+                      ),
+                      const SizedBox(height: 28),
+                      _buildPlanCard(
+                        context,
+                        title: "Premium",
+                        price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
+                        gradientColors: [
+                          Colors.deepPurple.shade800,
+                          Colors.deepPurple.shade600,
+                        ],
+                        textColor: Colors.white,
+                        buttonColor: Colors.deepPurpleAccent.shade200,
+                        buttonText: "Explorar Premium",
+                        features: const [
+                          "Registro ilimitado",
+                          "Análisis avanzado",
+                          "Estadísticas detalladas",
+                          "Resumen mensual por correo",
+                          "Comparte tu sueño y/o análisis",
+                          "Etiquetas avanzadas",
+                          "Backup en la nube",
+                          "Sin Ads",
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      _buildPlanCard(
+                        context,
+                        title: "Plus",
+                        price: "\$2.99/mes · \$14.99/año",
+                        gradientColors: [
+                          Colors.indigo.shade800,
+                          Colors.indigo.shade600,
+                        ],
+                        textColor: Colors.white,
+                        buttonColor: Colors.indigoAccent.shade200,
+                        buttonText: "Prueba 7 días",
+                        features: const [
+                          "Registro ilimitado",
+                          "Análisis avanzado",
+                          "Estadísticas detalladas",
+                          "Etiquetas simples",
+                          "Backup en la nube",
+                          "Sin Ads",
+                        ],
+                        isRecommended: true,
+                      ),
+                      /*const SizedBox(height: 20),
                   _buildPlanCard(
                     context,
                     title: "Freemium",
@@ -108,10 +118,10 @@ class _BottomSheetContent extends StatelessWidget {
                       "Etiquetas simples",
                     ],
                   ),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
+                  const SizedBox(height: 40),*/
+                    ],
+                  ),
+                ),
           ),
         ),
       ),
@@ -119,16 +129,16 @@ class _BottomSheetContent extends StatelessWidget {
   }
 
   Widget _buildPlanCard(
-      BuildContext context, {
-        required String title,
-        required String price,
-        required List<Color> gradientColors,
-        required Color textColor,
-        required Color buttonColor,
-        required String buttonText,
-        required List<String> features,
-        bool isRecommended = false,
-      }) {
+    BuildContext context, {
+    required String title,
+    required String price,
+    required List<Color> gradientColors,
+    required Color textColor,
+    required Color buttonColor,
+    required String buttonText,
+    required List<String> features,
+    bool isRecommended = false,
+  }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
       duration: const Duration(milliseconds: 500),
@@ -168,7 +178,10 @@ class _BottomSheetContent extends StatelessWidget {
                   Align(
                     alignment: Alignment.topRight,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.amber.shade600,
                         borderRadius: BorderRadius.circular(16),
@@ -184,9 +197,15 @@ class _BottomSheetContent extends StatelessWidget {
                     ),
                   ),
                 const SizedBox(height: 12),
-                Text(title.toUpperCase(), style: RobotoTextStyle.titleStyle(textColor)),
+                Text(
+                  title.toUpperCase(),
+                  style: RobotoTextStyle.titleStyle(textColor),
+                ),
                 const SizedBox(height: 10),
-                Text(price, style: RobotoTextStyle.subtitleStyle(Colors.grey.shade300)),
+                Text(
+                  price,
+                  style: RobotoTextStyle.subtitleStyle(Colors.grey.shade300),
+                ),
                 const SizedBox(height: 20),
                 ..._buildFeatureList(features),
                 const SizedBox(height: 24),
@@ -194,7 +213,10 @@ class _BottomSheetContent extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: buttonColor,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 14,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(32),
                       ),
@@ -206,7 +228,10 @@ class _BottomSheetContent extends StatelessWidget {
                         SnackBar(content: Text("Seleccionaste: $title")),
                       );
                     },
-                    child: Text(buttonText, style: RobotoTextStyle.smallTextStyle(Colors.white)),
+                    child: Text(
+                      buttonText,
+                      style: RobotoTextStyle.smallTextStyle(Colors.white),
+                    ),
                   ),
                 ),
               ],
@@ -219,10 +244,12 @@ class _BottomSheetContent extends StatelessWidget {
 
   List<Widget> _buildFeatureList(List<String> features) {
     return features
-        .map((feature) => Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: _feature(feature),
-    ))
+        .map(
+          (feature) => Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: _feature(feature),
+          ),
+        )
         .toList();
   }
 
