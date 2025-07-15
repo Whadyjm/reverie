@@ -1125,26 +1125,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.deepPurple,
-                                    boxShadow:
-                                        btnProvider.isButtonEnabled
-                                            ? [
-                                              BoxShadow(
-                                                color: Colors.white.withOpacity(
-                                                  0.5,
-                                                ),
-                                                blurRadius: 10,
-                                                offset: Offset(0, 0),
-                                              ),
-                                            ]
-                                            : [
-                                              BoxShadow(
-                                                color: Colors.amber.withOpacity(
-                                                  0.5,
-                                                ),
-                                                blurRadius: 10,
-                                                offset: Offset(0, 0),
-                                              ),
-                                            ],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white.withOpacity(0.5),
+                                        blurRadius: 10,
+                                        offset: Offset(0, 0),
+                                      ),
+                                    ],
                                   ),
                                   child: Center(
                                     child: Text(

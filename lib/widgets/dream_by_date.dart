@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import 'dream_card.dart' as dream_card;
@@ -19,6 +20,17 @@ class DreamByDate extends StatefulWidget {
 class _DreamByDateState extends State<DreamByDate> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   bool isLongPress = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(seconds: 5), () {
+      if (mounted && _isLoading) {
+        setState(() => _isLoading = false);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,99 +62,74 @@ class _DreamByDateState extends State<DreamByDate> {
                 )
                 .snapshots(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            _isLoading = true;
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
+            _isLoading = false;
+          }
+
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
+
           final dreams = snapshot.data?.docs ?? [];
           int dreamCount = dreams.length;
 
-          return dreams.isEmpty
+          return dreams.isEmpty && !_isLoading
               ? DreamListEmpty(btnProvider: btnProvider)
-              : ListView.builder(
-                itemCount: dreamCount, // Use the variable here
-                itemBuilder: (context, index) {
-                  final dream = dreams[index];
-                  return GestureDetector(
-                    onLongPress: () async {
-                      /*bool confirmDelete = await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text(
-                              'Confirmar Eliminación',
-                              style: RobotoTextStyle.titleStyle(Colors.black87),
-                            ),
-                            content: Text(
-                              '¿Estás seguro de que deseas eliminar este sueño?',
-                              style: RobotoTextStyle.subtitleStyle(
-                                Colors.grey.shade600,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(false),
-                                child: Text(
-                                  'Cancelar',
-                                  style: RobotoTextStyle.smallTextStyle(
-                                    Colors.purple.shade300,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(true),
-                                child: Text(
-                                  'Eliminar',
-                                  style: RobotoTextStyle.smallTextStyle(
-                                    Colors.red.shade400,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+              : Skeletonizer(
+                containersColor:
+                    btnProvider.isButtonEnabled
+                        ? Colors.purple.shade800.withAlpha(40)
+                        : Colors.purple.shade100.withAlpha(70),
+                enabled: _isLoading,
+                ignoreContainers: false,
+                child: ListView.builder(
+                  itemCount: dreamCount,
+                  itemBuilder: (context, index) {
+                    final dream = dreams[index];
+                    if (_isLoading) {
+                      return dream_card.DreamCard(
+                        btnProvider: btnProvider,
+                        dream: dream,
+                        isLongPress: false,
                       );
+                    }
 
-                      if (confirmDelete == true) {
-                        await firestore
-                            .collection('users')
-                            .doc(auth.currentUser?.uid)
-                            .collection('dreams')
-                            .doc(dream['dreamId'])
-                            .delete();
-                        print('Dream deleted');
-                      }*/
-                      setState(() {
-                        isLongPress = !isLongPress;
-                      });
-                      await Future.delayed(Duration(seconds: 20));
-                      setState(() {
-                        isLongPress = false;
-                      });
-                    },
-                    onTap: () {
-                      setState(() {
-                        isLongPress = false;
-                      });
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return DreamBottomSheet(
-                            btnProvider: btnProvider,
-                            dream: dream,
-                            suscription: widget.suscription,
-                          );
-                        },
-                      );
-                    },
-                    child: dream_card.DreamCard(
-                      btnProvider: btnProvider,
-                      dream: dream,
-                      isLongPress: isLongPress,
-                    ),
-                  );
-                },
+                    return GestureDetector(
+                      onLongPress: () async {
+                        setState(() {
+                          isLongPress = !isLongPress;
+                        });
+                        await Future.delayed(Duration(seconds: 20));
+                        setState(() {
+                          isLongPress = false;
+                        });
+                      },
+                      onTap: () {
+                        setState(() {
+                          isLongPress = false;
+                        });
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DreamBottomSheet(
+                              btnProvider: btnProvider,
+                              dream: dream,
+                              suscription: widget.suscription,
+                            );
+                          },
+                        );
+                      },
+                      child: dream_card.DreamCard(
+                        btnProvider: btnProvider,
+                        dream: dream,
+                        isLongPress: isLongPress,
+                      ),
+                    );
+                  },
+                ),
               );
         },
       ),
