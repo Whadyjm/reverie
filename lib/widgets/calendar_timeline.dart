@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:pillow/provider/calendar_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 
@@ -40,9 +42,9 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
         .snapshots()
         .map((snapshot) => snapshot.docs.length)
         .handleError((e) {
-      print('Error getting dream count: $e');
-      return 0;
-    });
+          print('Error getting dream count: $e');
+          return 0;
+        });
   }
 
   Stream<int> fetchDreamCountByDate(DateTime date) {
@@ -51,22 +53,28 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
         .doc(auth.currentUser?.uid)
         .collection('dreams')
         .where(
-      'timestamp',
-      isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
-    )
+          'timestamp',
+          isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
+        )
         .where(
-      'timestamp',
-      isLessThan: DateTime(date.year, date.month, date.day + 1),
-    )
+          'timestamp',
+          isLessThan: DateTime(date.year, date.month, date.day + 1),
+        )
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs.length);
   }
 
-  Future<void> _showCustomCalendar(BuildContext context, DateTime initialDate) async {
+  Future<void> _showCustomCalendar(
+    BuildContext context,
+    DateTime initialDate,
+  ) async {
     DateTime selectedDate = initialDate;
     bool isYearPicker = false;
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
-    final calendarProvider = Provider.of<CalendarProvider>(context, listen: false);
+    final calendarProvider = Provider.of<CalendarProvider>(
+      context,
+      listen: false,
+    );
 
     final DateTime? pickedDate = await showDialog<DateTime>(
       context: context,
@@ -80,9 +88,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
                   width: 300,
-                  color: btnProvider.isButtonEnabled
-                      ? Colors.grey.shade900
-                      : Colors.white,
+                  color:
+                      btnProvider.isButtonEnabled
+                          ? Colors.grey.shade900
+                          : Colors.white,
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -95,9 +104,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                             IconButton(
                               icon: Icon(
                                 Icons.chevron_left,
-                                color: btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade800,
+                                color:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white
+                                        : Colors.grey.shade800,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -110,22 +120,28 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                               },
                             ),
                             InkWell(
-                              child: Text(DateFormat('MMMM y', 'es_ES').format(selectedDate),
+                              child: Text(
+                                DateFormat(
+                                  'MMMM y',
+                                  'es_ES',
+                                ).format(selectedDate),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: btnProvider.isButtonEnabled
-                                      ? Colors.white
-                                      : Colors.grey.shade800,
+                                  color:
+                                      btnProvider.isButtonEnabled
+                                          ? Colors.white
+                                          : Colors.grey.shade800,
                                 ),
                               ),
                             ),
                             IconButton(
                               icon: Icon(
                                 Icons.chevron_right,
-                                color: btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade800,
+                                color:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white
+                                        : Colors.grey.shade800,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -144,7 +160,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                         _buildYearGrid(selectedDate, setState, context)
                       else
                         _buildMonthGrid(selectedDate, (newDate) {
-                          Navigator.pop(context, DateTime(newDate.year, newDate.month, 1));
+                          Navigator.pop(
+                            context,
+                            DateTime(newDate.year, newDate.month, 1),
+                          );
                         }, context),
                     ],
                   ),
@@ -166,10 +185,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   }
 
   Widget _buildMonthGrid(
-      DateTime selectedDate,
-      Function(DateTime) onMonthSelected,
-      BuildContext context,
-      ) {
+    DateTime selectedDate,
+    Function(DateTime) onMonthSelected,
+    BuildContext context,
+  ) {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     final now = DateTime.now();
     final currentYear = now.year;
@@ -182,7 +201,8 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       children: List.generate(12, (index) {
         final monthDate = DateTime(selectedDate.year, index + 1, 1);
         final isSelected = selectedDate.month == index + 1;
-        final isFutureMonth = selectedDate.year > currentYear ||
+        final isFutureMonth =
+            selectedDate.year > currentYear ||
             (selectedDate.year == currentYear && (index + 1) > currentMonth);
 
         return Padding(
@@ -192,18 +212,20 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
             onTap: isFutureMonth ? null : () => onMonthSelected(monthDate),
             child: Container(
               decoration: BoxDecoration(
-                color: isSelected
-                    ? (btnProvider.isButtonEnabled
-                    ? Colors.purple.shade400
-                    : Colors.purple.shade300)
-                    : Colors.transparent,
+                color:
+                    isSelected
+                        ? (btnProvider.isButtonEnabled
+                            ? Colors.purple.shade400
+                            : Colors.purple.shade300)
+                        : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : (btnProvider.isButtonEnabled
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.grey.withOpacity(0.2)),
+                  color:
+                      isSelected
+                          ? Colors.transparent
+                          : (btnProvider.isButtonEnabled
+                              ? Colors.white.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.2)),
                 ),
               ),
               alignment: Alignment.center,
@@ -212,16 +234,18 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 child: Text(
                   DateFormat('MMM', 'es_ES').format(monthDate),
                   style: TextStyle(
-                    color: isSelected
-                        ? (btnProvider.isButtonEnabled
-                        ? Colors.black
-                        : Colors.white)
-                        : (isFutureMonth
-                        ? Colors.grey
-                        : (btnProvider.isButtonEnabled
-                        ? Colors.white
-                        : Colors.grey.shade800)),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color:
+                        isSelected
+                            ? (btnProvider.isButtonEnabled
+                                ? Colors.black
+                                : Colors.white)
+                            : (isFutureMonth
+                                ? Colors.grey
+                                : (btnProvider.isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.grey.shade800)),
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -232,7 +256,11 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
     );
   }
 
-  Widget _buildYearGrid(DateTime selectedDate, StateSetter setState, BuildContext context) {
+  Widget _buildYearGrid(
+    DateTime selectedDate,
+    StateSetter setState,
+    BuildContext context,
+  ) {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     final currentYear = selectedDate.year;
     final yearRange = List.generate(12, (index) => currentYear - 5 + index);
@@ -241,52 +269,57 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 3,
-      children: yearRange.map((year) {
-        final isSelected = selectedDate.year == year;
+      children:
+          yearRange.map((year) {
+            final isSelected = selectedDate.year == year;
 
-        return Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8),
-            onTap: () {
-              setState(() {
-                selectedDate = DateTime(year, selectedDate.month, 1);
-              });
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? (btnProvider.isButtonEnabled
-                    ? Colors.purple.shade400
-                    : Colors.purple.shade300)
-                    : Colors.transparent,
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: InkWell(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : (btnProvider.isButtonEnabled
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.grey.withOpacity(0.2)),
+                onTap: () {
+                  setState(() {
+                    selectedDate = DateTime(year, selectedDate.month, 1);
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color:
+                        isSelected
+                            ? (btnProvider.isButtonEnabled
+                                ? Colors.purple.shade400
+                                : Colors.purple.shade300)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color:
+                          isSelected
+                              ? Colors.transparent
+                              : (btnProvider.isButtonEnabled
+                                  ? Colors.white.withOpacity(0.2)
+                                  : Colors.grey.withOpacity(0.2)),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    year.toString(),
+                    style: TextStyle(
+                      color:
+                          isSelected
+                              ? (btnProvider.isButtonEnabled
+                                  ? Colors.black
+                                  : Colors.white)
+                              : (btnProvider.isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.grey.shade800),
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
                 ),
               ),
-              alignment: Alignment.center,
-              child: Text(
-                year.toString(),
-                style: TextStyle(
-                  color: isSelected
-                      ? (btnProvider.isButtonEnabled
-                      ? Colors.black
-                      : Colors.white)
-                      : (btnProvider.isButtonEnabled
-                      ? Colors.white
-                      : Colors.grey.shade800),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
+            );
+          }).toList(),
     );
   }
 
@@ -316,16 +349,21 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
               onTap: () => _showCustomCalendar(context, date),
               borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
-                  color: btnProvider.isButtonEnabled
-                      ? Colors.white.withOpacity(0.1)
-                      : Colors.grey.withOpacity(0.1),
+                  color:
+                      btnProvider.isButtonEnabled
+                          ? Colors.white.withOpacity(0.1)
+                          : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: btnProvider.isButtonEnabled
-                        ? Colors.white.withOpacity(0.3)
-                        : Colors.grey.withOpacity(0.3),
+                    color:
+                        btnProvider.isButtonEnabled
+                            ? Colors.white.withOpacity(0.3)
+                            : Colors.grey.withOpacity(0.3),
                     width: 0.5,
                   ),
                 ),
@@ -335,9 +373,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     Icon(
                       Icons.calendar_today_rounded,
                       size: 16,
-                      color: btnProvider.isButtonEnabled
-                          ? Colors.white
-                          : Colors.grey.shade700,
+                      color:
+                          btnProvider.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey.shade700,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -345,23 +384,42 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: btnProvider.isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade800,
+                        color:
+                            btnProvider.isButtonEnabled
+                                ? Colors.white
+                                : Colors.grey.shade800,
                       ),
                     ),
                     const SizedBox(width: 4),
                     Icon(
                       Icons.keyboard_arrow_down_rounded,
                       size: 16,
-                      color: btnProvider.isButtonEnabled
-                          ? Colors.white
-                          : Colors.grey.shade700,
+                      color:
+                          btnProvider.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey.shade700,
                     ),
                     const Spacer(),
                     StreamBuilder<int>(
                       stream: getDreamCountByMonth(_currentDisplayedMonth),
                       builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return FadeIn(
+                            duration: Duration(milliseconds: 1000),
+                            child: Skeletonizer(
+                              enabled: true,
+                              child: Container(
+                                width: 15,
+                                height: 15,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[300]?.withAlpha(50),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                         final dreamCount = snapshot.data ?? 0;
                         return Text(
                           dreamCount > 0
@@ -384,9 +442,14 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       ),
       firstDate: DateTime(2025, 1, 1),
       lastDate: DateTime.now(),
-      focusedDate: _isMonthSelection
-          ? DateTime(_currentDisplayedMonth.year, _currentDisplayedMonth.month, 1)
-          : selectedDate,
+      focusedDate:
+          _isMonthSelection
+              ? DateTime(
+                _currentDisplayedMonth.year,
+                _currentDisplayedMonth.month,
+                1,
+              )
+              : selectedDate,
       itemExtent: 100,
       itemBuilder: (context, date, isSelected, isDisabled, isToday, onTap) {
         return Padding(
@@ -402,9 +465,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: btnProvider.isButtonEnabled
-                        ? Colors.black.withOpacity(0.3)
-                        : Colors.grey.shade300,
+                    color:
+                        btnProvider.isButtonEnabled
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.grey.shade300,
                     blurRadius: 5,
                     offset: Offset(0, 2),
                   ),
@@ -415,23 +479,24 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     spreadRadius: 1,
                   ),
                 ],
-                gradient: isSelected
-                    ? LinearGradient(
-                  colors: [
-                    Colors.grey.shade200.withOpacity(0.8),
-                    Colors.purple.shade200.withOpacity(0.8),
-                    Colors.purple.shade200.withOpacity(0.8),
-                    Colors.indigo.shade300.withOpacity(0.8),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-                    : LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.3),
-                    Colors.white.withOpacity(0.1),
-                  ],
-                ),
+                gradient:
+                    isSelected
+                        ? LinearGradient(
+                          colors: [
+                            Colors.grey.shade200.withOpacity(0.8),
+                            Colors.purple.shade200.withOpacity(0.8),
+                            Colors.purple.shade200.withOpacity(0.8),
+                            Colors.indigo.shade300.withOpacity(0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                        : LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.3),
+                            Colors.white.withOpacity(0.1),
+                          ],
+                        ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -442,9 +507,8 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       child: Text(
                         DateFormat('EEEE', 'es_ES').format(date),
                         style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : Colors.grey.shade700,
+                          color:
+                              isSelected ? Colors.white : Colors.grey.shade700,
                           fontFamily: 'roboto',
                           fontWeight: FontWeight.w800,
                           fontSize: 13,
@@ -472,46 +536,73 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                             color: Colors.red.shade500,
                           ),
                         );
-                      } else {
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.waiting) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
-                            snapshot.data ?? 0,
-                                (index) => Padding(
+                            1,
+                            (index) => Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 2.0,
                               ),
-                              child: Container(
-                                width: 15,
-                                height: 15,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.purple.shade300,
-                                      Colors.indigo,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
+                              child: FadeIn(
+                                duration: Duration(milliseconds: 1000),
+                                child: Skeletonizer(
+                                  enabled: true,
+                                  child: Container(
+                                    width: 15,
+                                    height: 15,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey[300]?.withAlpha(50),
+                                    ),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.purple.shade100,
-                                      offset: Offset(-2, -2),
-                                      blurRadius: 5,
-                                    ),
-                                    BoxShadow(
-                                      color: Colors.indigo.shade400,
-                                      offset: Offset(2, 2),
-                                      blurRadius: 5,
-                                    ),
-                                  ],
                                 ),
                               ),
                             ),
                           ),
                         );
                       }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          snapshot.data ?? 0,
+                          (index) => Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2.0,
+                            ),
+                            child: Container(
+                              width: 15,
+                              height: 15,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.purple.shade300,
+                                    Colors.indigo,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.purple.shade100,
+                                    offset: Offset(-2, -2),
+                                    blurRadius: 5,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.indigo.shade400,
+                                    offset: Offset(2, 2),
+                                    blurRadius: 5,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -525,7 +616,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
           _currentDisplayedMonth = date;
           _isMonthSelection = false;
         });
-        Provider.of<CalendarProvider>(context, listen: false).setSelectedDate(date);
+        Provider.of<CalendarProvider>(
+          context,
+          listen: false,
+        ).setSelectedDate(date);
       },
     );
   }

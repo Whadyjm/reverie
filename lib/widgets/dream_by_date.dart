@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -78,57 +79,60 @@ class _DreamByDateState extends State<DreamByDate> {
 
           return dreams.isEmpty && !_isLoading
               ? DreamListEmpty(btnProvider: btnProvider)
-              : Skeletonizer(
-                containersColor:
-                    btnProvider.isButtonEnabled
-                        ? Colors.purple.shade800.withAlpha(40)
-                        : Colors.purple.shade100.withAlpha(70),
-                enabled: _isLoading,
-                ignoreContainers: false,
-                child: ListView.builder(
-                  itemCount: dreamCount,
-                  itemBuilder: (context, index) {
-                    final dream = dreams[index];
-                    if (_isLoading) {
-                      return dream_card.DreamCard(
-                        btnProvider: btnProvider,
-                        dream: dream,
-                        isLongPress: false,
-                      );
-                    }
-
-                    return GestureDetector(
-                      onLongPress: () async {
-                        setState(() {
-                          isLongPress = !isLongPress;
-                        });
-                        await Future.delayed(Duration(seconds: 20));
-                        setState(() {
-                          isLongPress = false;
-                        });
-                      },
-                      onTap: () {
-                        setState(() {
-                          isLongPress = false;
-                        });
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return DreamBottomSheet(
-                              btnProvider: btnProvider,
-                              dream: dream,
-                              suscription: widget.suscription,
-                            );
-                          },
+              : FadeIn(
+                duration: Duration(milliseconds: 800),
+                child: Skeletonizer(
+                  containersColor:
+                      btnProvider.isButtonEnabled
+                          ? Colors.purple.shade800.withAlpha(40)
+                          : Colors.purple.shade100.withAlpha(70),
+                  enabled: _isLoading,
+                  ignoreContainers: false,
+                  child: ListView.builder(
+                    itemCount: dreamCount,
+                    itemBuilder: (context, index) {
+                      final dream = dreams[index];
+                      if (_isLoading) {
+                        return dream_card.DreamCard(
+                          btnProvider: btnProvider,
+                          dream: dream,
+                          isLongPress: false,
                         );
-                      },
-                      child: dream_card.DreamCard(
-                        btnProvider: btnProvider,
-                        dream: dream,
-                        isLongPress: isLongPress,
-                      ),
-                    );
-                  },
+                      }
+
+                      return GestureDetector(
+                        onLongPress: () async {
+                          setState(() {
+                            isLongPress = !isLongPress;
+                          });
+                          await Future.delayed(Duration(seconds: 20));
+                          setState(() {
+                            isLongPress = false;
+                          });
+                        },
+                        onTap: () {
+                          setState(() {
+                            isLongPress = false;
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DreamBottomSheet(
+                                btnProvider: btnProvider,
+                                dream: dream,
+                                suscription: widget.suscription,
+                              );
+                            },
+                          );
+                        },
+                        child: dream_card.DreamCard(
+                          btnProvider: btnProvider,
+                          dream: dream,
+                          isLongPress: isLongPress,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               );
         },
