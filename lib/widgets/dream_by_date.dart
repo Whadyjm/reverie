@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pillow/style/text_style.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
@@ -78,7 +79,20 @@ class _DreamByDateState extends State<DreamByDate> {
           int dreamCount = dreams.length;
 
           return dreams.isEmpty && !_isLoading
-              ? DreamListEmpty(btnProvider: btnProvider)
+              ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '¿Que soñaste hoy?',
+                    style: AppTextStyle.titleStyle(
+                      btnProvider.isButtonEnabled
+                          ? Colors.white.withAlpha(200)
+                          : Colors.grey.shade700,
+                    ),
+                  ),
+                  Image.asset('assets/notebook.png', width: 300, height: 300),
+                ],
+              )
               : FadeIn(
                 duration: Duration(milliseconds: 800),
                 child: Skeletonizer(

@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppTextStyle {
-
   static TextStyle titleStyle(Color textColor) => TextStyle(
     fontFamily: 'instrumental',
     color: textColor,
@@ -34,7 +33,6 @@ class AppTextStyle {
 }
 
 class RobotoTextStyle {
-
   static TextStyle titleStyle(Color textColor) => TextStyle(
     fontFamily: 'roboto',
     color: textColor,
