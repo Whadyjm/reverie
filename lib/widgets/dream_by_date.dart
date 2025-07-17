@@ -22,17 +22,6 @@ class DreamByDate extends StatefulWidget {
 class _DreamByDateState extends State<DreamByDate> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   bool isLongPress = false;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration(seconds: 5), () {
-      if (mounted && _isLoading) {
-        setState(() => _isLoading = false);
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +53,6 @@ class _DreamByDateState extends State<DreamByDate> {
                 )
                 .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            _isLoading = true;
-          } else if (snapshot.connectionState == ConnectionState.active ||
-              snapshot.connectionState == ConnectionState.done) {
-            _isLoading = false;
-          }
-
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
@@ -78,7 +60,7 @@ class _DreamByDateState extends State<DreamByDate> {
           final dreams = snapshot.data?.docs ?? [];
           int dreamCount = dreams.length;
 
-          return dreams.isEmpty && !_isLoading
+          return dreams.isEmpty
               ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -95,58 +77,43 @@ class _DreamByDateState extends State<DreamByDate> {
               )
               : FadeIn(
                 duration: Duration(milliseconds: 800),
-                child: Skeletonizer(
-                  containersColor:
-                      btnProvider.isButtonEnabled
-                          ? Colors.purple.shade800.withAlpha(40)
-                          : Colors.purple.shade100.withAlpha(70),
-                  enabled: _isLoading,
-                  ignoreContainers: false,
-                  child: ListView.builder(
-                    itemCount: dreamCount,
-                    itemBuilder: (context, index) {
-                      final dream = dreams[index];
-                      if (_isLoading) {
-                        return dream_card.DreamCard(
-                          btnProvider: btnProvider,
-                          dream: dream,
-                          isLongPress: false,
-                        );
-                      }
+                child: ListView.builder(
+                  itemCount: dreamCount,
+                  itemBuilder: (context, index) {
+                    final dream = dreams[index];
 
-                      return GestureDetector(
-                        onLongPress: () async {
-                          setState(() {
-                            isLongPress = !isLongPress;
-                          });
-                          await Future.delayed(Duration(seconds: 20));
-                          setState(() {
-                            isLongPress = false;
-                          });
-                        },
-                        onTap: () {
-                          setState(() {
-                            isLongPress = false;
-                          });
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DreamBottomSheet(
-                                btnProvider: btnProvider,
-                                dream: dream,
-                                suscription: widget.suscription,
-                              );
-                            },
-                          );
-                        },
-                        child: dream_card.DreamCard(
-                          btnProvider: btnProvider,
-                          dream: dream,
-                          isLongPress: isLongPress,
-                        ),
-                      );
-                    },
-                  ),
+                    return GestureDetector(
+                      onLongPress: () async {
+                        setState(() {
+                          isLongPress = !isLongPress;
+                        });
+                        await Future.delayed(Duration(seconds: 20));
+                        setState(() {
+                          isLongPress = false;
+                        });
+                      },
+                      onTap: () {
+                        setState(() {
+                          isLongPress = false;
+                        });
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return DreamBottomSheet(
+                              btnProvider: btnProvider,
+                              dream: dream,
+                              suscription: widget.suscription,
+                            );
+                          },
+                        );
+                      },
+                      child: dream_card.DreamCard(
+                        btnProvider: btnProvider,
+                        dream: dream,
+                        isLongPress: isLongPress,
+                      ),
+                    );
+                  },
                 ),
               );
         },

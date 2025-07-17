@@ -24,32 +24,6 @@ class _DreamCountDotState extends State<DreamCountDot> {
             style: TextStyle(fontSize: 12, color: Colors.red.shade500),
           );
         }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              1,
-              (index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                child: FadeIn(
-                  duration: Duration(milliseconds: 1000),
-                  child: Skeletonizer(
-                    enabled: true,
-                    child: Container(
-                      width: 15,
-                      height: 15,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[300]?.withAlpha(50),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(

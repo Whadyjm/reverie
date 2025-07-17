@@ -404,23 +404,6 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     StreamBuilder<int>(
                       stream: getDreamCountByMonth(_currentDisplayedMonth),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return FadeIn(
-                            duration: Duration(milliseconds: 1000),
-                            child: Skeletonizer(
-                              enabled: true,
-                              child: Container(
-                                width: 15,
-                                height: 15,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey[300]?.withAlpha(50),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
                         final dreamCount = snapshot.data ?? 0;
                         return Text(
                           dreamCount > 0
