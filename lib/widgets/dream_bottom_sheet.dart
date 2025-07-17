@@ -4,10 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:pillow/style/text_style.dart';
-import 'package:pillow/widgets/custom_button.dart';
-import 'package:pillow/widgets/dialogs/pricing_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:reverie/style/text_style.dart';
+import 'package:reverie/widgets/dialogs/pricing_dialog.dart';
 
 import '../provider/button_provider.dart';
 

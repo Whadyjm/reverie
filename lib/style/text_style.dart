@@ -3,6 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppTextStyle {
+  static TextStyle biggerTitleStyle(Color textColor) => TextStyle(
+    fontFamily: 'instrumental',
+    color: textColor,
+    fontSize: 80,
+    fontWeight: FontWeight.w800,
+  );
+
   static TextStyle titleStyle(Color textColor) => TextStyle(
     fontFamily: 'instrumental',
     color: textColor,

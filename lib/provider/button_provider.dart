@@ -14,10 +14,12 @@ class ButtonProvider with ChangeNotifier {
     _isPinActive = !_isPinActive;
     notifyListeners();
   }
+
   void enablePin() {
     _isPinActive = true;
     notifyListeners();
   }
+
   void disablePin() {
     _isPinActive = false;
     notifyListeners();
@@ -43,14 +45,17 @@ class ButtonProvider with ChangeNotifier {
     _isButtonEnabled = false;
     notifyListeners();
   }
+
   void toggleTextBlur() {
     _isTextBlurred = !_isTextBlurred;
     notifyListeners();
   }
+
   void enableTextBlur() {
     _isTextBlurred = true;
     notifyListeners();
   }
+
   void disableTextBlur() {
     _isTextBlurred = false;
     notifyListeners();

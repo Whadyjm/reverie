@@ -3,16 +3,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:pillow/provider/button_provider.dart';
-import 'package:pillow/provider/calendar_provider.dart';
-import 'package:pillow/provider/dream_provider.dart';
-import 'package:pillow/screens/login_screen.dart';
-import 'package:pillow/screens/onboarding_screen.dart';
-import 'package:pillow/screens/secret_pin.dart';
-import 'package:pillow/screens/home_screen.dart';
-import 'package:pillow/services/noti_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reverie/provider/button_provider.dart';
+import 'package:reverie/provider/calendar_provider.dart';
+import 'package:reverie/provider/dream_provider.dart';
+import 'package:reverie/screens/home_screen.dart';
+import 'package:reverie/screens/login_screen.dart';
+import 'package:reverie/screens/onboarding_screen.dart';
+import 'package:reverie/screens/secret_pin.dart';
+import 'package:reverie/services/noti_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
@@ -52,10 +52,11 @@ void main() async {
     initialScreen = LoginScreen();
   } else if (isPinActive) {
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser.uid)
+              .get();
 
       final userPin = userDoc.data()?['pin']?.toString() ?? '';
       final pinCreated = userDoc.data()?['pinCreated'] as bool? ?? false;
@@ -78,14 +79,14 @@ void main() async {
   runApp(MyApp(initialScreen: initialScreen));
 }
 
-
 Future<void> _requestNotificationPermissions() async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin
+      >()
       ?.requestNotificationsPermission();
 }
 

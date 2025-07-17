@@ -5,15 +5,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:pillow/widgets/analysis_style_tag.dart';
 import 'package:provider/provider.dart';
+import 'package:reverie/widgets/analysis_style_tag.dart';
 
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 import 'like_button.dart';
 
 class DreamCard extends StatefulWidget {
-  DreamCard({super.key, required this.btnProvider, required this.dream, required this.isLongPress});
+  DreamCard({
+    super.key,
+    required this.btnProvider,
+    required this.dream,
+    required this.isLongPress,
+  });
 
   bool isLongPress;
   final ButtonProvider btnProvider;
@@ -26,7 +31,6 @@ class DreamCard extends StatefulWidget {
 class _DreamCardState extends State<DreamCard> {
   @override
   Widget build(BuildContext context) {
-
     final analysisStyle = widget.dream['analysisStyle'];
     final btnProvider = Provider.of<ButtonProvider>(context);
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -64,7 +68,7 @@ class _DreamCardState extends State<DreamCard> {
                       Flexible(
                         child: Blur(
                           colorOpacity: 0,
-                          blur: btnProvider.isTextBlurred ? 2.5:0,
+                          blur: btnProvider.isTextBlurred ? 2.5 : 0,
                           child: Text(
                             widget.dream['title'],
                             style: AppTextStyle.subtitleStyle(
@@ -80,7 +84,7 @@ class _DreamCardState extends State<DreamCard> {
                     padding: const EdgeInsets.only(top: 3),
                     child: Blur(
                       colorOpacity: 0,
-                      blur: btnProvider.isTextBlurred ? 2.5:0,
+                      blur: btnProvider.isTextBlurred ? 2.5 : 0,
                       child: Text(
                         widget.dream['text'],
                         maxLines: 3,
@@ -120,30 +124,34 @@ class _DreamCardState extends State<DreamCard> {
                   print('Dream deleted');
                 },
                 child: Positioned(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.shade400,
-                                  blurRadius: 4,
-                                  offset: Offset(2, 1),
-                                ),
-                              ],
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Icon(Icons.remove_rounded, color: Colors.redAccent,),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade400,
+                                blurRadius: 4,
+                                offset: Offset(2, 1),
+                              ),
+                            ],
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
                           ),
-                        ],
-                      ),
-                    )),
+                          child: Icon(
+                            Icons.remove_rounded,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             Positioned(
@@ -152,15 +160,18 @@ class _DreamCardState extends State<DreamCard> {
               bottom: -80,
               child: Row(
                 children: [
-                  AnalysisStyleTag(analysisStyle: analysisStyle,),
+                  AnalysisStyleTag(analysisStyle: analysisStyle),
                   const SizedBox(width: 20),
-                  LikeButton(isLiked: widget.dream['isLiked'], dreamId: widget.dream['dreamId'],),
+                  LikeButton(
+                    isLiked: widget.dream['isLiked'],
+                    dreamId: widget.dream['dreamId'],
+                  ),
                   const SizedBox(width: 20),
                   Chip(
                     label: Blur(
                       borderRadius: BorderRadius.circular(12),
                       colorOpacity: 0.01,
-                      blur: btnProvider.isTextBlurred ? 2.5:0,
+                      blur: btnProvider.isTextBlurred ? 2.5 : 0,
                       child: Text(
                         widget.dream['classification'],
                         style: RobotoTextStyle.smallTextStyle(Colors.white),

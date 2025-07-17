@@ -3,15 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:pillow/style/text_style.dart';
-import 'package:pillow/widgets/custom_button.dart';
+import 'package:reverie/style/text_style.dart';
+import 'package:reverie/widgets/custom_button.dart';
 
 import '../style/gradients.dart';
 import '../widgets/custom_textfield.dart';
 import 'home_screen.dart';
 
 class SecretPin extends StatefulWidget {
-  SecretPin({super.key, required this.userUid, this.userHasPin, this.userPin, this.pinCreated});
+  SecretPin({
+    super.key,
+    required this.userUid,
+    this.userHasPin,
+    this.userPin,
+    this.pinCreated,
+  });
 
   String userUid;
   bool? userHasPin;
@@ -64,19 +70,18 @@ class _SecretPinState extends State<SecretPin> {
 
     _pin = _controllers.map((c) => c.text).join();
 
-    if (_pin.length == 4 && widget.pinCreated == false){
-
+    if (_pin.length == 4 && widget.pinCreated == false) {
       try {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(widget.userUid)
-            .update({'pin': _pin, 'pinCreatedAt': Timestamp.now(),});
-      }catch(e){}
-      finally{
+            .update({'pin': _pin, 'pinCreatedAt': Timestamp.now()});
+      } catch (e) {
+      } finally {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MyHomePage()),
-              (route) => false,
+          (route) => false,
         );
       }
     }
@@ -95,12 +100,15 @@ class _SecretPinState extends State<SecretPin> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MyHomePage()),
-              (route) => false,
+          (route) => false,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('El pin ingresado es incorrecto.', style: TextStyle(color: Colors.white)),
+            content: Text(
+              'El pin ingresado es incorrecto.',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: Colors.grey.shade900,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -114,13 +122,13 @@ class _SecretPinState extends State<SecretPin> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => MyHomePage()),
-            (route) => false,
+        (route) => false,
       );
 
       await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userUid)
-          .update({'pin': _pin, 'pinCreatedAt': Timestamp.now(),});
+          .update({'pin': _pin, 'pinCreatedAt': Timestamp.now()});
     }
   }
 
@@ -186,18 +194,21 @@ class _SecretPinState extends State<SecretPin> {
                 ),
               ),
               Visibility(
-                visible: widget.userHasPin == true ? true:false,
+                visible: widget.userHasPin == true ? true : false,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 100),
-                  child: CustomButton(text: 'Recuperar pin', onPressed: (){
-                    _pin = '';
-                    recoverPinDialog(context);
-                  },),
+                  child: CustomButton(
+                    text: 'Recuperar pin',
+                    onPressed: () {
+                      _pin = '';
+                      recoverPinDialog(context);
+                    },
+                  ),
                 ),
               ),
-              const SizedBox(height: 50,),
+              const SizedBox(height: 50),
               Icon(Iconsax.lock_1, color: Colors.white70, size: 40),
-              const SizedBox(height: 10,),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -250,7 +261,7 @@ class _SecretPinState extends State<SecretPin> {
                 controller: emailController,
               ),
               const SizedBox(height: 20),
-               CustomButton(
+              CustomButton(
                 text: 'Siguiente',
                 onPressed: () async {
                   final user = FirebaseAuth.instance.currentUser;
@@ -262,24 +273,23 @@ class _SecretPinState extends State<SecretPin> {
                       widget.pinCreated = false;
                       _pin = '';
                     });
-
                   } else {
                     showDialog(
                       context: context,
                       builder:
                           (context) => AlertDialog(
-                        title: Text(
-                          'Email no coincide.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
+                            title: Text(
+                              'Email no coincide.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
+                            backgroundColor: Colors.grey.shade900,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                        ),
-                        backgroundColor: Colors.grey.shade900,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                     );
                   }
                 },

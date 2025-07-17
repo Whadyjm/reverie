@@ -4,9 +4,10 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pillow/provider/calendar_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:reverie/provider/calendar_provider.dart';
+import 'package:reverie/widgets/dream_count_dot.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
@@ -356,14 +357,14 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 decoration: BoxDecoration(
                   color:
                       btnProvider.isButtonEnabled
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
+                          ? Colors.white.withAlpha(10)
+                          : Colors.grey.withAlpha(10),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color:
                         btnProvider.isButtonEnabled
-                            ? Colors.white.withOpacity(0.3)
-                            : Colors.grey.withOpacity(0.3),
+                            ? Colors.white.withAlpha(30)
+                            : Colors.grey.withAlpha(30),
                     width: 0.5,
                   ),
                 ),
@@ -459,21 +460,18 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
-                  width: 1,
-                ),
+                border: Border.all(color: Colors.white.withAlpha(20), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color:
                         btnProvider.isButtonEnabled
-                            ? Colors.black.withOpacity(0.3)
+                            ? Colors.black.withAlpha(20)
                             : Colors.grey.shade300,
                     blurRadius: 5,
                     offset: Offset(0, 2),
                   ),
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withAlpha(20),
                     blurRadius: 5,
                     offset: Offset(0, 0),
                     spreadRadius: 1,
@@ -483,18 +481,18 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     isSelected
                         ? LinearGradient(
                           colors: [
-                            Colors.grey.shade200.withOpacity(0.8),
-                            Colors.purple.shade200.withOpacity(0.8),
-                            Colors.purple.shade200.withOpacity(0.8),
-                            Colors.indigo.shade300.withOpacity(0.8),
+                            Colors.grey.shade200.withAlpha(80),
+                            Colors.purple.shade200.withAlpha(80),
+                            Colors.purple.shade200.withAlpha(80),
+                            Colors.indigo.shade300.withAlpha(80),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         )
                         : LinearGradient(
                           colors: [
-                            Colors.white.withOpacity(0.3),
-                            Colors.white.withOpacity(0.1),
+                            Colors.white.withAlpha(80),
+                            Colors.white.withAlpha(80),
                           ],
                         ),
               ),
@@ -525,86 +523,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       fontSize: 40,
                     ),
                   ),
-                  StreamBuilder<int>(
-                    stream: fetchDreamCountByDate(date),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text(
-                          'Error',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.red.shade500,
-                          ),
-                        );
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            1,
-                            (index) => Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 2.0,
-                              ),
-                              child: FadeIn(
-                                duration: Duration(milliseconds: 1000),
-                                child: Skeletonizer(
-                                  enabled: true,
-                                  child: Container(
-                                    width: 15,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.grey[300]?.withAlpha(50),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          snapshot.data ?? 0,
-                          (index) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 2.0,
-                            ),
-                            child: Container(
-                              width: 15,
-                              height: 15,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.purple.shade300,
-                                    Colors.indigo,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.purple.shade100,
-                                    offset: Offset(-2, -2),
-                                    blurRadius: 5,
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.indigo.shade400,
-                                    offset: Offset(2, 2),
-                                    blurRadius: 5,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  DreamCountDot(stream: fetchDreamCountByDate(date)),
                 ],
               ),
             ),

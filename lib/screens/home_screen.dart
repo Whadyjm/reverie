@@ -3,10 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:pillow/screens/favorite_screen.dart';
-import 'package:pillow/screens/login_screen.dart';
-import 'package:pillow/screens/plan_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:reverie/screens/favorite_screen.dart';
+import 'package:reverie/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
@@ -57,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
       Provider.of<DreamProvider>(context, listen: false).loadAnalysisStyle();
     });
-    print('-----------------------$analysisStyle-------------------------');
+    print('-----------------$analysisStyle-----------------');
   }
 
   @override
@@ -178,9 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           apiKey = doc.data()?['apiKey'] ?? '';
         });
-        print(
-          '-----------------------------$apiKey-----------------------------------',
-        );
+        print('-----------------$apiKey-----------------');
       } else {
         print('Document does not exist.');
       }
@@ -512,7 +509,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               radius: 40,
                               backgroundColor:
                                   btnProvider.isButtonEnabled
-                                      ? Colors.white.withOpacity(0.2)
+                                      ? Colors.white.withAlpha(20)
                                       : Colors.grey.shade200,
                               child: StreamBuilder<User?>(
                                 stream: user,

@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:pillow/widgets/modal_sheets/forgot_password_modal_sheet.dart';
-import 'package:pillow/widgets/modal_sheets/register_modal_sheet.dart';
+import 'package:reverie/widgets/modal_sheets/forgot_password_modal_sheet.dart';
+import 'package:reverie/widgets/modal_sheets/register_modal_sheet.dart';
 import '../auth/auth_process.dart';
 import '../style/gradients.dart';
 import '../style/text_style.dart';
@@ -101,7 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomTextField(
                   hintText: 'Correo electrónico',
                   icon: Icons.person,
-                  controller: emailController, obscureText: false,
+                  controller: emailController,
+                  obscureText: false,
                 ),
                 const SizedBox(height: 15),
 
@@ -111,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: passwordController,
                   obscureText: hidePassword,
                   suffixIcon: IconButton(
-                    onPressed: () =>
-                        setState(() => hidePassword = !hidePassword),
+                    onPressed:
+                        () => setState(() => hidePassword = !hidePassword),
                     icon: Icon(
                       hidePassword ? Iconsax.eye : Iconsax.eye_slash,
                       color: Colors.white70,
@@ -142,18 +143,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 isLoading
                     ? const SizedBox(
-                  width: 25,
-                  height: 25,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 4,
-                    valueColor:
-                    AlwaysStoppedAnimation<Color>(Colors.purple),
-                  ),
-                )
+                      width: 25,
+                      height: 25,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 4,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.purple,
+                        ),
+                      ),
+                    )
                     : CustomButton(
-                  text: 'Iniciar sesión',
-                  onPressed: _handleLogin,
-                ),
+                      text: 'Iniciar sesión',
+                      onPressed: _handleLogin,
+                    ),
 
                 TextButton(
                   onPressed: () {
@@ -189,10 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   text: 'Continuar con Google',
                   image: Padding(
                     padding: const EdgeInsets.all(5),
-                    child: Image.asset(
-                      'assets/google_logo.png',
-                      height: 20,
-                    ),
+                    child: Image.asset('assets/google_logo.png', height: 20),
                   ),
                   onPressed: _handleGoogleSignIn,
                 ),
