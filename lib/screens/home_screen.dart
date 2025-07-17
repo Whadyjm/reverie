@@ -6,6 +6,8 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/screens/favorite_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
+import 'package:reverie/widgets/drawer_head.dart';
+import 'package:reverie/widgets/select_gender_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
@@ -191,9 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final isButtonEnabled = prefs.getBool('isButtonEnabled') ?? false;
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     if (isButtonEnabled) {
-      btnProvider.enableButton();
-    } else {
       btnProvider.disableButton();
+    } else {
+      btnProvider.enableButton();
     }
   }
 
@@ -484,148 +486,17 @@ class _MyHomePageState extends State<MyHomePage> {
             width: MediaQuery.of(context).size.width * 0.6,
             child: Column(
               children: [
-                /*ElevatedButton(onPressed: (){
-                  print(analysisStyleProvider.analysisStyle);
-                }, child: Text('Test: Estilo de analisis')),*/
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: DrawerHeader(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.purple.shade700,
-                          Colors.deepPurple.shade400,
-                        ],
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundColor:
-                                  btnProvider.isButtonEnabled
-                                      ? Colors.white.withAlpha(20)
-                                      : Colors.grey.shade200,
-                              child: StreamBuilder<User?>(
-                                stream: user,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData &&
-                                      snapshot.data != null) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(25),
-                                      child:
-                                          snapshot.data?.photoURL != null
-                                              ? Image.network(
-                                                snapshot.data!.photoURL!,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (
-                                                  context,
-                                                  error,
-                                                  stackTrace,
-                                                ) {
-                                                  return Icon(
-                                                    Icons.person,
-                                                    color: Colors.grey,
-                                                    size: 20,
-                                                  );
-                                                },
-                                                loadingBuilder: (
-                                                  context,
-                                                  child,
-                                                  loadingProgress,
-                                                ) {
-                                                  if (loadingProgress == null)
-                                                    return child;
-                                                  return CircularProgressIndicator(
-                                                    value:
-                                                        loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded /
-                                                                loadingProgress
-                                                                    .expectedTotalBytes!
-                                                            : null,
-                                                  );
-                                                },
-                                              )
-                                              : Icon(
-                                                Icons.person,
-                                                color: Colors.grey,
-                                                size: 20,
-                                              ),
-                                    );
-                                  } else {
-                                    return CircleAvatar(
-                                      backgroundColor:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white.withOpacity(0.2)
-                                              : Colors.grey.shade200,
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Colors.grey,
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                dreamCount == 0 ? '' : '🌙 $dreamCount Sueños',
-                                style: RobotoTextStyle.small2TextStyle(
-                                  Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Text(
-                              userName ?? name,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(color: Colors.white),
-                            ),
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                              onTap: () async {
-                                await showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return SelectGender();
-                                  },
-                                );
-                              },
-                              child: Icon(
-                                selectedGender == 'male'
-                                    ? Icons.male_rounded
-                                    : selectedGender == 'female'
-                                    ? Icons.female_rounded
-                                    : selectedGender == 'other'
-                                    ? Icons.transgender_rounded
-                                    : Icons.question_mark_rounded,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          userEmail ?? 'Email',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.white70, fontSize: 10),
-                        ),
-                      ],
-                    ),
+                  child: DrawerHeadWidget(
+                    btnProvider: btnProvider,
+                    dontShowAgain: dontShowAgain,
+                    user: user,
+                    dreamCount: dreamCount,
+                    name: name,
+                    selectedGender: selectedGender!,
+                    userEmail: userEmail,
+                    userName: userName,
                   ),
                 ),
 
@@ -785,18 +656,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(height: 12),
                       GestureDetector(
                         onTap: () async {
-                          /*setState(() {
-                            analysisStyle = 'cientifico';
-                            analysisStyleProvider.analysisStyle = 'cientifico';
-                          });
-                          final user = FirebaseAuth.instance.currentUser;
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.uid)
-                              .update({'analysisStyle': 'cientifico'});
-
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('analysisStyle', 'cientifico')*/
                           SubscriptionBottomSheet.show(context);
                         },
                         child: Stack(
@@ -1034,8 +893,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
 
                       const Divider(height: 20, thickness: 1),
-
-                      // Logout Option
                       _buildDrawerItem(
                         icon: Iconsax.logout,
                         title: 'Cerrar sesión',
@@ -1045,8 +902,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-
-                // Footer
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
@@ -1096,14 +951,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     : Colors.grey.shade800,
                               ),
                             ),
-                            /*Text(
-                              '👋  Hola, ${userName?.split(' ').first ?? name}',
-                              style: RobotoTextStyle.subtitleStyle(
-                                btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade800,
-                              ),
-                            ),*/
                           ],
                         ),
                         suscription == 'free'
@@ -1287,7 +1134,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         barrierDismissible: false,
                         context: context,
                         builder: (context) {
-                          return SelectGender();
+                          return SelectGenderDialog(
+                            selectedGender: selectedGender!,
+                            dontShowAgain: dontShowAgain,
+                          );
                         },
                       );
                     }
@@ -1903,135 +1753,38 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
-
-  Widget SelectGender() {
-    return StatefulBuilder(
-      builder: (BuildContext context, void Function(void Function()) setState) {
-        return AlertDialog(
-          backgroundColor: Colors.grey.shade900,
-          title: Column(
-            children: [
-              Text(
-                'Selecciona tu género',
-                style: RobotoTextStyle.subtitleStyle(Colors.white),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Esto nos permitirá personalizar tu experiencia',
-                style: RobotoTextStyle.small2TextStyle(Colors.white),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildGenderCard(
-                    context: context,
-                    isSelected: selectedGender == 'male',
-                    icon: Icons.male,
-                    iconColor: Colors.blue,
-                    onTap: () => setState(() => selectedGender = 'male'),
-                  ),
-                  _buildGenderCard(
-                    context: context,
-                    isSelected: selectedGender == 'female',
-                    icon: Icons.female,
-                    iconColor: Colors.pinkAccent,
-                    onTap: () => setState(() => selectedGender = 'female'),
-                  ),
-                  _buildGenderCard(
-                    context: context,
-                    isSelected: selectedGender == 'other',
-                    icon: Icons.transgender,
-                    iconColor: Colors.purple,
-                    onTap: () => setState(() => selectedGender = 'other'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Checkbox(
-                    value: dontShowAgain,
-                    onChanged: (value) {
-                      setState(() {
-                        dontShowAgain = value ?? false;
-                      });
-                    },
-                    activeColor: Colors.purple,
-                    checkColor: Colors.white,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "No volver a mostrar",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Prefiero no hacerlo',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final userUid = FirebaseAuth.instance.currentUser!.uid;
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool('dontShowGenderDialog', dontShowAgain);
-                    await firestore.collection('users').doc(userUid).update({
-                      'selectedGender': selectedGender,
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Continuar',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
-Widget _buildGenderCard({
-  required BuildContext context,
-  required bool isSelected,
-  required IconData icon,
-  required Color iconColor,
-  required VoidCallback onTap,
-}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      width: 70,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.grey.shade600 : Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [Icon(icon, size: 30, color: iconColor)],
-      ),
-    ),
-  );
+class UserAvatarDrawer extends StatelessWidget {
+  const UserAvatarDrawer({super.key, required this.snapshot});
+
+  final AsyncSnapshot snapshot;
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child:
+          snapshot.data?.photoURL != null
+              ? Image.network(
+                snapshot.data!.photoURL!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.person, color: Colors.grey, size: 20);
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return CircularProgressIndicator(
+                    value:
+                        loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                  );
+                },
+              )
+              : Icon(Icons.person, color: Colors.grey, size: 20),
+    );
+  }
 }
 
 Widget _buildDrawerItem({
