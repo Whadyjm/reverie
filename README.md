@@ -1,4 +1,4 @@
-# pillow
+# Reverie
 
 A new Flutter project.
 
