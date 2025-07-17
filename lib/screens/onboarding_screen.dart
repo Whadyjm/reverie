@@ -192,7 +192,15 @@ class _OnboardingPageState extends State<OnboardingPage>
                   );
                 }),
 
-                // Main Content
+                Positioned(
+                  top: 40,
+                  left: 90,
+                  child: Text(
+                    'Reverie',
+                    style: AppTextStyle.biggerTitleStyle(Colors.white),
+                  ),
+                ),
+
                 SafeArea(
                   child: Column(
                     children: [
@@ -210,13 +218,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Reverie',
-                                      style: AppTextStyle.biggerTitleStyle(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 40),
+                                    const SizedBox(height: 80),
                                     _buildVisual(index),
                                     const SizedBox(height: 24),
                                     Text(
