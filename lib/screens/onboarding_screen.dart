@@ -1,9 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reverie/screens/login_screen.dart';
 import 'package:reverie/style/text_style.dart';
+import 'package:reverie/widgets/emotional_evolution.dart';
+import 'package:reverie/widgets/pulsing_container.dart';
+import 'package:reverie/widgets/ripple_animation.dart';
 import 'package:reverie/widgets/ripple_painter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,73 +76,101 @@ class _OnboardingPageState extends State<OnboardingPage>
   Widget _buildVisual(int index) {
     switch (index) {
       case 0:
-        // Dream Journal: card mockup
+        // Página 1: Simulación de chat
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _chatBubble(
+              "🌙 Anoche soñé que flotaba en un mar de estrellas...",
+              isUser: true,
+            ),
+            const SizedBox(height: 12),
+            _chatBubble(
+              "✨ Qué bello sueño. ¿Sientes que fue una experiencia liberadora?",
+              isUser: false,
+            ),
+            const SizedBox(height: 20),
+          ],
+        );
+
+      case 1:
+        // Página 2: Análisis de IA
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            PulsingContainer(),
+            const SizedBox(height: 20),
             Container(
-              width: double.infinity,
-              height: 180,
               padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.symmetric(horizontal: 16),
+              margin: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
                 color: Colors.white12,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.white10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
-                    "🌙 Anoche soñé...",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    "🧠 Análisis IA:",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Spacer(),
+                  SizedBox(height: 8),
                   Text(
-                    "📝 Me encontraba en un lugar lleno de espejos...",
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    "• Emociones detectadas: libertad, asombro",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    "• Símbolos: estrellas, vuelo, agua",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    "• Interpretación: deseo de escapar de lo cotidiano...",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
           ],
         );
-      case 1:
-        // AI Brain Glow
-        return Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const RadialGradient(
-              colors: [
-                Color(0xFFB388FF),
-                Color(0xFF7E57C2),
-                Colors.transparent,
-              ],
-              radius: 0.85,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.purpleAccent.withOpacity(0.5),
-                blurRadius: 40,
-                spreadRadius: 10,
-              ),
-            ],
-          ),
-          child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 64),
-        );
+
       case 2:
-        return SizedBox(
-          height: 160,
-          child: CustomPaint(
-            size: const Size(double.infinity, 160),
-            painter: RipplePainter(),
-          ),
+        // Página 3: Visual abstracto de exploración interior
+        return Column(
+          children: [
+            SizedBox(height: 100, child: RippleAnimation()),
+            const SizedBox(height: 50),
+            EmotionalEvolutionBar(),
+          ],
         );
+
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  Widget _chatBubble(String text, {required bool isUser}) {
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        constraints: const BoxConstraints(maxWidth: 300),
+        decoration: BoxDecoration(
+          color:
+              isUser
+                  ? Colors.white24
+                  : Colors.deepPurple.shade600.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
+        ),
+      ),
+    );
   }
 
   @override
@@ -163,7 +195,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             ),
             child: Stack(
               children: [
-                // Stars
+                // Estrellas animadas
                 ...List.generate(40, (index) {
                   final random = Random(index);
                   final top =
@@ -218,7 +250,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const SizedBox(height: 80),
+                                    const SizedBox(height: 100),
                                     _buildVisual(index),
                                     const SizedBox(height: 24),
                                     Text(
@@ -241,7 +273,6 @@ class _OnboardingPageState extends State<OnboardingPage>
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
-                                    const SizedBox(height: 30),
                                   ],
                                 ),
                               ),
@@ -330,26 +361,4 @@ class _OnboardingPageState extends State<OnboardingPage>
       ),
     );
   }
-}
-
-// Optional: Emotional wave painter
-class WavePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = Colors.white24
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3;
-
-    final path = Path();
-    for (double x = 0; x <= size.width; x += 1) {
-      final y = sin(x * 0.015) * 20 + size.height / 2;
-      path.lineTo(x, y);
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
