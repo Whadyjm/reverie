@@ -141,20 +141,21 @@ class _BottomSheetContent extends StatelessWidget {
   }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Opacity(
           opacity: value,
           child: Transform.translate(
-            offset: Offset(0, 30 * (1 - value)),
+            offset: Offset(0, 40 * (1 - value)),
             child: child,
           ),
         );
       },
       child: Stack(
         children: [
-          Container(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -165,9 +166,10 @@ class _BottomSheetContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: buttonColor.withOpacity(0.25),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
+                  color: buttonColor.withOpacity(0.4),
+                  blurRadius: 24,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
@@ -183,13 +185,18 @@ class _BottomSheetContent extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.amber.shade600,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.amber.shade400,
+                            Colors.orange.shade600,
+                          ],
+                        ),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Text(
                         "⭐ Recomendado",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -199,7 +206,9 @@ class _BottomSheetContent extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   title.toUpperCase(),
-                  style: RobotoTextStyle.titleStyle(textColor),
+                  style: RobotoTextStyle.titleStyle(
+                    textColor,
+                  ).copyWith(letterSpacing: 1.2),
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -207,30 +216,57 @@ class _BottomSheetContent extends StatelessWidget {
                   style: RobotoTextStyle.subtitleStyle(Colors.grey.shade300),
                 ),
                 const SizedBox(height: 20),
-                ..._buildFeatureList(features),
+                ...features
+                    .asMap()
+                    .entries
+                    .map(
+                      (entry) => TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: 1),
+                        duration: Duration(milliseconds: 300 + entry.key * 60),
+                        builder: (context, value, child) {
+                          return Opacity(
+                            opacity: value,
+                            child: Transform.translate(
+                              offset: Offset(0, 10 * (1 - value)),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: _feature(entry.value),
+                      ),
+                    )
+                    .toList(),
                 const SizedBox(height: 24),
                 Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonColor,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      elevation: 4,
-                    ),
-                    onPressed: () {
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(32),
+                    onTap: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Seleccionaste: $title")),
                       );
                     },
-                    child: Text(
-                      buttonText,
-                      style: RobotoTextStyle.smallTextStyle(Colors.white),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: buttonColor,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: buttonColor.withOpacity(0.6),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        buttonText,
+                        style: RobotoTextStyle.smallTextStyle(Colors.white),
+                      ),
                     ),
                   ),
                 ),
