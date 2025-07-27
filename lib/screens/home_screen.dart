@@ -954,34 +954,37 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         ),
                         suscription == 'free'
-                            ? GestureDetector(
-                              onTap: () {
-                                SubscriptionBottomSheet.show(context);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 25,
-                                  top: 16.0,
-                                ),
-                                child: Container(
-                                  height: 30,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.deepPurple,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.white.withOpacity(0.5),
-                                        blurRadius: 10,
-                                        offset: Offset(0, 0),
-                                      ),
-                                    ],
+                            ? FadeIn(
+                              duration: Duration(milliseconds: 800),
+                              child: GestureDetector(
+                                onTap: () {
+                                  SubscriptionBottomSheet.show(context);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 25,
+                                    top: 16.0,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      'Obtén PLUS ✨',
-                                      style: RobotoTextStyle.smallTextStyle(
-                                        Colors.white,
+                                  child: Container(
+                                    height: 30,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.deepPurple,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.5),
+                                          blurRadius: 10,
+                                          offset: Offset(0, 0),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Obtén PLUS ✨',
+                                        style: RobotoTextStyle.smallTextStyle(
+                                          Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),

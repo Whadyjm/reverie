@@ -61,21 +61,28 @@ class _DreamByDateState extends State<DreamByDate> {
           int dreamCount = dreams.length;
 
           return dreams.isEmpty
-              ? SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 40),
-                    Text(
-                      '¿Que soñaste hoy?',
-                      style: AppTextStyle.titleStyle(
-                        btnProvider.isButtonEnabled
-                            ? Colors.white.withAlpha(200)
-                            : Colors.grey.shade700,
+              ? FadeIn(
+                duration: Duration(milliseconds: 800),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 40),
+                      Text(
+                        '¿Que soñaste hoy?',
+                        style: AppTextStyle.titleStyle(
+                          btnProvider.isButtonEnabled
+                              ? Colors.white.withAlpha(250)
+                              : Colors.grey.shade700,
+                        ),
                       ),
-                    ),
-                    Image.asset('assets/notebook.png', width: 300, height: 300),
-                  ],
+                      Image.asset(
+                        'assets/notebook.png',
+                        width: 300,
+                        height: 300,
+                      ),
+                    ],
+                  ),
                 ),
               )
               : FadeIn(

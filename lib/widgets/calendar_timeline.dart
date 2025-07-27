@@ -346,79 +346,88 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8.0),
-            child: InkWell(
-              onTap: () => _showCustomCalendar(context, date),
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color:
+                    btnProvider.isButtonEnabled
+                        ? Colors.white.withAlpha(10)
+                        : Colors.grey.withAlpha(10),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
                   color:
                       btnProvider.isButtonEnabled
-                          ? Colors.white.withAlpha(10)
-                          : Colors.grey.withAlpha(10),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
+                          ? Colors.white.withAlpha(30)
+                          : Colors.grey.withAlpha(30),
+                  width: 0.5,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    size: 16,
                     color:
                         btnProvider.isButtonEnabled
-                            ? Colors.white.withAlpha(30)
-                            : Colors.grey.withAlpha(30),
-                    width: 0.5,
+                            ? Colors.white
+                            : Colors.grey.shade700,
                   ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.calendar_today_rounded,
-                      size: 16,
-                      color:
-                          btnProvider.isButtonEnabled
-                              ? Colors.white
-                              : Colors.grey.shade700,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () => _showCustomCalendar(context, date),
+                    child: Text(
                       DateFormat('MMMM y', 'es_ES').format(date),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color:
-                            btnProvider.isButtonEnabled
-                                ? Colors.white
-                                : Colors.grey.shade800,
+                      style: RobotoTextStyle.small2TextStyle(
+                        btnProvider.isButtonEnabled
+                            ? Colors.white
+                            : Colors.grey.shade700,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 16,
-                      color:
-                          btnProvider.isButtonEnabled
-                              ? Colors.white
-                              : Colors.grey.shade700,
-                    ),
-                    const Spacer(),
-                    StreamBuilder<int>(
-                      stream: getDreamCountByMonth(_currentDisplayedMonth),
-                      builder: (context, snapshot) {
-                        final dreamCount = snapshot.data ?? 0;
-                        return Text(
-                          dreamCount > 0
-                              ? '🌙 $dreamCount ${dreamCount == 1 ? "Sueño" : "Sueños"}'
-                              : '',
-                          style: RobotoTextStyle.small2TextStyle(
-                            btnProvider.isButtonEnabled
-                                ? Colors.white
-                                : Colors.grey.shade700,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 16,
+                    color:
+                        btnProvider.isButtonEnabled
+                            ? Colors.white
+                            : Colors.grey.shade700,
+                  ),
+                  const Spacer(),
+                  StreamBuilder(
+                    stream: getDreamCountByMonth(_currentDisplayedMonth),
+                    builder: (context, snapshot) {
+                      int dreamCount = snapshot.data ?? 0;
+                      return dreamCount != 0
+                          ? Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => _showPanelDreams(context),
+                                child: Text(
+                                  'Panel de sueños',
+                                  style: RobotoTextStyle.small2TextStyle(
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white
+                                        : Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 16,
+                                color:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white
+                                        : Colors.grey.shade700,
+                              ),
+                            ],
+                          )
+                          : const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
             ),
           );
@@ -522,6 +531,70 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
           context,
           listen: false,
         ).setSelectedDate(date);
+      },
+    );
+  }
+
+  void _showPanelDreams(BuildContext context) {
+    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: 200,
+              color:
+                  btnProvider.isButtonEnabled
+                      ? Colors.grey.shade900
+                      : Colors.white,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Panel de sueños de ${DateFormat('MMMM y', 'es_ES').format(_currentDisplayedMonth)}',
+                    style: RobotoTextStyle.subtitleStyle(
+                      btnProvider.isButtonEnabled
+                          ? Colors.white
+                          : Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  StreamBuilder<int>(
+                    stream: getDreamCountByMonth(_currentDisplayedMonth),
+                    builder: (context, snapshot) {
+                      final dreamCount = snapshot.data ?? 0;
+                      return Text(
+                        dreamCount > 0
+                            ? '🌙 $dreamCount ${dreamCount == 1 ? "Sueño" : "Sueños"}'
+                            : '',
+                        style: RobotoTextStyle.smallTextStyle(
+                          btnProvider.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey.shade700,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '🙂  Emoción del mes: Curiosidad',
+                    style: RobotoTextStyle.smallTextStyle(
+                      btnProvider.isButtonEnabled
+                          ? Colors.white
+                          : Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }

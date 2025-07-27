@@ -41,7 +41,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
 
     return Padding(
-      padding: const EdgeInsets.only(top: 90),
+      padding: const EdgeInsets.only(top: 280),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -53,7 +53,6 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
         ),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
