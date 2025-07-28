@@ -13,7 +13,9 @@ import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 
 class CalendarTimeline extends StatefulWidget {
-  CalendarTimeline({super.key});
+  CalendarTimeline({super.key, this.emotionResult});
+
+  final String? emotionResult;
 
   @override
   State<CalendarTimeline> createState() => _CalendarTimelineState();
@@ -399,7 +401,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     stream: getDreamCountByMonth(_currentDisplayedMonth),
                     builder: (context, snapshot) {
                       int dreamCount = snapshot.data ?? 0;
-                      return dreamCount != 0
+                      return (dreamCount != 0)
                           ? Row(
                             children: [
                               GestureDetector(
@@ -582,14 +584,16 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     },
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '🙂  Emoción del mes: Curiosidad',
-                    style: RobotoTextStyle.smallTextStyle(
-                      btnProvider.isButtonEnabled
-                          ? Colors.white
-                          : Colors.grey.shade700,
-                    ),
-                  ),
+                  widget.emotionResult!.isNotEmpty
+                      ? Text(
+                        '🙂  Emoción del mes: ${widget.emotionResult}',
+                        style: RobotoTextStyle.smallTextStyle(
+                          btnProvider.isButtonEnabled
+                              ? Colors.white
+                              : Colors.grey.shade700,
+                        ),
+                      )
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),

@@ -10,11 +10,18 @@ class AppTextStyle {
     fontWeight: FontWeight.w800,
   );
 
-  static TextStyle titleStyle(Color textColor) => TextStyle(
+  static TextStyle logoTitleStyle(Color textColor) => TextStyle(
     fontFamily: 'instrumental',
     color: textColor,
     fontSize: 40,
     fontWeight: FontWeight.w800,
+  );
+
+  static TextStyle titleStyle(Color textColor) => TextStyle(
+    fontFamily: 'instrumental',
+    color: textColor,
+    fontSize: 40,
+    fontWeight: FontWeight.w500,
   );
 
   static TextStyle subtitleStyle(Color textColor) => TextStyle(

@@ -6,6 +6,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/screens/favorite_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
+import 'package:reverie/services/emotion_service.dart';
 import 'package:reverie/widgets/drawer_head.dart';
 import 'package:reverie/widgets/select_gender_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,10 +42,15 @@ class _MyHomePageState extends State<MyHomePage> {
   bool dontShowAgain = false;
   bool shouldShowDialog = false;
   int dreamCount = 0;
+  String emotionResult = "";
 
   @override
   void initState() {
     super.initState();
+    final now = DateTime.now();
+    final tomorrow = now.add(const Duration(days: 1));
+    final isLastDayOfMonth = now.month != tomorrow.month;
+
     _checkPreferences();
     getAPIKeyFromFirestore();
     initializeButtonState();
@@ -53,12 +59,17 @@ class _MyHomePageState extends State<MyHomePage> {
     getUserSelectedGender();
     getDreamCountByUser();
     getUserSuscription();
+
+    if (isLastDayOfMonth) {
+      getMonthlyEmotion();
+    }
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
       Provider.of<DreamProvider>(context, listen: false).loadAnalysisStyle();
     });
     print('-----------------$analysisStyle-----------------');
+    print('-----------------$emotionResult-----------------');
   }
 
   @override
@@ -185,6 +196,32 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     } catch (e) {
       print('Error fetching API key: $e');
+    }
+  }
+
+  Future<void> getMonthlyEmotion() async {
+    setState(() => isLoading = true);
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      final doc = await firestore.collection('apiKey').doc('apiKey').get();
+
+      setState(() {
+        apiKey = doc.data()?['apiKey'] ?? '';
+      });
+
+      final result = await EmotionService().analyzeUserEmotions(
+        userId!,
+        apiKey,
+      );
+      setState(() {
+        emotionResult = result;
+      });
+    } catch (e) {
+      setState(() {
+        emotionResult = "Error: $e";
+      });
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -945,7 +982,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           children: [
                             Text(
                               'Reverie',
-                              style: AppTextStyle.titleStyle(
+                              style: AppTextStyle.logoTitleStyle(
                                 btnProvider.isButtonEnabled
                                     ? Colors.white
                                     : Colors.grey.shade800,
@@ -1090,7 +1127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                CalendarTimeline(),
+                CalendarTimeline(emotionResult: emotionResult),
                 DreamByDate(suscription: suscription),
                 //TextAudioInput(apiKey: apiKey),
               ],
