@@ -539,62 +539,139 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
 
   void _showPanelDreams(BuildContext context) {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
-    showDialog(
+    final isDark = btnProvider.isButtonEnabled;
+
+    showGeneralDialog(
       context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(20),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              width: 200,
-              color:
-                  btnProvider.isButtonEnabled
-                      ? Colors.grey.shade900
-                      : Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Panel de sueños de ${DateFormat('MMMM y', 'es_ES').format(_currentDisplayedMonth)}',
-                    style: RobotoTextStyle.subtitleStyle(
-                      btnProvider.isButtonEnabled
-                          ? Colors.white
-                          : Colors.grey.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  StreamBuilder<int>(
-                    stream: getDreamCountByMonth(_currentDisplayedMonth),
-                    builder: (context, snapshot) {
-                      final dreamCount = snapshot.data ?? 0;
-                      return Text(
-                        dreamCount > 0
-                            ? '🌙 $dreamCount ${dreamCount == 1 ? "Sueño" : "Sueños"}'
-                            : '',
-                        style: RobotoTextStyle.smallTextStyle(
-                          btnProvider.isButtonEnabled
-                              ? Colors.white
-                              : Colors.grey.shade700,
+      barrierDismissible: true,
+      barrierLabel: 'Sueños',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.95, end: 1.0).animate(curved),
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 40,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient:
+                        isDark
+                            ? const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFF1A1124),
+                                Color(0xFF1C1733),
+                                Color(0xFF222222),
+                              ],
+                            )
+                            : const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFFF5F3FF), // lavanda muy suave
+                                Color(0xFFEDE9FE), // gris perla
+                                Color(0xFFFFFFFF), // blanco puro
+                              ],
+                            ),
+                    boxShadow: [
+                      if (!isDark)
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
                         ),
-                      );
-                    },
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  widget.emotionResult!.isNotEmpty
-                      ? Text(
-                        '🙂  Emoción del mes: ${widget.emotionResult}',
-                        style: RobotoTextStyle.smallTextStyle(
-                          btnProvider.isButtonEnabled
-                              ? Colors.white
-                              : Colors.grey.shade700,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '🌘 Panel de sueños',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              isDark ? Colors.white : const Color(0xFF3B2E5A),
                         ),
-                      )
-                      : const SizedBox.shrink(),
-                ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        DateFormat(
+                          'MMMM y',
+                          'es_ES',
+                        ).format(_currentDisplayedMonth),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color:
+                              isDark
+                                  ? Colors.grey.shade300
+                                  : const Color(0xFF6B5E7A),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      StreamBuilder<int>(
+                        stream: getDreamCountByMonth(_currentDisplayedMonth),
+                        builder: (context, snapshot) {
+                          final dreamCount = snapshot.data ?? 0;
+                          if (dreamCount == 0) return const SizedBox.shrink();
+                          return Row(
+                            children: [
+                              const Text('🌙 ', style: TextStyle(fontSize: 18)),
+                              Text(
+                                '$dreamCount ${dreamCount == 1 ? "sueño registrado" : "sueños registrados"}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      isDark
+                                          ? Colors.grey.shade100
+                                          : const Color(0xFF4A3B6A),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      if (widget.emotionResult?.isNotEmpty == true)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('🎭 ', style: TextStyle(fontSize: 18)),
+                            Expanded(
+                              child: Text(
+                                'Emoción del mes: ${widget.emotionResult}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      isDark
+                                          ? Colors.grey.shade100
+                                          : const Color(0xFF4A3B6A),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
