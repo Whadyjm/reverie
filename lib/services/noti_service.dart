@@ -143,10 +143,64 @@ class NotiService {
       payload: payload,
     );
 
-    print('--------------Notification scheduled for $scheduledDate------------------');
+    print('📅 Notificación creada para el $scheduledDate------------------');
   }
 
-  Future<void> cancelAllNotifications(){
+  Future<void> scheduleEndOfMonthNotification({
+    int id = 1000,
+    String? payload = 'monthly_emotion',
+  }) async {
+    if (!_isInitialized) {
+      await initNotification();
+    }
+
+    final now = tz.TZDateTime.now(tz.local);
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    final tzLastDay = tz.TZDateTime(
+      tz.local,
+      lastDayOfMonth.year,
+      lastDayOfMonth.month,
+      lastDayOfMonth.day,
+      7,
+      0,
+    );
+
+    if (tzLastDay.isAfter(now)) {
+      await notificationsPlugin.zonedSchedule(
+        id,
+        '🌙 Tu emoción de ${_monthNameInSpanish(tzLastDay.month)}',
+        'Descubre cómo te sentiste este mes',
+        tzLastDay,
+        _notificationDetails(),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.dateAndTime,
+        payload: payload,
+      );
+
+      print('📅 Notificación de fin de mes programada para $tzLastDay');
+    }
+  }
+
+  String _monthNameInSpanish(int month) {
+    const months = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ];
+    return months[month - 1];
+  }
+
+  Future<void> cancelAllNotifications() {
     return notificationsPlugin.cancelAll();
   }
 }

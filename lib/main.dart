@@ -36,6 +36,10 @@ void main() async {
     payload: 'notification_payload',
   );
 
+  await NotiService().scheduleEndOfMonthNotification(
+    payload: 'notification_payload',
+  );
+
   await _requestNotificationPermissions();
 
   final prefs = await SharedPreferences.getInstance();
