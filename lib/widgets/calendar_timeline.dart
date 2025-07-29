@@ -73,106 +73,143 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   ) async {
     DateTime selectedDate = initialDate;
     bool isYearPicker = false;
+
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     final calendarProvider = Provider.of<CalendarProvider>(
       context,
       listen: false,
     );
+    final isDark = btnProvider.isButtonEnabled;
 
-    final DateTime? pickedDate = await showDialog<DateTime>(
+    final DateTime? pickedDate = await showGeneralDialog<DateTime>(
       context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(20),
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  width: 300,
-                  color:
-                      btnProvider.isButtonEnabled
-                          ? Colors.grey.shade900
-                          : Colors.white,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.chevron_left,
-                                color:
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade800,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  selectedDate = DateTime(
-                                    selectedDate.year - (isYearPicker ? 1 : 0),
-                                    selectedDate.month - (isYearPicker ? 0 : 1),
-                                    1,
-                                  );
-                                });
-                              },
-                            ),
-                            InkWell(
-                              child: Text(
-                                DateFormat(
-                                  'MMMM y',
-                                  'es_ES',
-                                ).format(selectedDate),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+      barrierDismissible: true,
+      barrierLabel: 'Calendario',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.95, end: 1.0).animate(curved),
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 40,
+              ),
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      width: 320,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors:
+                              isDark
+                                  ? [
+                                    const Color(0xFF1A1124),
+                                    const Color(0xFF1C1733),
+                                    const Color(0xFF222222),
+                                  ]
+                                  : [Colors.grey.shade100, Colors.white],
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.chevron_left,
                                   color:
-                                      btnProvider.isButtonEnabled
+                                      isDark
                                           ? Colors.white
                                           : Colors.grey.shade800,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedDate = DateTime(
+                                      selectedDate.year -
+                                          (isYearPicker ? 1 : 0),
+                                      selectedDate.month -
+                                          (isYearPicker ? 0 : 1),
+                                      1,
+                                    );
+                                  });
+                                },
                               ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.chevron_right,
-                                color:
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade800,
+                              InkWell(
+                                onTap: () {
+                                  setState(() => isYearPicker = !isYearPicker);
+                                },
+                                child: Text(
+                                  DateFormat(
+                                    'MMMM y',
+                                    'es_ES',
+                                  ).format(selectedDate),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        isDark
+                                            ? Colors.white
+                                            : Colors.grey.shade800,
+                                  ),
+                                ),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  selectedDate = DateTime(
-                                    selectedDate.year + (isYearPicker ? 1 : 0),
-                                    selectedDate.month + (isYearPicker ? 0 : 1),
-                                    1,
-                                  );
-                                });
-                              },
-                            ),
-                          ],
-                        ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.chevron_right,
+                                  color:
+                                      isDark
+                                          ? Colors.white
+                                          : Colors.grey.shade800,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedDate = DateTime(
+                                      selectedDate.year +
+                                          (isYearPicker ? 1 : 0),
+                                      selectedDate.month +
+                                          (isYearPicker ? 0 : 1),
+                                      1,
+                                    );
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          if (isYearPicker)
+                            _buildYearGrid(selectedDate, setState, context)
+                          else
+                            _buildMonthGrid(selectedDate, (newDate) {
+                              Navigator.pop(
+                                context,
+                                DateTime(newDate.year, newDate.month, 1),
+                              );
+                            }, context),
+                        ],
                       ),
-                      if (isYearPicker)
-                        _buildYearGrid(selectedDate, setState, context)
-                      else
-                        _buildMonthGrid(selectedDate, (newDate) {
-                          Navigator.pop(
-                            context,
-                            DateTime(newDate.year, newDate.month, 1),
-                          );
-                        }, context),
-                    ],
-                  ),
-                ),
-              );
-            },
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         );
       },

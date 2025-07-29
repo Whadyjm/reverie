@@ -54,7 +54,7 @@ class _DreamCardState extends State<DreamCard> {
             ),
           ],
         ),
-        height: 150,
+        height: 200,
         width: 200,
         child: Stack(
           children: [
@@ -157,7 +157,7 @@ class _DreamCardState extends State<DreamCard> {
             Positioned(
               right: 0,
               top: 0,
-              bottom: -80,
+              bottom: -120,
               child: Row(
                 children: [
                   AnalysisStyleTag(analysisStyle: analysisStyle),
