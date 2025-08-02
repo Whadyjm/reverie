@@ -216,6 +216,17 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         emotionResult = result;
       });
+
+      //seccion para guardar la emocion del mes
+      var monthlyEmotionCollection = firestore
+          .collection('users')
+          .doc(userId)
+          .collection('monthlyEmotions');
+
+      var documentRef = await monthlyEmotionCollection.add({
+        'emotion': emotionResult,
+        'month': Timestamp.now(),
+      });
     } catch (e) {
       setState(() {
         emotionResult = "Error: $e";
