@@ -484,7 +484,16 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                                   BuildContext context,
                                   AsyncSnapshot<dynamic> snapshot,
                                 ) {
-                                  return (snapshot.hasData && !openDreamPanel)
+                                  final now = DateTime.now();
+                                  final tomorrow = now.add(
+                                    const Duration(days: 1),
+                                  );
+                                  final isLastDayOfMonth =
+                                      now.month != tomorrow.month;
+
+                                  return (snapshot.hasData &&
+                                          !openDreamPanel &&
+                                          isLastDayOfMonth)
                                       ? Padding(
                                         padding: const EdgeInsets.only(
                                           left: 8.0,
