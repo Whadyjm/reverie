@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
@@ -65,6 +67,21 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
         )
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs.length);
+  }
+
+  Stream<String> monthlyEmotion(int date) {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('monthlyEmotions')
+        .where('month', isEqualTo: date)
+        .snapshots()
+        .map((querySnapshot) {
+          if (querySnapshot.docs.isNotEmpty) {
+            return querySnapshot.docs.first.get('emotion');
+          }
+          return '';
+        });
   }
 
   Future<void> _showCustomCalendar(
@@ -687,25 +704,43 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                         },
                       ),
                       const SizedBox(height: 12),
-                      if (widget.emotionResult?.isNotEmpty == true)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('🎭 ', style: TextStyle(fontSize: 18)),
-                            Expanded(
-                              child: Text(
-                                'Emoción del mes: ${widget.emotionResult}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color:
-                                      isDark
-                                          ? Colors.grey.shade100
-                                          : const Color(0xFF4A3B6A),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      //if (widget.emotionResult?.isNotEmpty == true)
+                      StreamBuilder(
+                        stream: monthlyEmotion(_currentDisplayedMonth.month),
+                        builder: (context, Snapshot) {
+                          if (Snapshot.hasError) {
+                            return Text('');
+                          }
+                          return Skeletonizer(
+                            enabled: Snapshot.hasData ? false : true,
+                            child:
+                                Snapshot.data != ''
+                                    ? Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          '🎭 ',
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'Emoción del mes: ${Snapshot.data}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color:
+                                                  isDark
+                                                      ? Colors.grey.shade100
+                                                      : const Color(0xFF4A3B6A),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : const SizedBox.shrink(),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

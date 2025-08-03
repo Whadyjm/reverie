@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getUserSuscription();
 
     if (isLastDayOfMonth) {
-      getMonthlyEmotion();
+      generateMonthlyEmotion();
     }
     // Cargar el valor guardado al iniciar la pantalla
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -199,8 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> getMonthlyEmotion() async {
-    setState(() => isLoading = true);
+  Future<void> generateMonthlyEmotion() async {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       final doc = await firestore.collection('apiKey').doc('apiKey').get();
@@ -213,9 +212,6 @@ class _MyHomePageState extends State<MyHomePage> {
         userId!,
         apiKey,
       );
-      setState(() {
-        emotionResult = result;
-      });
 
       //seccion para guardar la emocion del mes
       var monthlyEmotionCollection = firestore
@@ -224,16 +220,11 @@ class _MyHomePageState extends State<MyHomePage> {
           .collection('monthlyEmotions');
 
       var documentRef = await monthlyEmotionCollection.add({
-        'emotion': emotionResult,
-        'month': Timestamp.now(),
+        'emotion': result,
+        'month': Timestamp.now().toDate().month,
       });
     } catch (e) {
-      setState(() {
-        emotionResult = "Error: $e";
-      });
-    } finally {
-      setState(() => isLoading = false);
-    }
+    } finally {}
   }
 
   Future<void> initializeButtonState() async {
