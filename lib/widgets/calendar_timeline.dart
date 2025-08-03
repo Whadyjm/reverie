@@ -6,6 +6,7 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:reverie/provider/calendar_provider.dart';
@@ -28,7 +29,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   FirebaseAuth auth = FirebaseAuth.instance;
   DateTime _currentDisplayedMonth = DateTime.now();
   bool _isMonthSelection = false;
-
+  bool openDreamPanel = false;
   Stream<int> getDreamCountByMonth(DateTime month) {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -459,7 +460,12 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                           ? Row(
                             children: [
                               GestureDetector(
-                                onTap: () => _showPanelDreams(context),
+                                onTap: () {
+                                  setState(() {
+                                    openDreamPanel = true;
+                                  });
+                                  _showPanelDreams(context);
+                                },
                                 child: Text(
                                   'Panel de sueños',
                                   style: RobotoTextStyle.small2TextStyle(
@@ -470,13 +476,38 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 16,
-                                color:
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
+                              StreamBuilder(
+                                stream: monthlyEmotion(
+                                  _currentDisplayedMonth.month,
+                                ),
+                                builder: (
+                                  BuildContext context,
+                                  AsyncSnapshot<dynamic> snapshot,
+                                ) {
+                                  return (snapshot.hasData && !openDreamPanel)
+                                      ? Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8.0,
+                                        ),
+                                        child: Badge(
+                                          padding: EdgeInsets.all(3),
+                                          backgroundColor: Colors.deepPurple,
+                                          label: Icon(
+                                            Iconsax.notification,
+                                            size: 15,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                      : Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        size: 16,
+                                        color:
+                                            btnProvider.isButtonEnabled
+                                                ? Colors.white
+                                                : Colors.grey.shade700,
+                                      );
+                                },
                               ),
                             ],
                           )
@@ -647,7 +678,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     boxShadow: [
                       if (!isDark)
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withAlpha(8),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
