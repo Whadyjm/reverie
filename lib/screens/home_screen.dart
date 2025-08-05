@@ -701,77 +701,27 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      GestureDetector(
-                        onTap: () async {
+                      _analysisStyleContainer(
+                        '🧬 Científico',
+                        'Analiza sueños desde la neurociencia',
+                        'cientifico',
+                        _confettiController,
+                        context,
+                        () async {
                           SubscriptionBottomSheet.show(context);
                         },
-                        child: Stack(
-                          children: [
-                            Card(
-                              color:
-                                  analysisStyleProvider.analysisStyle ==
-                                          'cientifico'
-                                      ? Colors.purple.shade100
-                                      : Colors.white,
-                              elevation: 4,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '🧬 Científico',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.grey.shade800,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      'Analiza a través de la neurociencia.',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                height: 30,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.deepPurple.shade700,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Plus',
-                                    style: RobotoTextStyle.smallTextStyle(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        analysisStyleProvider,
+                        true,
                       ),
 
-                      GestureDetector(
-                        onTap: () async {
+                      _analysisStyleContainer(
+                        '🧠 Psicológico',
+                        'Explora emociones y símbolos internos',
+                        'psicologico',
+                        _confettiController,
+                        context,
+                        () async {
+                          _confettiController.play();
                           setState(() {
                             analysisStyle = 'psicologico';
                             analysisStyleProvider.analysisStyle = 'psicologico';
@@ -781,135 +731,45 @@ class _MyHomePageState extends State<MyHomePage> {
                               .collection('users')
                               .doc(user!.uid)
                               .update({'analysisStyle': 'psicologico'});
-
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('analysisStyle', 'psicologico');
                         },
-                        child: Card(
-                          color:
-                              analysisStyleProvider.analysisStyle ==
-                                      'psicologico'
-                                  ? Colors.purple.shade100
-                                  : Colors.white,
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      '🧠 Psicológico',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Analiza emociones y patrones mentales',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        analysisStyleProvider,
+                        false,
                       ),
 
-                      // Místico Card
-                      Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              _confettiController.play();
-                              setState(() {
-                                analysisStyle = 'mistico';
-                                analysisStyleProvider.analysisStyle = 'mistico';
-                              });
-                              final user = FirebaseAuth.instance.currentUser;
-                              await FirebaseFirestore.instance
-                                  .collection('users')
-                                  .doc(user!.uid)
-                                  .update({'analysisStyle': 'mistico'});
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString('analysisStyle', 'mistico');
-                            },
-                            child: Card(
-                              color:
-                                  analysisStyleProvider.analysisStyle ==
-                                          'mistico'
-                                      ? Colors.purple.shade100
-                                      : Colors.white,
-                              elevation: 4,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '🔮 Místico',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.grey.shade800,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      'Interpreta señales y mensajes espirituales',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: ConfettiWidget(
-                              confettiController: _confettiController,
-                              blastDirectionality:
-                                  BlastDirectionality.explosive,
-                              shouldLoop: false,
-                              colors: const [
-                                Colors.purple,
-                                Colors.purpleAccent,
-                                Colors.white,
-                                Colors.lightBlueAccent,
-                              ],
-                              createParticlePath:
-                                  drawStar, // Usamos estrellas en lugar de círculos
-                            ),
-                          ),
-                        ],
+                      _analysisStyleContainer(
+                        '🔮 Místico',
+                        'Interpreta señales y mensajes espirituales',
+                        'mistico',
+                        _confettiController,
+                        context,
+                        () async {
+                          _confettiController.play();
+                          setState(() {
+                            analysisStyle = 'mistico';
+                            analysisStyleProvider.analysisStyle = 'mistico';
+                          });
+                          final user = FirebaseAuth.instance.currentUser;
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user!.uid)
+                              .update({'analysisStyle': 'mistico'});
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('analysisStyle', 'mistico');
+                        },
+                        analysisStyleProvider,
+                        false,
                       ),
 
-                      // Híbrido Card
-                      GestureDetector(
-                        onTap: () async {
+                      _analysisStyleContainer(
+                        '🌀 Híbrido',
+                        'Combina  psicología y misticismo',
+                        'hibrido',
+                        _confettiController,
+                        context,
+                        () async {
+                          _confettiController.play();
                           setState(() {
                             analysisStyle = 'hibrido';
                             analysisStyleProvider.analysisStyle = 'hibrido';
@@ -922,45 +782,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.setString('analysisStyle', 'hibrido');
                         },
-                        child: Card(
-                          color:
-                              analysisStyleProvider.analysisStyle == 'hibrido'
-                                  ? Colors.purple.shade100
-                                  : Colors.white,
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      '🌀 Híbrido',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Combina ambos enfoques de análisis',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        analysisStyleProvider,
+                        false,
                       ),
 
                       const Divider(height: 20, thickness: 1),
@@ -1971,6 +1794,90 @@ void _logout(BuildContext context) {
             ),
           ),
         ),
+  );
+}
+
+Widget _analysisStyleContainer(
+  String title,
+  String description,
+  String analysisStyle,
+  ConfettiController _confettiController,
+  BuildContext context,
+  void Function()? onTap,
+  DreamProvider analysisStyleProvider,
+  bool isPlus,
+) {
+  return Stack(
+    children: [
+      GestureDetector(
+        onTap: onTap,
+        child: Card(
+          color:
+              analysisStyleProvider.analysisStyle == analysisStyle
+                  ? Colors.purple.shade100
+                  : Colors.white,
+          elevation: 4,
+          margin: const EdgeInsets.only(bottom: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      title, //'🔮 Místico',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  description, //'Interpreta señales y mensajes espirituales',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      isPlus
+          ? Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              height: 30,
+              width: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.deepPurple.shade700,
+              ),
+              child: Center(
+                child: Text(
+                  'Plus',
+                  style: RobotoTextStyle.smallTextStyle(Colors.white),
+                ),
+              ),
+            ),
+          )
+          : const SizedBox.shrink(),
+      Align(
+        alignment: Alignment.center,
+        child: ConfettiWidget(
+          confettiController: _confettiController,
+          blastDirectionality: BlastDirectionality.explosive,
+          shouldLoop: false,
+          colors: const [Colors.purple, Colors.purpleAccent, Colors.white],
+          createParticlePath: drawStar,
+        ),
+      ),
+    ],
   );
 }
 
