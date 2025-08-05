@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -44,13 +47,17 @@ class _MyHomePageState extends State<MyHomePage> {
   int dreamCount = 0;
   String emotionResult = "";
 
+  late ConfettiController _confettiController;
+
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     final tomorrow = now.add(const Duration(days: 1));
     final isLastDayOfMonth = now.month != tomorrow.month;
-
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 1),
+    );
     _checkPreferences();
     getAPIKeyFromFirestore();
     initializeButtonState();
@@ -63,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (isLastDayOfMonth) {
       generateMonthlyEmotion();
     }
-    // Cargar el valor guardado al iniciar la pantalla
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
       Provider.of<DreamProvider>(context, listen: false).loadAnalysisStyle();
@@ -80,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _dreamController.dispose();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -820,59 +828,83 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
 
                       // Místico Card
-                      GestureDetector(
-                        onTap: () async {
-                          setState(() {
-                            analysisStyle = 'mistico';
-                            analysisStyleProvider.analysisStyle = 'mistico';
-                          });
-                          final user = FirebaseAuth.instance.currentUser;
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.uid)
-                              .update({'analysisStyle': 'mistico'});
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('analysisStyle', 'mistico');
-                        },
-                        child: Card(
-                          color:
-                              analysisStyleProvider.analysisStyle == 'mistico'
-                                  ? Colors.purple.shade100
-                                  : Colors.white,
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
+                      Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              _confettiController.play();
+                              setState(() {
+                                analysisStyle = 'mistico';
+                                analysisStyleProvider.analysisStyle = 'mistico';
+                              });
+                              final user = FirebaseAuth.instance.currentUser;
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(user!.uid)
+                                  .update({'analysisStyle': 'mistico'});
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString('analysisStyle', 'mistico');
+                            },
+                            child: Card(
+                              color:
+                                  analysisStyleProvider.analysisStyle ==
+                                          'mistico'
+                                      ? Colors.purple.shade100
+                                      : Colors.white,
+                              elevation: 4,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '🔮 Místico',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
                                     Text(
-                                      '🔮 Místico',
+                                      'Interpreta señales y mensajes espirituales',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         color: Colors.grey.shade800,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Interpreta señales y mensajes espirituales',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: ConfettiWidget(
+                              confettiController: _confettiController,
+                              blastDirectionality:
+                                  BlastDirectionality.explosive,
+                              shouldLoop: false,
+                              colors: const [
+                                Colors.purple,
+                                Colors.purpleAccent,
+                                Colors.white,
+                                Colors.lightBlueAccent,
+                              ],
+                              createParticlePath:
+                                  drawStar, // Usamos estrellas en lugar de círculos
+                            ),
+                          ),
+                        ],
                       ),
 
                       // Híbrido Card
@@ -1940,4 +1972,33 @@ void _logout(BuildContext context) {
           ),
         ),
   );
+}
+
+// Función para dibujar estrellas
+Path drawStar(Size size) {
+  double degToRad(double deg) => deg * (pi / 180.0);
+
+  const numberOfPoints = 5;
+  final halfWidth = size.width / 2;
+  final externalRadius = halfWidth;
+  final internalRadius = halfWidth / 2.5;
+  final degreesPerStep = degToRad(360 / numberOfPoints);
+  final halfDegreesPerStep = degreesPerStep / 2;
+
+  final path = Path();
+  final fullAngle = degToRad(360);
+  path.moveTo(size.width, halfWidth);
+
+  for (double step = 0; step < fullAngle; step += degreesPerStep) {
+    path.lineTo(
+      halfWidth + externalRadius * cos(step),
+      halfWidth + externalRadius * sin(step),
+    );
+    path.lineTo(
+      halfWidth + internalRadius * cos(step + halfDegreesPerStep),
+      halfWidth + internalRadius * sin(step + halfDegreesPerStep),
+    );
+  }
+  path.close();
+  return path;
 }
