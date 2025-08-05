@@ -1,6 +1,3 @@
-import 'dart:ffi';
-
-import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:reverie/provider/calendar_provider.dart';
 import 'package:reverie/widgets/dream_count_dot.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
@@ -498,13 +496,24 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                                         padding: const EdgeInsets.only(
                                           left: 8.0,
                                         ),
-                                        child: Badge(
-                                          padding: EdgeInsets.all(3),
-                                          backgroundColor: Colors.deepPurple,
-                                          label: Icon(
-                                            Iconsax.notification,
-                                            size: 15,
-                                            color: Colors.white,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
+                                          child: Shimmer(
+                                            duration: const Duration(
+                                              seconds: 1,
+                                            ),
+                                            child: Badge(
+                                              padding: EdgeInsets.all(5),
+                                              backgroundColor:
+                                                  Colors.deepPurple,
+                                              label: Icon(
+                                                Iconsax.notification,
+                                                size: 15,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       )
