@@ -147,236 +147,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                               setState(() {
                                 isLoading = false;
                               });
-                              showModalBottomSheet(
-                                context: context,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(12),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    widget.btnProvider.isButtonEnabled
-                                        ? Colors.grey.shade900
-                                        : Colors.white,
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    padding: const EdgeInsets.all(16),
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Text(
-                                              'Análisis del sueño',
-                                              style: AppTextStyle.subtitleStyle(
-                                                widget
-                                                        .btnProvider
-                                                        .isButtonEnabled
-                                                    ? Colors.white
-                                                    : Colors.grey.shade700,
-                                              ),
-                                            ),
-                                          ),
-                                          const Divider(),
-                                          SingleChildScrollView(
-                                            child: Text(
-                                              widget.dream['analysis'],
-                                              style: TextStyle(
-                                                color:
-                                                    widget
-                                                            .btnProvider
-                                                            .isButtonEnabled
-                                                        ? Colors.white
-                                                        : Colors.grey.shade800,
-                                                fontFamily: 'roboto',
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Visibility(
-                                            visible:
-                                                widget.suscription == 'free'
-                                                    ? true
-                                                    : false,
-                                            child: SizedBox(
-                                              height: 70,
-                                              width:
-                                                  MediaQuery.sizeOf(
-                                                    context,
-                                                  ).width -
-                                                  32,
-                                              child: ElevatedButton(
-                                                onPressed: () async {
-                                                  SubscriptionBottomSheet.show(
-                                                    context,
-                                                  );
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  shadowColor:
-                                                      Colors.transparent,
-                                                ),
-                                                child: Ink(
-                                                  decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      colors: [
-                                                        Colors.purple.shade400,
-                                                        Colors.purple.shade600,
-                                                        Colors.indigo.shade400,
-                                                      ],
-                                                      begin: Alignment.topLeft,
-                                                      end:
-                                                          Alignment.bottomRight,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    child:
-                                                        isLoading
-                                                            ? SizedBox(
-                                                              width: 25,
-                                                              height: 25,
-                                                              child: CircularProgressIndicator(
-                                                                strokeWidth: 4,
-                                                                valueColor:
-                                                                    AlwaysStoppedAnimation<
-                                                                      Color
-                                                                    >(
-                                                                      Colors
-                                                                          .white,
-                                                                    ),
-                                                              ),
-                                                            )
-                                                            : Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Text(
-                                                                  'Ver análisis mas detallado',
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    fontFamily:
-                                                                        'roboto',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        Colors
-                                                                            .white,
-                                                                  ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Icon(
-                                                                  Iconsax
-                                                                      .magic_star,
-                                                                  color:
-                                                                      Colors
-                                                                          .amber,
-                                                                  size: 20,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              ElevatedButton(
-                                                onPressed: () {},
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Colors.purple.shade400,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          8,
-                                                        ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  'Compartir',
-                                                  style:
-                                                      RobotoTextStyle.smallTextStyle(
-                                                        Colors.white,
-                                                      ),
-                                                ),
-                                              ),
-                                              RatingBar(
-                                                size: 32,
-                                                filledIcon: Icons.star_rounded,
-                                                emptyIcon:
-                                                    Icons.star_border_rounded,
-                                                onRatingChanged: (value) async {
-                                                  setState(() {
-                                                    currentRating = value;
-                                                  });
-                                                  try {
-                                                    FirebaseFirestore
-                                                    firestore =
-                                                        FirebaseFirestore
-                                                            .instance;
-                                                    FirebaseAuth auth =
-                                                        FirebaseAuth.instance;
-
-                                                    await firestore
-                                                        .collection('users')
-                                                        .doc(
-                                                          auth.currentUser?.uid,
-                                                        )
-                                                        .collection('dreams')
-                                                        .doc(widget.dream.id)
-                                                        .update({
-                                                          'rating': value,
-                                                        });
-                                                  } catch (e) {
-                                                    ScaffoldMessenger.of(
-                                                      context,
-                                                    ).showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                          'Error updating rating.',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                                initialRating: currentRating,
-                                                maxRating: 5,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
+                              _analysisBottomSheet(context);
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -448,6 +219,273 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
           ),
         ),
       ),
+    );
+  }
+
+  void _analysisBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allows the sheet to take more space
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor:
+          widget.btnProvider.isButtonEnabled
+              ? Colors.grey.shade900
+              : Theme.of(context).colorScheme.surface,
+      builder: (BuildContext context) {
+        return AnimatedPadding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          duration: const Duration(milliseconds: 100),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Draggable handle
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color:
+                          widget.btnProvider.isButtonEnabled
+                              ? Colors.grey.shade700
+                              : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Text(
+                      'Análisis del sueño',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color:
+                            widget.btnProvider.isButtonEnabled
+                                ? Colors.white
+                                : Colors.grey.shade800,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color:
+                            widget.btnProvider.isButtonEnabled
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      splashRadius: 20,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+                Divider(
+                  color:
+                      widget.btnProvider.isButtonEnabled
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade300,
+                  height: 1,
+                ),
+                const SizedBox(height: 16),
+
+                // Analysis content with smooth scrolling
+                Flexible(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Text(
+                      widget.dream['analysis'],
+                      style: TextStyle(
+                        color:
+                            widget.btnProvider.isButtonEnabled
+                                ? Colors.white
+                                : Colors.grey.shade800,
+                        fontSize: 16,
+                        height: 1.6,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                if (widget.suscription == 'free') ...[
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    height: 56,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.shade400,
+                          Colors.purple.shade600,
+                          Colors.indigo.shade400,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.purple.shade200.withAlpha(40),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        SubscriptionBottomSheet.show(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child:
+                          isLoading
+                              ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                              : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Iconsax.magic_star,
+                                    color: Colors.amber,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Análisis detallado',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: Icon(
+                          Icons.share,
+                          color:
+                              widget.btnProvider.isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.purple.shade600,
+                        ),
+                        label: Text(
+                          'Compartir',
+                          style: TextStyle(
+                            color:
+                                widget.btnProvider.isButtonEnabled
+                                    ? Colors.white
+                                    : Colors.purple.shade600,
+                          ),
+                        ),
+                        onPressed: () => null,
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color:
+                                widget.btnProvider.isButtonEnabled
+                                    ? Colors.grey.shade700
+                                    : Colors.purple.shade400,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        decoration: BoxDecoration(
+                          color:
+                              widget.btnProvider.isButtonEnabled
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Califica tu análisis',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color:
+                                    widget.btnProvider.isButtonEnabled
+                                        ? Colors.grey.shade400
+                                        : Colors.grey.shade600,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: RatingBar(
+                                size: 28,
+                                filledIcon: Icons.star_rounded,
+                                emptyIcon: Icons.star_border_rounded,
+                                filledColor: Colors.amber.shade400,
+                                emptyColor:
+                                    widget.btnProvider.isButtonEnabled
+                                        ? Colors.grey.shade600
+                                        : Colors.grey.shade400,
+                                onRatingChanged: (value) async {
+                                  setState(() => currentRating = value);
+                                  try {
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(
+                                          FirebaseAuth
+                                              .instance
+                                              .currentUser
+                                              ?.uid,
+                                        )
+                                        .collection('dreams')
+                                        .doc(widget.dream.id)
+                                        .update({'rating': value});
+                                  } catch (e) {}
+                                },
+                                initialRating: currentRating,
+                                maxRating: 5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
