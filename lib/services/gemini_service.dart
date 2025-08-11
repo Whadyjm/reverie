@@ -63,7 +63,7 @@ class GeminiService {
                         : analysisStyle == 'mistico'
                         ? Prompts.mysticalExploration
                         : Prompts.hybridExploration} $dreamText'
-                    'El analisis debe ser breve, no PASES de 2 párrafos.',
+                    'El analisis debe ser breve, sólo 1 párrafo, no mas de 100 palabras.',
               },
             ],
           },
@@ -169,6 +169,7 @@ class GeminiService {
                 "text":
                     "$dreamText Detecta y nombra las emociones predominantes presentes en el siguiente sueño."
                     "Sé específico y directo. Solo nombra 3 palabras que representen el sueño. Responde SOLO con las palabras, ningún otro texto antes o después."
+                    "Tampoco utilices comas, puntos ni asteriscos o cualquier otro signo"
                     "Muestra cada palabra con su icono como prefijo, una al lado de la otra separadas por dos espacios"
                     "Agrega ademas un icono unicode com prefijo relacionado con cada palabra.",
               },
