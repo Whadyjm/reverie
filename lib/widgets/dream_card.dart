@@ -38,81 +38,123 @@ class _DreamCardState extends State<DreamCard> {
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  btnProvider.isButtonEnabled
-                      ? Colors.black87
-                      : Colors.grey.shade300,
-              blurRadius: 4,
-              offset: Offset(2, 1),
+      child: Stack(
+        children: [
+          Container(
+            constraints: const BoxConstraints(
+              minWidth: 200,
+              maxWidth: 350,
+              minHeight: 80,
+              maxHeight: 500,
             ),
-          ],
-        ),
-        height: 200,
-        width: 200,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Blur(
-                          colorOpacity: 0,
-                          blur: btnProvider.isTextBlurred ? 2.5 : 0,
-                          child: Text(
-                            widget.dream['title'],
-                            style: AppTextStyle.subtitleStyle(
-                              Colors.grey.shade600,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      btnProvider.isButtonEnabled
+                          ? Colors.black87
+                          : Colors.grey.shade300,
+                  blurRadius: 4,
+                  offset: Offset(2, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Blur(
+                        colorOpacity: 0,
+                        blur: btnProvider.isTextBlurred ? 2.5 : 0,
+                        child: Text(
+                          widget.dream['title'],
+                          style: AppTextStyle.subtitleStyle(
+                            Colors.grey.shade600,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 3),
-                    child: Blur(
-                      colorOpacity: 0,
-                      blur: btnProvider.isTextBlurred ? 2.5 : 0,
-                      child: Text(
-                        widget.dream['text'],
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'roboto',
-                          fontWeight: FontWeight.w500,
-                          foreground:
-                              Paint()
-                                ..shader = LinearGradient(
-                                  colors: [
-                                    Colors.transparent.withAlpha(200),
-                                    Colors.transparent.withAlpha(150),
-                                    Colors.transparent.withAlpha(50),
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
-                          fontSize: 15,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: Blur(
+                    colorOpacity: 0,
+                    blur: btnProvider.isTextBlurred ? 2.5 : 0,
+                    child: Text(
+                      widget.dream['text'],
+                      maxLines: 8,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'roboto',
+                        fontWeight: FontWeight.w500,
+                        foreground:
+                            Paint()
+                              ..shader = LinearGradient(
+                                colors: [
+                                  Colors.transparent.withAlpha(200),
+                                  Colors.transparent.withAlpha(150),
+                                  Colors.transparent.withAlpha(50),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ).createShader(Rect.fromLTWH(0, 0, 200, 100)),
+                        fontSize: 15,
+                      ),
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AnalysisStyleTag(analysisStyle: analysisStyle),
+                    const SizedBox(width: 20),
+                    LikeButton(
+                      isLiked: widget.dream['isLiked'],
+                      dreamId: widget.dream['dreamId'],
+                    ),
+                    const SizedBox(width: 20),
+                    Chip(
+                      label: Blur(
+                        borderRadius: BorderRadius.circular(12),
+                        colorOpacity: 0.01,
+                        blur: btnProvider.isTextBlurred ? 2.5 : 0,
+                        child: Text(
+                          widget.dream['classification'],
+                          style: RobotoTextStyle.smallTextStyle(Colors.white),
+                        ),
+                      ),
+                      backgroundColor:
+                          widget.dream['classification'] == 'Pesadilla'
+                              ? Colors.purple.shade600
+                              : Colors.purple.shade300,
+                      avatar: Icon(
+                        widget.dream['classification'] == 'Pesadilla'
+                            ? Iconsax.emoji_sad
+                            : Iconsax.happyemoji,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            Visibility(
-              visible: widget.isLongPress ? true : false,
+          ),
+          if (widget.isLongPress)
+            Align(
+              alignment: Alignment.topRight,
               child: GestureDetector(
                 onTap: () async {
                   await firestore
@@ -123,80 +165,29 @@ class _DreamCardState extends State<DreamCard> {
                       .delete();
                   print('Dream deleted');
                 },
-                child: Positioned(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade400,
-                                blurRadius: 4,
-                                offset: Offset(2, 1),
-                              ),
-                            ],
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: Icon(
-                            Icons.remove_rounded,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      ],
-                    ),
+                child: Container(
+                  margin: const EdgeInsets.only(top: 4, right: 4),
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade600,
+                        blurRadius: 4,
+                        offset: Offset(2, 1),
+                      ),
+                    ],
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: const Icon(
+                    Icons.remove_rounded,
+                    color: Colors.redAccent,
                   ),
                 ),
               ),
             ),
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: -120,
-              child: Row(
-                children: [
-                  AnalysisStyleTag(analysisStyle: analysisStyle),
-                  const SizedBox(width: 20),
-                  LikeButton(
-                    isLiked: widget.dream['isLiked'],
-                    dreamId: widget.dream['dreamId'],
-                  ),
-                  const SizedBox(width: 20),
-                  Chip(
-                    label: Blur(
-                      borderRadius: BorderRadius.circular(12),
-                      colorOpacity: 0.01,
-                      blur: btnProvider.isTextBlurred ? 2.5 : 0,
-                      child: Text(
-                        widget.dream['classification'],
-                        style: RobotoTextStyle.smallTextStyle(Colors.white),
-                      ),
-                    ),
-                    backgroundColor:
-                        widget.dream['classification'] == 'Pesadilla'
-                            ? Colors.purple.shade600
-                            : Colors.purple.shade300,
-                    avatar: Icon(
-                      widget.dream['classification'] == 'Pesadilla'
-                          ? Iconsax.emoji_sad
-                          : Iconsax.happyemoji,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
