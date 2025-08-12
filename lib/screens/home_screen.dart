@@ -102,9 +102,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 .collection('dreams')
                 .get();
 
-        setState(() {
-          dreamCount = dreamsSnapshot.docs.length;
-        });
+        if (mounted) {
+          setState(() {
+            dreamCount = dreamsSnapshot.docs.length;
+          });
+        }
 
         print('-----------------Dream count: $dreamCount-----------------');
       }
@@ -115,10 +117,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _checkPreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      dontShowAgain = prefs.getBool('dontShowGenderDialog') ?? false;
-      shouldShowDialog = !dontShowAgain;
-    });
+    if (mounted) {
+      setState(() {
+        dontShowAgain = prefs.getBool('dontShowGenderDialog') ?? false;
+        shouldShowDialog = !dontShowAgain;
+      });
+    }
   }
 
   Future<void> getUserSelectedGender() async {
@@ -130,9 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
             .doc(user.uid)
             .get()
             .then((value) => value.data()?['selectedGender'] ?? '');
-        setState(() {
-          selectedGender = fetchUserSelectedGender;
-        });
+        if (mounted) {
+          setState(() {
+            selectedGender = fetchUserSelectedGender;
+          });
+        }
       }
       print('-----------------$selectedGender-----------------');
     } catch (e) {}
@@ -147,9 +153,11 @@ class _MyHomePageState extends State<MyHomePage> {
             .doc(user.uid)
             .get()
             .then((value) => value.data()?['suscription'] ?? '');
-        setState(() {
-          suscription = fetchUserSuscription;
-        });
+        if (mounted) {
+          setState(() {
+            suscription = fetchUserSuscription;
+          });
+        }
       }
       print('-----------------$suscription-----------------');
     } catch (e) {}
@@ -164,9 +172,11 @@ class _MyHomePageState extends State<MyHomePage> {
             .doc(user.uid)
             .get()
             .then((value) => value.data()?['name'] ?? '');
-        setState(() {
-          name = fetchUserName;
-        });
+        if (mounted) {
+          setState(() {
+            name = fetchUserName;
+          });
+        }
       }
       print('-----------------$name-----------------');
     } catch (e) {}
@@ -181,9 +191,11 @@ class _MyHomePageState extends State<MyHomePage> {
             .doc(user.uid)
             .get()
             .then((value) => value.data()?['analysisStyle'] ?? '');
-        setState(() {
-          analysisStyle = fetchedAnalysisStyle;
-        });
+        if (mounted) {
+          setState(() {
+            analysisStyle = fetchedAnalysisStyle;
+          });
+        }
       }
       print('-----------------$analysisStyle-----------------');
     } catch (e) {
@@ -195,9 +207,11 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final doc = await firestore.collection('apiKey').doc('apiKey').get();
       if (doc.exists) {
-        setState(() {
-          apiKey = doc.data()?['apiKey'] ?? '';
-        });
+        if (mounted) {
+          setState(() {
+            apiKey = doc.data()?['apiKey'] ?? '';
+          });
+        }
         print('-----------------$apiKey-----------------');
       } else {
         print('Document does not exist.');
@@ -212,9 +226,11 @@ class _MyHomePageState extends State<MyHomePage> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       final doc = await firestore.collection('apiKey').doc('apiKey').get();
 
-      setState(() {
-        apiKey = doc.data()?['apiKey'] ?? '';
-      });
+      if (mounted) {
+        setState(() {
+          apiKey = doc.data()?['apiKey'] ?? '';
+        });
+      }
 
       final result = await EmotionService().analyzeUserEmotions(
         userId!,
@@ -239,6 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final prefs = await SharedPreferences.getInstance();
     final isButtonEnabled = prefs.getBool('isButtonEnabled') ?? false;
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    if (!mounted) return;
     if (isButtonEnabled) {
       btnProvider.disableButton();
     } else {
@@ -710,6 +727,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         analysisStyleProvider,
                         true,
+                        Alignment.topCenter,
                       ),
 
                       _analysisStyleContainer(
@@ -734,6 +752,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         analysisStyleProvider,
                         false,
+                        Alignment.center,
                       ),
 
                       _analysisStyleContainer(
@@ -758,6 +777,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         analysisStyleProvider,
                         false,
+                        Alignment.center,
                       ),
 
                       _analysisStyleContainer(
@@ -782,6 +802,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         analysisStyleProvider,
                         false,
+                        Alignment.bottomCenter,
                       ),
 
                       const Divider(height: 20, thickness: 1),
@@ -1797,7 +1818,6 @@ void _feedback(BuildContext context) {
                           return;
                         }
                         try {
-                          // Aquí puedes enviar el feedback a tu backend o servicio
                           FirebaseService().sendFeedback(
                             feedbackController.text.trim(),
                           );
@@ -2006,6 +2026,7 @@ Widget _analysisStyleContainer(
   void Function()? onTap,
   DreamProvider analysisStyleProvider,
   bool isPlus,
+  AlignmentGeometry alignment,
 ) {
   return Stack(
     children: [
@@ -2068,43 +2089,46 @@ Widget _analysisStyleContainer(
           )
           : const SizedBox.shrink(),
       Align(
-        alignment: Alignment.center,
+        alignment: alignment,
         child: ConfettiWidget(
           confettiController: _confettiController,
           blastDirectionality: BlastDirectionality.explosive,
           shouldLoop: false,
           colors: const [Colors.purple, Colors.purpleAccent, Colors.white],
-          createParticlePath: drawStar,
+          createParticlePath: drawShape,
         ),
       ),
     ],
   );
 }
 
-// Función para dibujar estrellas
-Path drawStar(Size size) {
+Path drawShape(Size size) {
   double degToRad(double deg) => deg * (pi / 180.0);
-
-  const numberOfPoints = 5;
-  final halfWidth = size.width / 2;
-  final externalRadius = halfWidth;
-  final internalRadius = halfWidth / 2.5;
-  final degreesPerStep = degToRad(360 / numberOfPoints);
-  final halfDegreesPerStep = degreesPerStep / 2;
-
+  const petals = 6;
+  final center = Offset(size.width / 2, size.height / 2);
+  final outerRadius = size.width / 2;
+  final innerRadius = outerRadius * 0.55;
   final path = Path();
-  final fullAngle = degToRad(360);
-  path.moveTo(size.width, halfWidth);
-
-  for (double step = 0; step < fullAngle; step += degreesPerStep) {
-    path.lineTo(
-      halfWidth + externalRadius * cos(step),
-      halfWidth + externalRadius * sin(step),
+  for (int i = 0; i < petals; i++) {
+    final angle = degToRad(60.0 * i - 90);
+    final nextAngle = degToRad(60.0 * (i + 1) - 90);
+    final controlAngle = degToRad(60.0 * i + 30 - 90);
+    final p1 = Offset(
+      center.dx + outerRadius * cos(angle),
+      center.dy + outerRadius * sin(angle),
     );
-    path.lineTo(
-      halfWidth + internalRadius * cos(step + halfDegreesPerStep),
-      halfWidth + internalRadius * sin(step + halfDegreesPerStep),
+    final p2 = Offset(
+      center.dx + outerRadius * cos(nextAngle),
+      center.dy + outerRadius * sin(nextAngle),
     );
+    final control = Offset(
+      center.dx + innerRadius * cos(controlAngle),
+      center.dy + innerRadius * sin(controlAngle),
+    );
+    if (i == 0) {
+      path.moveTo(p1.dx, p1.dy);
+    }
+    path.quadraticBezierTo(control.dx, control.dy, p2.dx, p2.dy);
   }
   path.close();
   return path;

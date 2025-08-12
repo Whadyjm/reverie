@@ -4,12 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/style/text_style.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
 import 'dream_card.dart' as dream_card;
 import 'dream_bottom_sheet.dart';
-import 'dream_list_empty.dart';
 
 class DreamByDate extends StatefulWidget {
   const DreamByDate({super.key, this.suscription});
