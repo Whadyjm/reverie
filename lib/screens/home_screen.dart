@@ -546,8 +546,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     userName: userName,
                   ),
                 ),
-
-                // Main Drawer Items
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -787,6 +785,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
 
                       const Divider(height: 20, thickness: 1),
+                      _buildDrawerItem(
+                        icon: Iconsax.message,
+                        title: 'Feedback',
+                        onTap: () => _feedback(context),
+                        color: Colors.grey.shade800,
+                      ),
                       _buildDrawerItem(
                         icon: Iconsax.logout,
                         title: 'Cerrar sesión',
@@ -1650,6 +1654,202 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+}
+
+void _feedback(BuildContext context) {
+  final TextEditingController feedbackController = TextEditingController();
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Iconsax.message,
+                    color: Colors.purple.shade400,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '¡Queremos escucharte!',
+                    style: RobotoTextStyle.subtitleStyle(Colors.grey.shade800),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '¿Tienes sugerencias, comentarios o encontraste un problema?\nTu opinión nos ayuda a mejorar.',
+                style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700),
+              ),
+              const SizedBox(height: 18),
+              TextField(
+                controller: feedbackController,
+                maxLines: 5,
+                textCapitalization: TextCapitalization.sentences,
+                style: TextStyle(
+                  color: Colors.grey.shade800,
+                  fontFamily: 'roboto',
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Escribe tu feedback aquí...',
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.purple.shade100),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.purple.shade100),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.purple.shade300,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        side: BorderSide(color: Colors.purple.shade100),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancelar',
+                        style: RobotoTextStyle.smallTextStyle(
+                          Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: Colors.purple.shade400,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (feedbackController.text.trim().isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  title: Text(
+                                    'Campo vacío',
+                                    style: TextStyle(
+                                      color: Colors.purple.shade400,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    'Por favor, escribe tu feedback.',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        'OK',
+                                        style: TextStyle(
+                                          color: Colors.purple.shade400,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                          );
+                          return;
+                        }
+                        try {
+                          // Aquí puedes enviar el feedback a tu backend o servicio
+                          FirebaseService().sendFeedback(
+                            feedbackController.text.trim(),
+                          );
+                        } catch (e) {}
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder:
+                              (context) => AlertDialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                title: Text(
+                                  '¡Gracias!',
+                                  style: TextStyle(
+                                    color: Colors.purple.shade400,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: Text(
+                                  '¡Gracias por tu feedback!',
+                                  style: TextStyle(color: Colors.grey.shade800),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(
+                                      'Cerrar',
+                                      style: TextStyle(
+                                        color: Colors.purple.shade400,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        );
+                      },
+                      child: Text(
+                        'Enviar',
+                        style: RobotoTextStyle.smallTextStyle(Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class UserAvatarDrawer extends StatelessWidget {

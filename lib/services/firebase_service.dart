@@ -50,4 +50,20 @@ class FirebaseService {
       FocusScope.of(context).unfocus();
     }
   }
+
+  void sendFeedback(String feedback) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    try {
+      await firestore.collection('feedback').add({
+        'userId': auth.currentUser?.uid,
+        'email': auth.currentUser?.email,
+        'feedback': feedback,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error al enviar el feedback: $e');
+    }
+  }
 }
