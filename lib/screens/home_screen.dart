@@ -831,188 +831,213 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          body: Container(
-            decoration: BoxDecoration(
-              gradient:
-                  btnProvider.isButtonEnabled
-                      ? LinearGradient(
-                        begin: Alignment.bottomLeft,
-                        end: Alignment.topRight,
-                        colors: Gradients.homeScreenDarkMode,
-                      )
-                      : LinearGradient(
-                        colors: Gradients.homeScreenLightMode,
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 60,
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 15),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Reverie',
-                              style: AppTextStyle.logoTitleStyle(
-                                btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade800,
-                              ),
-                            ),
-                          ],
+          body: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              final calendarProvider = Provider.of<CalendarProvider>(
+                context,
+                listen: false,
+              );
+              final currentDate = calendarProvider.selectedDate;
+              if (details.primaryVelocity != null) {
+                if (details.primaryVelocity! < 0) {
+                  calendarProvider.setSelectedDate(
+                    currentDate.add(const Duration(days: 1)),
+                  );
+                } else if (details.primaryVelocity! > 0) {
+                  calendarProvider.setSelectedDate(
+                    currentDate.subtract(const Duration(days: 1)),
+                  );
+                }
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                gradient:
+                    btnProvider.isButtonEnabled
+                        ? LinearGradient(
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                          colors: Gradients.homeScreenDarkMode,
+                        )
+                        : LinearGradient(
+                          colors: Gradients.homeScreenLightMode,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                         ),
-                        suscription == 'free'
-                            ? FadeIn(
-                              duration: Duration(milliseconds: 800),
-                              child: GestureDetector(
-                                onTap: () {
-                                  SubscriptionBottomSheet.show(context);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 25,
-                                    top: 16.0,
-                                  ),
-                                  child: Container(
-                                    height: 30,
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.deepPurple,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(0.5),
-                                          blurRadius: 10,
-                                          offset: Offset(0, 0),
-                                        ),
-                                      ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 60,
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 15, right: 15),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Reverie',
+                                style: AppTextStyle.logoTitleStyle(
+                                  btnProvider.isButtonEnabled
+                                      ? Colors.white
+                                      : Colors.grey.shade800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          suscription == 'free'
+                              ? FadeIn(
+                                duration: Duration(milliseconds: 800),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    SubscriptionBottomSheet.show(context);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 25,
+                                      top: 16.0,
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        'Obtén PLUS ✨',
-                                        style: RobotoTextStyle.smallTextStyle(
-                                          Colors.white,
+                                    child: Container(
+                                      height: 30,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.deepPurple,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.white.withOpacity(
+                                              0.5,
+                                            ),
+                                            blurRadius: 10,
+                                            offset: Offset(0, 0),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Obtén PLUS ✨',
+                                          style: RobotoTextStyle.smallTextStyle(
+                                            Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )
-                            : const SizedBox.shrink(),
-                        SizedBox(width: MediaQuery.sizeOf(context).width - 350),
-                        user != null
-                            ? Padding(
-                              padding: const EdgeInsets.only(top: 12),
-                              child: Builder(
-                                builder: (context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        Scaffold.of(context).openEndDrawer();
-                                        FocusScope.of(context).unfocus();
-                                      });
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 18,
-                                      backgroundColor:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white.withOpacity(0.2)
-                                              : Colors.grey.shade200,
-                                      child: StreamBuilder<User?>(
-                                        stream: user,
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData &&
-                                              snapshot.data != null) {
-                                            return ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(25),
-                                              child:
-                                                  snapshot.data?.photoURL !=
-                                                          null
-                                                      ? Image.network(
-                                                        snapshot
-                                                            .data!
-                                                            .photoURL!,
-                                                        fit: BoxFit.cover,
-                                                        errorBuilder: (
-                                                          context,
-                                                          error,
-                                                          stackTrace,
-                                                        ) {
-                                                          return Icon(
-                                                            Icons.person,
-                                                            color: Colors.grey,
-                                                            size: 20,
-                                                          );
-                                                        },
-                                                        loadingBuilder: (
-                                                          context,
-                                                          child,
-                                                          loadingProgress,
-                                                        ) {
-                                                          if (loadingProgress ==
-                                                              null)
-                                                            return child;
-                                                          return CircularProgressIndicator(
-                                                            value:
-                                                                loadingProgress
-                                                                            .expectedTotalBytes !=
-                                                                        null
-                                                                    ? loadingProgress
-                                                                            .cumulativeBytesLoaded /
-                                                                        loadingProgress
-                                                                            .expectedTotalBytes!
-                                                                    : null,
-                                                          );
-                                                        },
-                                                      )
-                                                      : Icon(
-                                                        Icons.person,
-                                                        color: Colors.grey,
-                                                        size: 20,
-                                                      ),
-                                            );
-                                          } else {
-                                            return CircleAvatar(
-                                              backgroundColor:
-                                                  btnProvider.isButtonEnabled
-                                                      ? Colors.white
-                                                          .withOpacity(0.2)
-                                                      : Colors.grey.shade200,
-                                              child: Icon(
-                                                Icons.person,
-                                                color: Colors.grey,
-                                              ),
-                                            );
-                                          }
-                                        },
+                              )
+                              : const SizedBox.shrink(),
+                          SizedBox(
+                            width: MediaQuery.sizeOf(context).width - 350,
+                          ),
+                          user != null
+                              ? Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: Builder(
+                                  builder: (context) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          Scaffold.of(context).openEndDrawer();
+                                          FocusScope.of(context).unfocus();
+                                        });
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 18,
+                                        backgroundColor:
+                                            btnProvider.isButtonEnabled
+                                                ? Colors.white.withOpacity(0.2)
+                                                : Colors.grey.shade200,
+                                        child: StreamBuilder<User?>(
+                                          stream: user,
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData &&
+                                                snapshot.data != null) {
+                                              return ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                                child:
+                                                    snapshot.data?.photoURL !=
+                                                            null
+                                                        ? Image.network(
+                                                          snapshot
+                                                              .data!
+                                                              .photoURL!,
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder: (
+                                                            context,
+                                                            error,
+                                                            stackTrace,
+                                                          ) {
+                                                            return Icon(
+                                                              Icons.person,
+                                                              color:
+                                                                  Colors.grey,
+                                                              size: 20,
+                                                            );
+                                                          },
+                                                          loadingBuilder: (
+                                                            context,
+                                                            child,
+                                                            loadingProgress,
+                                                          ) {
+                                                            if (loadingProgress ==
+                                                                null)
+                                                              return child;
+                                                            return CircularProgressIndicator(
+                                                              value:
+                                                                  loadingProgress
+                                                                              .expectedTotalBytes !=
+                                                                          null
+                                                                      ? loadingProgress
+                                                                              .cumulativeBytesLoaded /
+                                                                          loadingProgress
+                                                                              .expectedTotalBytes!
+                                                                      : null,
+                                                            );
+                                                          },
+                                                        )
+                                                        : Icon(
+                                                          Icons.person,
+                                                          color: Colors.grey,
+                                                          size: 20,
+                                                        ),
+                                              );
+                                            } else {
+                                              return CircleAvatar(
+                                                backgroundColor:
+                                                    btnProvider.isButtonEnabled
+                                                        ? Colors.white
+                                                            .withOpacity(0.2)
+                                                        : Colors.grey.shade200,
+                                                child: Icon(
+                                                  Icons.person,
+                                                  color: Colors.grey,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                            : const SizedBox.shrink(),
-                      ],
+                                    );
+                                  },
+                                ),
+                              )
+                              : const SizedBox.shrink(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                CalendarTimeline(emotionResult: emotionResult),
-                DreamByDate(suscription: suscription),
-                //TextAudioInput(apiKey: apiKey),
-              ],
+                  CalendarTimeline(emotionResult: emotionResult),
+                  DreamByDate(suscription: suscription),
+                  //TextAudioInput(apiKey: apiKey),
+                ],
+              ),
             ),
           ),
           floatingActionButton: Pulse(

@@ -1,13 +1,11 @@
 import 'package:blur/blur.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/widgets/analysis_style_tag.dart';
-
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 import 'like_button.dart';
@@ -37,7 +35,7 @@ class _DreamCardState extends State<DreamCard> {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(left: 16.0, top: 10.0, bottom: 12.0),
       child: Stack(
         children: [
           Container(
