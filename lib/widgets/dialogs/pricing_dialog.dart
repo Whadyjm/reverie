@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import '../../style/text_style.dart';
 
 class SubscriptionBottomSheet {
@@ -17,7 +18,7 @@ class SubscriptionBottomSheet {
 }
 
 class _BottomSheetContent extends StatelessWidget {
-  const _BottomSheetContent({super.key});
+  const _BottomSheetContent();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class _BottomSheetContent extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.grey.shade900.withOpacity(0.9),
+            color: Colors.grey.shade900.withAlpha(90),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: DraggableScrollableSheet(
@@ -94,8 +95,8 @@ class _BottomSheetContent extends StatelessWidget {
                         buttonText: "Prueba 7 días",
                         features: const [
                           "Registro ilimitado",
-                          "Análisis avanzado",
-                          "Estadísticas detalladas",
+                          "Análisis limitado",
+                          "Estadísticas limitadas",
                           "Etiquetas simples",
                           "Backup en la nube",
                           "Sin Ads",
@@ -154,123 +155,228 @@ class _BottomSheetContent extends StatelessWidget {
       },
       child: Stack(
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 400),
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: gradientColors,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: buttonColor.withOpacity(0.4),
-                  blurRadius: 24,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (isRecommended)
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.amber.shade400,
-                            Colors.orange.shade600,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Text(
-                        "⭐ Recomendado",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
+          // Glassmorphism effect
+          ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      gradientColors.first.withOpacity(0.85),
+                      gradientColors.last.withOpacity(0.85),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                const SizedBox(height: 12),
-                Text(
-                  title.toUpperCase(),
-                  style: RobotoTextStyle.titleStyle(
-                    textColor,
-                  ).copyWith(letterSpacing: 1.2),
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: buttonColor.withAlpha(60),
+                      blurRadius: 32,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.08),
+                    width: 1.2,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  price,
-                  style: RobotoTextStyle.subtitleStyle(Colors.grey.shade300),
-                ),
-                const SizedBox(height: 20),
-                ...features
-                    .asMap()
-                    .entries
-                    .map(
-                      (entry) => TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0, end: 1),
-                        duration: Duration(milliseconds: 300 + entry.key * 60),
-                        builder: (context, value, child) {
-                          return Opacity(
-                            opacity: value,
-                            child: Transform.translate(
-                              offset: Offset(0, 10 * (1 - value)),
-                              child: child,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isRecommended)
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 7,
                             ),
-                          );
-                        },
-                        child: _feature(entry.value),
-                      ),
-                    )
-                    .toList(),
-                const SizedBox(height: 24),
-                Center(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(32),
-                    onTap: () {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Seleccionaste: $title")),
-                      );
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 14,
-                      ),
-                      decoration: BoxDecoration(
-                        color: buttonColor,
-                        borderRadius: BorderRadius.circular(32),
-                        boxShadow: [
-                          BoxShadow(
-                            color: buttonColor.withOpacity(0.6),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.amber.shade400,
+                                  Colors.orange.shade600,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(18),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.orange.withAlpha(60),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(
+                                  Icons.star_rounded,
+                                  color: Colors.black,
+                                  size: 16,
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  "Recomendado",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 18),
+                      Row(
+                        children: [
+                          // Plan icon
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [
+                                  buttonColor.withOpacity(0.7),
+                                  buttonColor.withOpacity(0.95),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: buttonColor.withAlpha(80),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Icon(
+                              title.toLowerCase().contains('premium')
+                                  ? Icons.workspace_premium_rounded
+                                  : Icons.star_rounded,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  title.toUpperCase(),
+                                  style: RobotoTextStyle.titleStyle(
+                                    textColor,
+                                  ).copyWith(
+                                    letterSpacing: 1.5,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  price,
+                                  style: RobotoTextStyle.subtitleStyle(
+                                    Colors.grey.shade200,
+                                  ).copyWith(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      child: Text(
-                        buttonText,
-                        style: RobotoTextStyle.smallTextStyle(Colors.white),
+                      const SizedBox(height: 22),
+                      ...features
+                          .asMap()
+                          .entries
+                          .map(
+                            (entry) => TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0, end: 1),
+                              duration: Duration(
+                                milliseconds: 320 + entry.key * 70,
+                              ),
+                              builder: (context, value, child) {
+                                return Opacity(
+                                  opacity: value,
+                                  child: Transform.translate(
+                                    offset: Offset(0, 10 * (1 - value)),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: _feature(entry.value),
+                            ),
+                          )
+                          .toList(),
+                      const SizedBox(height: 32),
+                      Center(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(36),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 38,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  buttonColor.withOpacity(0.95),
+                                  buttonColor.withOpacity(0.7),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(36),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: buttonColor.withAlpha(80),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  buttonText,
+                                  style: RobotoTextStyle.smallTextStyle(
+                                    Colors.white,
+                                  ).copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -295,13 +401,16 @@ class _BottomSheetContent extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: Icon(Icons.star_rounded, size: 18, color: Colors.indigoAccent),
+          child: Icon(Icons.star_rounded, size: 18, color: Colors.amber),
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            text,
-            style: RobotoTextStyle.small2TextStyle(Colors.white70),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              text,
+              style: RobotoTextStyle.small2TextStyle(Colors.white70),
+            ),
           ),
         ),
       ],
