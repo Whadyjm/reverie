@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/screens/favorite_screen.dart';
@@ -653,6 +655,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             activeColor: Colors.purple.shade300,
                             value: btnProvider.isButtonEnabled,
                             onChanged: (value) async {
+                              final can = await Haptics.canVibrate();
+
+                              if (!can) {
+                                return;
+                              }
+                              await Haptics.vibrate(HapticsType.success);
                               setState(() {
                                 if (value) {
                                   btnProvider.enableButton();
@@ -691,6 +699,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             activeColor: Colors.purple.shade300,
                             value: pinProvider.isPinActive,
                             onChanged: (value2) async {
+                              final can = await Haptics.canVibrate();
+
+                              if (!can) {
+                                return;
+                              }
+                              await Haptics.vibrate(HapticsType.success);
                               setState(() {
                                 if (value2) {
                                   pinProvider.enablePin();
@@ -741,6 +755,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         _confettiController,
                         context,
                         () async {
+                          final can = await Haptics.canVibrate();
+
+                          if (!can) {
+                            return;
+                          }
+                          await Haptics.vibrate(HapticsType.success);
                           SubscriptionBottomSheet.show(context);
                         },
                         analysisStyleProvider,
@@ -755,6 +775,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         _confettiController,
                         context,
                         () async {
+                          final can = await Haptics.canVibrate();
+
+                          if (!can) {
+                            return;
+                          }
+                          await Haptics.vibrate(HapticsType.success);
                           _confettiController.play();
                           setState(() {
                             analysisStyle = 'psicologico';
@@ -780,6 +806,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         _confettiController,
                         context,
                         () async {
+                          final can = await Haptics.canVibrate();
+
+                          if (!can) {
+                            return;
+                          }
+                          await Haptics.vibrate(HapticsType.success);
                           _confettiController.play();
                           setState(() {
                             analysisStyle = 'mistico';
@@ -805,6 +837,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         _confettiController,
                         context,
                         () async {
+                          final can = await Haptics.canVibrate();
+
+                          if (!can) {
+                            return;
+                          }
+                          await Haptics.vibrate(HapticsType.success);
                           _confettiController.play();
                           setState(() {
                             analysisStyle = 'hibrido';

@@ -762,6 +762,11 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                             return Text('');
                           }
                           return Skeletonizer(
+                            effect: const ShimmerEffect(
+                              baseColor: Colors.grey,
+                              highlightColor: Colors.white,
+                              duration: Duration(seconds: 1),
+                            ),
                             enabled: Snapshot.hasData ? false : true,
                             child:
                                 Snapshot.data != ''

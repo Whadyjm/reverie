@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -23,25 +24,22 @@ class _LikeButtonState extends State<LikeButton> {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: () async {
+        final can = await Haptics.canVibrate();
+
+        if (!can) {
+          return;
+        }
+        await Haptics.vibrate(HapticsType.success);
         setState(() {
           liked = !liked;
         });
         try {
-          // Obtén la referencia al documento específico que deseas actualizar
           var dreamsCollection = firestore
               .collection('users')
               .doc(auth.currentUser?.uid)
               .collection('dreams');
-
-          // Retrieve the document ID dynamically
-         /* var querySnapshot = await dreamsCollection.limit(1).get();
-          var dreamId =
-              querySnapshot.docs.isNotEmpty
-                  ? querySnapshot.docs.first.id
-                  : null;*/
 
           var documentSnapshot =
               await firestore
