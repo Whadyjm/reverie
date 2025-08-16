@@ -31,8 +31,8 @@ class _DreamCountDotState extends State<DreamCountDot> {
             (index) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Container(
-                width: 15,
-                height: 15,
+                width: 13,
+                height: 13,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(

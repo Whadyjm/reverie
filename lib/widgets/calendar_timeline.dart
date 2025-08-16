@@ -386,7 +386,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
 
     return EasyDateTimeLinePicker.itemBuilder(
-      timelineOptions: TimelineOptions(height: 125),
+      timelineOptions: TimelineOptions(height: 115),
       locale: Locale('es', 'ES'),
       headerOptions: HeaderOptions(
         headerBuilder: (context, date, onTap) {
@@ -620,6 +620,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       fontSize: 30,
                     ),
                   ),
+                  const SizedBox(height: 3),
                   DreamCountDot(stream: fetchDreamCountByDate(date)),
                 ],
               ),
