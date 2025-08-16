@@ -1806,106 +1806,134 @@ Widget _dreamTextField(
             ],
           ),
           const SizedBox(height: 6),
-          SizedBox(
-            height: 70,
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () async {
-                final btnProvider = Provider.of<ButtonProvider>(
-                  context,
-                  listen: false,
-                );
-                FocusScope.of(context).unfocus();
-                if (_dreamController.text.trim().isEmpty) {
-                  return;
-                }
-                try {
-                  btnProvider.setLoading(true);
-                  final title = await GeminiService().generateTitle(
-                    _dreamController.text,
-                    apiKey,
-                  );
-                  final analysis = await GeminiService().generateAnalysis(
-                    _dreamController.text,
-                    apiKey,
-                    analysisStyle == ''
-                        ? analysisStyleProvider.analysisStyle
-                        : analysisStyle,
-                    selectedGender!,
-                    userName!,
-                    suscription!,
-                  );
-                  final tag = await GeminiService().generateTag(
-                    _dreamController.text,
-                    apiKey,
-                  );
-                  final emotions = await GeminiService().generateEmotion(
-                    _dreamController.text,
-                    apiKey,
-                  );
-                  FirebaseService().saveDream(
-                    context,
-                    _dreamController,
-                    _selectedDate,
-                    title,
-                    analysis,
-                    tag,
-                    emotions,
-                    analysisStyle == ''
-                        ? analysisStyleProvider.analysisStyle
-                        : analysisStyle,
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error, intente de nuevo')),
-                  );
-                } finally {
-                  btnProvider.setLoading(false);
-                  _dreamController.clear();
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-              ),
-              child: Ink(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.purple.shade400,
-                      Colors.purple.shade600,
-                      Colors.indigo.shade400,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+          Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: SizedBox(
+                  height: 70,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final btnProvider = Provider.of<ButtonProvider>(
+                        context,
+                        listen: false,
+                      );
+                      FocusScope.of(context).unfocus();
+                      if (_dreamController.text.trim().isEmpty) {
+                        return;
+                      }
+                      try {
+                        btnProvider.setLoading(true);
+                        final title = await GeminiService().generateTitle(
+                          _dreamController.text,
+                          apiKey,
+                        );
+                        final analysis = await GeminiService().generateAnalysis(
+                          _dreamController.text,
+                          apiKey,
+                          analysisStyle == ''
+                              ? analysisStyleProvider.analysisStyle
+                              : analysisStyle,
+                          selectedGender!,
+                          userName!,
+                          suscription!,
+                        );
+                        final tag = await GeminiService().generateTag(
+                          _dreamController.text,
+                          apiKey,
+                        );
+                        final emotions = await GeminiService().generateEmotion(
+                          _dreamController.text,
+                          apiKey,
+                        );
+                        FirebaseService().saveDream(
+                          context,
+                          _dreamController,
+                          _selectedDate,
+                          title,
+                          analysis,
+                          tag,
+                          emotions,
+                          analysisStyle == ''
+                              ? analysisStyleProvider.analysisStyle
+                              : analysisStyle,
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error, intente de nuevo')),
+                        );
+                      } finally {
+                        btnProvider.setLoading(false);
+                        _dreamController.clear();
+                        Navigator.pop(context);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.purple.shade400,
+                            Colors.purple.shade600,
+                            Colors.indigo.shade400,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child:
+                            btnProvider.isLoading
+                                ? SizedBox(
+                                  width: 40,
+                                  height: 25,
+                                  child: _ThreeDotsLoading(color: Colors.white),
+                                )
+                                : Text(
+                                  'Guardar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'roboto',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                      ),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Container(
-                  alignment: Alignment.center,
-                  child:
-                      btnProvider.isLoading
-                          ? SizedBox(
-                            width: 40,
-                            height: 25,
-                            child: _ThreeDotsLoading(color: Colors.white),
-                          )
-                          : Text(
-                            'Guardar',
-                            style: TextStyle(
-                              fontFamily: 'roboto',
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
                 ),
               ),
-            ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      backgroundColor: Colors.indigo.shade400,
+                    ),
+                    child: Icon(
+                      Iconsax.microphone_2,
+                      color: Colors.white,
+                      size: 25,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
