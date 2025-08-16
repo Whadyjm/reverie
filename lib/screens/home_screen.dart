@@ -250,6 +250,25 @@ class _MyHomePageState extends State<MyHomePage> {
     } finally {}
   }
 
+  Stream<int> _fetchDreamCountByDate(DateTime date) {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('dreams')
+        .where(
+          'timestamp',
+          isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
+        )
+        .where(
+          'timestamp',
+          isLessThan: DateTime(date.year, date.month, date.day + 1),
+        )
+        .snapshots()
+        .map((querySnapshot) => querySnapshot.docs.length);
+  }
+
   Future<void> initializeButtonState() async {
     final prefs = await SharedPreferences.getInstance();
     final isButtonEnabled = prefs.getBool('isButtonEnabled') ?? false;
@@ -1075,113 +1094,141 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                FloatingActionButton(
-                  onPressed: () async {
-                    if (selectedGender == '' && shouldShowDialog) {
-                      await showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return SelectGenderDialog(
-                            selectedGender: selectedGender!,
-                            dontShowAgain: dontShowAgain,
+                StreamBuilder(
+                  stream: _fetchDreamCountByDate(_selectedDate),
+                  builder: (context, snapshot) {
+                    final dreamCount = snapshot.data ?? 0;
+                    return FloatingActionButton(
+                      onPressed: () async {
+                        if (dreamCount == 4) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Solo puedes registrar hasta 4 sueños por día.',
+                                style: RobotoTextStyle.smallTextStyle(
+                                  Colors.white,
+                                ),
+                              ),
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                58,
+                                42,
+                                106,
+                              ),
+                            ),
                           );
-                        },
-                      );
-                    }
-                    if (analysisStyleProvider.analysisStyle.isEmpty &&
-                        analysisSelected == false) {
-                      await showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return SelectAnalysisStyle();
-                        },
-                      );
-                      analysisStyle = analysisStyleProvider.analysisStyle;
-                      await Future.delayed(Duration(milliseconds: 300));
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12),
+                          return;
+                        }
+
+                        if (selectedGender == '' && shouldShowDialog) {
+                          await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return SelectGenderDialog(
+                                selectedGender: selectedGender!,
+                                dontShowAgain: dontShowAgain,
+                              );
+                            },
+                          );
+                        }
+                        if (analysisStyleProvider.analysisStyle.isEmpty &&
+                            analysisSelected == false) {
+                          await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return SelectAnalysisStyle();
+                            },
+                          );
+                          analysisStyle = analysisStyleProvider.analysisStyle;
+                          await Future.delayed(Duration(milliseconds: 300));
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
+                            ),
+                            backgroundColor:
+                                btnProvider.isButtonEnabled
+                                    ? Colors.grey.shade900
+                                    : Colors.white,
+                            builder: (BuildContext context) {
+                              return _dreamTextField(
+                                context,
+                                btnProvider,
+                                analysisStyleProvider,
+                                analysisStyle,
+                                isLoading,
+                                _dreamController,
+                                _selectedDate,
+                                selectedGender,
+                                userName,
+                                suscription,
+                                apiKey,
+                              );
+                            },
+                          );
+                        } else if (analysisStyleProvider
+                                .analysisStyle
+                                .isNotEmpty ||
+                            analysisSelected == true) {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
+                            ),
+                            backgroundColor:
+                                btnProvider.isButtonEnabled
+                                    ? Colors.grey.shade900
+                                    : Colors.white,
+                            builder: (BuildContext context) {
+                              return _dreamTextField(
+                                context,
+                                btnProvider,
+                                analysisStyleProvider,
+                                analysisStyle,
+                                isLoading,
+                                _dreamController,
+                                _selectedDate,
+                                selectedGender,
+                                userName,
+                                suscription,
+                                apiKey,
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.purple.shade400,
+                              Colors.purple.shade600,
+                              Colors.indigo.shade400,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
+                          shape: BoxShape.rectangle,
                         ),
-                        backgroundColor:
-                            btnProvider.isButtonEnabled
-                                ? Colors.grey.shade900
-                                : Colors.white,
-                        builder: (BuildContext context) {
-                          return _dreamTextField(
-                            context,
-                            btnProvider,
-                            analysisStyleProvider,
-                            analysisStyle,
-                            isLoading,
-                            _dreamController,
-                            _selectedDate,
-                            selectedGender,
-                            userName,
-                            suscription,
-                            apiKey,
-                          );
-                        },
-                      );
-                    } else if (analysisStyleProvider.analysisStyle.isNotEmpty ||
-                        analysisSelected == true) {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12),
-                          ),
+                        child: Icon(
+                          Iconsax.add_copy,
+                          color: Colors.white,
+                          size: 30,
                         ),
-                        backgroundColor:
-                            btnProvider.isButtonEnabled
-                                ? Colors.grey.shade900
-                                : Colors.white,
-                        builder: (BuildContext context) {
-                          return _dreamTextField(
-                            context,
-                            btnProvider,
-                            analysisStyleProvider,
-                            analysisStyle,
-                            isLoading,
-                            _dreamController,
-                            _selectedDate,
-                            selectedGender,
-                            userName,
-                            suscription,
-                            apiKey,
-                          );
-                        },
-                      );
-                    }
-                  },
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.purple.shade400,
-                          Colors.purple.shade600,
-                          Colors.indigo.shade400,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
                       ),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Icon(
-                      Iconsax.add_copy,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ],
             ),
