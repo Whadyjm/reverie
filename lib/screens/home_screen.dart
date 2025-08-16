@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
@@ -838,8 +837,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 listen: false,
               );
               final currentDate = calendarProvider.selectedDate;
+              final currentDay = calendarProvider.selectedDate.day;
+              final today = DateTime.now().day;
               if (details.primaryVelocity != null) {
-                if (details.primaryVelocity! < 0) {
+                if (details.primaryVelocity! < 0 && currentDay != today) {
                   calendarProvider.setSelectedDate(
                     currentDate.add(const Duration(days: 1)),
                   );
@@ -1098,9 +1099,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       );
                       analysisStyle = analysisStyleProvider.analysisStyle;
-                      print(analysisStyle);
                       await Future.delayed(Duration(milliseconds: 300));
-
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -1114,246 +1113,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ? Colors.grey.shade900
                                 : Colors.white,
                         builder: (BuildContext context) {
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              left: 16.0,
-                              right: 16.0,
-                              top: 16.0,
-                              bottom: MediaQuery.of(context).viewInsets.bottom,
-                            ),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '¿Qué soñaste hoy?',
-                                        style: AppTextStyle.subtitleStyle(
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade700,
-                                        ),
-                                      ),
-                                      Text(
-                                        analysisStyleProvider
-                                                .analysisStyle
-                                                .isEmpty
-                                            ? ''
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'cientifico'
-                                            ? '🧬'
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'psicologico'
-                                            ? '🧠'
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'mistico'
-                                            ? '🔮'
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'hibrido'
-                                            ? '🌀'
-                                            : '',
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color:
-                                              btnProvider.isButtonEnabled
-                                                  ? Colors.white
-                                                  : Colors.grey.shade700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextField(
-                                    textCapitalization:
-                                        TextCapitalization.sentences,
-                                    style: TextStyle(
-                                      fontFamily: 'roboto',
-                                      color:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade700,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    controller: _dreamController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Escribe tu sueño...',
-                                      hintStyle: TextStyle(
-                                        color:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white70
-                                                : Colors.grey.shade500,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    maxLines: 5,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Iconsax.lock_1,
-                                        color:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white38
-                                                : Colors.grey.shade500,
-                                        size: 15,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Tus sueños se encuentran a salvo.',
-                                        style: RobotoTextStyle.small2TextStyle(
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white38
-                                              : Colors.grey.shade500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  SizedBox(
-                                    height: 70,
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        FocusScope.of(context).unfocus();
-                                        if (_dreamController.text
-                                            .trim()
-                                            .isEmpty) {
-                                          return;
-                                        }
-                                        try {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          print(
-                                            analysisStyleProvider.analysisStyle,
-                                          );
-                                          final title = await GeminiService()
-                                              .generateTitle(
-                                                _dreamController.text,
-                                                apiKey,
-                                              );
-                                          final analysis = await GeminiService()
-                                              .generateAnalysis(
-                                                _dreamController.text,
-                                                apiKey,
-                                                analysisStyle == ''
-                                                    ? analysisStyleProvider
-                                                        .analysisStyle
-                                                    : analysisStyle,
-                                                selectedGender!,
-                                                userName!,
-                                                suscription!,
-                                              );
-                                          final tag = await GeminiService()
-                                              .generateTag(
-                                                _dreamController.text,
-                                                apiKey,
-                                              );
-                                          final emotions = await GeminiService()
-                                              .generateEmotion(
-                                                _dreamController.text,
-                                                apiKey,
-                                              );
-                                          FirebaseService().saveDream(
-                                            context,
-                                            _dreamController,
-                                            _selectedDate,
-                                            title,
-                                            analysis,
-                                            tag,
-                                            emotions,
-                                            analysisStyle == ''
-                                                ? analysisStyleProvider
-                                                    .analysisStyle
-                                                : analysisStyle,
-                                          );
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Error, intente de nuevo',
-                                              ),
-                                            ),
-                                          );
-                                        } finally {
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                          _dreamController.clear();
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                      ),
-                                      child: Ink(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Colors.purple.shade400,
-                                              Colors.purple.shade600,
-                                              Colors.indigo.shade400,
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          child:
-                                              isLoading
-                                                  ? SizedBox(
-                                                    width: 25,
-                                                    height: 25,
-                                                    child: CircularProgressIndicator(
-                                                      strokeWidth: 4,
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                            Color
-                                                          >(Colors.white),
-                                                    ),
-                                                  )
-                                                  : Text(
-                                                    'Guardar',
-                                                    style: TextStyle(
-                                                      fontFamily: 'roboto',
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          return _dreamTextField(
+                            context,
+                            btnProvider,
+                            analysisStyleProvider,
+                            analysisStyle,
+                            isLoading,
+                            _dreamController,
+                            _selectedDate,
+                            selectedGender,
+                            userName,
+                            suscription,
+                            apiKey,
                           );
                         },
                       );
@@ -1372,249 +1143,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ? Colors.grey.shade900
                                 : Colors.white,
                         builder: (BuildContext context) {
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              left: 16.0,
-                              right: 16.0,
-                              top: 16.0,
-                              bottom:
-                                  MediaQuery.of(context)
-                                      .viewInsets
-                                      .bottom, // Ajusta el espacio según el teclado
-                            ),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '¿Qué soñaste hoy?',
-                                        style: AppTextStyle.subtitleStyle(
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade700,
-                                        ),
-                                      ),
-                                      Text(
-                                        analysisStyleProvider
-                                                .analysisStyle
-                                                .isEmpty
-                                            ? ''
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'cientifico'
-                                            ? '🧬'
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'psicologico'
-                                            ? '🧠'
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'mistico'
-                                            ? '🔮'
-                                            : analysisStyleProvider
-                                                    .analysisStyle ==
-                                                'hibrido'
-                                            ? '🌀'
-                                            : '',
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color:
-                                              btnProvider.isButtonEnabled
-                                                  ? Colors.white
-                                                  : Colors.grey.shade700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextField(
-                                    textCapitalization:
-                                        TextCapitalization.sentences,
-                                    style: TextStyle(
-                                      fontFamily: 'roboto',
-                                      color:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white
-                                              : Colors.grey.shade700,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    controller: _dreamController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Escribe tu sueño...',
-                                      hintStyle: TextStyle(
-                                        color:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white70
-                                                : Colors.grey.shade500,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    maxLines: 5,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Iconsax.lock_1,
-                                        color:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white38
-                                                : Colors.grey.shade500,
-                                        size: 15,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        'Tus sueños se encuentran a salvo.',
-                                        style: RobotoTextStyle.small2TextStyle(
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white38
-                                              : Colors.grey.shade500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  SizedBox(
-                                    height: 70,
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        FocusScope.of(context).unfocus();
-                                        if (_dreamController.text
-                                            .trim()
-                                            .isEmpty) {
-                                          return;
-                                        }
-                                        try {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          print(
-                                            analysisStyleProvider.analysisStyle,
-                                          );
-                                          final title = await GeminiService()
-                                              .generateTitle(
-                                                _dreamController.text,
-                                                apiKey,
-                                              );
-                                          final analysis = await GeminiService()
-                                              .generateAnalysis(
-                                                _dreamController.text,
-                                                apiKey,
-                                                analysisStyle == ''
-                                                    ? analysisStyleProvider
-                                                        .analysisStyle
-                                                    : analysisStyle,
-                                                selectedGender!,
-                                                userName!,
-                                                suscription!,
-                                              );
-                                          final tag = await GeminiService()
-                                              .generateTag(
-                                                _dreamController.text,
-                                                apiKey,
-                                              );
-                                          final emotions = await GeminiService()
-                                              .generateEmotion(
-                                                _dreamController.text,
-                                                apiKey,
-                                              );
-                                          FirebaseService().saveDream(
-                                            context,
-                                            _dreamController,
-                                            _selectedDate,
-                                            title,
-                                            analysis,
-                                            tag,
-                                            emotions,
-                                            analysisStyle == ''
-                                                ? analysisStyleProvider
-                                                    .analysisStyle
-                                                : analysisStyle,
-                                          );
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Error, intente de nuevo',
-                                              ),
-                                            ),
-                                          );
-                                        } finally {
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                          _dreamController.clear();
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        backgroundColor: Colors.transparent,
-                                        shadowColor: Colors.transparent,
-                                      ),
-                                      child: Ink(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Colors.purple.shade400,
-                                              Colors.purple.shade600,
-                                              Colors.indigo.shade400,
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          child:
-                                              isLoading
-                                                  ? SizedBox(
-                                                    width: 25,
-                                                    height: 25,
-                                                    child: CircularProgressIndicator(
-                                                      strokeWidth: 4,
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<
-                                                            Color
-                                                          >(Colors.white),
-                                                    ),
-                                                  )
-                                                  : Text(
-                                                    'Guardar',
-                                                    style: TextStyle(
-                                                      fontFamily: 'roboto',
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          return _dreamTextField(
+                            context,
+                            btnProvider,
+                            analysisStyleProvider,
+                            analysisStyle,
+                            isLoading,
+                            _dreamController,
+                            _selectedDate,
+                            selectedGender,
+                            userName,
+                            suscription,
+                            apiKey,
                           );
                         },
                       );
@@ -2157,4 +1697,283 @@ Path drawShape(Size size) {
   }
   path.close();
   return path;
+}
+
+Widget _dreamTextField(
+  context,
+  ButtonProvider btnProvider,
+  DreamProvider analysisStyleProvider,
+  String analysisStyle,
+  bool isLoading,
+  TextEditingController _dreamController,
+  DateTime _selectedDate,
+  String? selectedGender,
+  String? userName,
+  String? suscription,
+  String apiKey,
+) {
+  return Padding(
+    padding: EdgeInsets.only(
+      left: 16.0,
+      right: 16.0,
+      top: 16.0,
+      bottom: MediaQuery.of(context).viewInsets.bottom,
+    ),
+    child: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '¿Qué soñaste hoy?',
+                style: AppTextStyle.subtitleStyle(
+                  btnProvider.isButtonEnabled
+                      ? Colors.white
+                      : Colors.grey.shade700,
+                ),
+              ),
+              Text(
+                analysisStyleProvider.analysisStyle.isEmpty
+                    ? ''
+                    : analysisStyleProvider.analysisStyle == 'cientifico'
+                    ? '🧬'
+                    : analysisStyleProvider.analysisStyle == 'psicologico'
+                    ? '🧠'
+                    : analysisStyleProvider.analysisStyle == 'mistico'
+                    ? '🔮'
+                    : analysisStyleProvider.analysisStyle == 'hibrido'
+                    ? '🌀'
+                    : '',
+                style: TextStyle(
+                  fontSize: 25,
+                  color:
+                      btnProvider.isButtonEnabled
+                          ? Colors.white
+                          : Colors.grey.shade700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            textCapitalization: TextCapitalization.sentences,
+            style: TextStyle(
+              fontFamily: 'roboto',
+              color:
+                  btnProvider.isButtonEnabled
+                      ? Colors.white
+                      : Colors.grey.shade700,
+              fontWeight: FontWeight.w500,
+            ),
+            controller: _dreamController,
+            decoration: InputDecoration(
+              hintText: 'Escribe tu sueño...',
+              hintStyle: TextStyle(
+                color:
+                    btnProvider.isButtonEnabled
+                        ? Colors.white70
+                        : Colors.grey.shade500,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            maxLines: 5,
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(
+                Iconsax.lock_1,
+                color:
+                    btnProvider.isButtonEnabled
+                        ? Colors.white38
+                        : Colors.grey.shade500,
+                size: 15,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                'Tus sueños se encuentran a salvo.',
+                style: RobotoTextStyle.small2TextStyle(
+                  btnProvider.isButtonEnabled
+                      ? Colors.white38
+                      : Colors.grey.shade500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          SizedBox(
+            height: 70,
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                final btnProvider = Provider.of<ButtonProvider>(
+                  context,
+                  listen: false,
+                );
+                FocusScope.of(context).unfocus();
+                if (_dreamController.text.trim().isEmpty) {
+                  return;
+                }
+                try {
+                  btnProvider.setLoading(true);
+                  final title = await GeminiService().generateTitle(
+                    _dreamController.text,
+                    apiKey,
+                  );
+                  final analysis = await GeminiService().generateAnalysis(
+                    _dreamController.text,
+                    apiKey,
+                    analysisStyle == ''
+                        ? analysisStyleProvider.analysisStyle
+                        : analysisStyle,
+                    selectedGender!,
+                    userName!,
+                    suscription!,
+                  );
+                  final tag = await GeminiService().generateTag(
+                    _dreamController.text,
+                    apiKey,
+                  );
+                  final emotions = await GeminiService().generateEmotion(
+                    _dreamController.text,
+                    apiKey,
+                  );
+                  FirebaseService().saveDream(
+                    context,
+                    _dreamController,
+                    _selectedDate,
+                    title,
+                    analysis,
+                    tag,
+                    emotions,
+                    analysisStyle == ''
+                        ? analysisStyleProvider.analysisStyle
+                        : analysisStyle,
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error, intente de nuevo')),
+                  );
+                } finally {
+                  btnProvider.setLoading(false);
+                  _dreamController.clear();
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+              ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple.shade400,
+                      Colors.purple.shade600,
+                      Colors.indigo.shade400,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  child:
+                      btnProvider.isLoading
+                          ? SizedBox(
+                            width: 40,
+                            height: 25,
+                            child: _ThreeDotsLoading(color: Colors.white),
+                          )
+                          : Text(
+                            'Guardar',
+                            style: TextStyle(
+                              fontFamily: 'roboto',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _ThreeDotsLoading extends StatefulWidget {
+  final Color color;
+  const _ThreeDotsLoading({Key? key, required this.color}) : super(key: key);
+
+  @override
+  State<_ThreeDotsLoading> createState() => _ThreeDotsLoadingState();
+}
+
+class _ThreeDotsLoadingState extends State<_ThreeDotsLoading>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<Animation<double>> _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+    _animations = List.generate(3, (i) {
+      return Tween<double>(begin: 0.3, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Interval(i * 0.2, 1.0, curve: Curves.easeInOut),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (i) {
+        return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _animations[i].value,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: widget.color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
 }

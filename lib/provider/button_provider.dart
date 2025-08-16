@@ -5,10 +5,17 @@ class ButtonProvider with ChangeNotifier {
   bool _isButtonEnabled = false;
   bool _isTextBlurred = false;
   bool _isPinActive = true;
+  bool _isLoading = false;
 
   bool get isButtonEnabled => _isButtonEnabled;
   bool get isTextBlurred => _isTextBlurred;
   bool get isPinActive => _isPinActive;
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   void togglePin() {
     _isPinActive = !_isPinActive;
