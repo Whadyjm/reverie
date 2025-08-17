@@ -36,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  late FirebaseService firebaseService;
   String apiKey = '';
   final TextEditingController _dreamController = TextEditingController();
   bool isLoading = false;
@@ -53,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    firebaseService = FirebaseService();
     final now = DateTime.now();
     final tomorrow = now.add(const Duration(days: 1));
     final isLastDayOfMonth = now.month != tomorrow.month;
@@ -60,24 +62,73 @@ class _MyHomePageState extends State<MyHomePage> {
       duration: const Duration(seconds: 1),
     );
     _checkPreferences();
-    getAPIKeyFromFirestore();
     initializeButtonState();
-    getAnalysisStyle();
-    getUserName();
-    getUserSelectedGender();
-    getDreamCountByUser();
-    getUserSuscription();
+
+    firebaseService.getDreamCountByUser().then((count) {
+      if (mounted) {
+        setState(() {
+          dreamCount = count;
+        });
+      }
+      print('-----------------Dream count: $count-----------------');
+    });
+
+    firebaseService.getUserSelectedGender().then((gender) {
+      if (mounted) {
+        setState(() {
+          selectedGender = gender;
+        });
+      }
+      print('-----------------selected gender: $gender-----------------');
+    });
+    firebaseService.getUserSuscription().then((suscript) {
+      if (mounted) {
+        setState(() {
+          suscription = suscript;
+        });
+      }
+      print('-----------------suscription: $suscript-----------------');
+    });
+    firebaseService.getUserName().then((user) {
+      if (mounted) {
+        setState(() {
+          name = user;
+        });
+      }
+      print('-----------------name: $user-----------------');
+    });
+    firebaseService.getAnalysisStyle().then((style) {
+      if (mounted) {
+        setState(() {
+          analysisStyle = style;
+        });
+      }
+      print('-----------------analysisStyle: $style-----------------');
+    });
+    firebaseService.getAPIKeyFromFirestore().then((api) {
+      if (mounted) {
+        setState(() {
+          apiKey = api;
+        });
+      }
+      print('-----------------apiKey: $api-----------------');
+    });
 
     if (isLastDayOfMonth) {
-      generateMonthlyEmotion();
+      firebaseService.generateMonthlyEmotion().then((emotion) {
+        if (mounted) {
+          setState(() {
+            emotionResult = emotion;
+          });
+        }
+        print('-----------------Monthly Emotion: $emotion-----------------');
+      });
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
       Provider.of<DreamProvider>(context, listen: false).loadAnalysisStyle();
     });
-    print('-----------------$analysisStyle-----------------');
-    print('-----------------$emotionResult-----------------');
   }
 
   @override
@@ -92,30 +143,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  Future<void> getDreamCountByUser() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final dreamsSnapshot =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(user.uid)
-                .collection('dreams')
-                .get();
-
-        if (mounted) {
-          setState(() {
-            dreamCount = dreamsSnapshot.docs.length;
-          });
-        }
-
-        print('-----------------Dream count: $dreamCount-----------------');
-      }
-    } catch (e) {
-      print('Error getting dream count: $e');
-    }
-  }
-
   Future<void> _checkPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     if (mounted) {
@@ -124,151 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
         shouldShowDialog = !dontShowAgain;
       });
     }
-  }
-
-  Future<void> getUserSelectedGender() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final fetchUserSelectedGender = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((value) => value.data()?['selectedGender'] ?? '');
-        if (mounted) {
-          setState(() {
-            selectedGender = fetchUserSelectedGender;
-          });
-        }
-      }
-      print('-----------------$selectedGender-----------------');
-    } catch (e) {}
-  }
-
-  Future<void> getUserSuscription() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final fetchUserSuscription = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((value) => value.data()?['suscription'] ?? '');
-        if (mounted) {
-          setState(() {
-            suscription = fetchUserSuscription;
-          });
-        }
-      }
-      print('-----------------$suscription-----------------');
-    } catch (e) {}
-  }
-
-  Future<void> getUserName() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final fetchUserName = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((value) => value.data()?['name'] ?? '');
-        if (mounted) {
-          setState(() {
-            name = fetchUserName;
-          });
-        }
-      }
-      print('-----------------$name-----------------');
-    } catch (e) {}
-  }
-
-  Future<void> getAnalysisStyle() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final fetchedAnalysisStyle = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((value) => value.data()?['analysisStyle'] ?? '');
-        if (mounted) {
-          setState(() {
-            analysisStyle = fetchedAnalysisStyle;
-          });
-        }
-      }
-      print('-----------------$analysisStyle-----------------');
-    } catch (e) {
-      print('Error fetching analysis style: $e');
-    }
-  }
-
-  Future<void> getAPIKeyFromFirestore() async {
-    try {
-      final doc = await firestore.collection('apiKey').doc('apiKey').get();
-      if (doc.exists) {
-        if (mounted) {
-          setState(() {
-            apiKey = doc.data()?['apiKey'] ?? '';
-          });
-        }
-        print('-----------------$apiKey-----------------');
-      } else {
-        print('Document does not exist.');
-      }
-    } catch (e) {
-      print('Error fetching API key: $e');
-    }
-  }
-
-  Future<void> generateMonthlyEmotion() async {
-    try {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-      final doc = await firestore.collection('apiKey').doc('apiKey').get();
-
-      if (mounted) {
-        setState(() {
-          apiKey = doc.data()?['apiKey'] ?? '';
-        });
-      }
-
-      final result = await EmotionService().analyzeUserEmotions(
-        userId!,
-        apiKey,
-      );
-
-      //seccion para guardar la emocion del mes
-      var monthlyEmotionCollection = firestore
-          .collection('users')
-          .doc(userId)
-          .collection('monthlyEmotions');
-
-      var documentRef = await monthlyEmotionCollection.add({
-        'emotion': result,
-        'month': Timestamp.now().toDate().month,
-      });
-    } catch (e) {
-    } finally {}
-  }
-
-  Stream<int> _fetchDreamCountByDate(DateTime date) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    FirebaseAuth auth = FirebaseAuth.instance;
-    return firestore
-        .collection('users')
-        .doc(auth.currentUser?.uid)
-        .collection('dreams')
-        .where(
-          'timestamp',
-          isGreaterThanOrEqualTo: DateTime(date.year, date.month, date.day),
-        )
-        .where(
-          'timestamp',
-          isLessThan: DateTime(date.year, date.month, date.day + 1),
-        )
-        .snapshots()
-        .map((querySnapshot) => querySnapshot.docs.length);
   }
 
   Future<void> initializeButtonState() async {
@@ -304,7 +186,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: Text('Freudiano', style: TextStyle(color: textColor)),
                   onTap: () {
                     Navigator.pop(context);
-                    // Handle Freud selection
                   },
                 ),
                 const Divider(height: 1),
@@ -312,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: Text('Junguiano', style: TextStyle(color: textColor)),
                   onTap: () {
                     Navigator.pop(context);
-                    // Handle Jung selection
                   },
                 ),
                 const Divider(height: 1),
@@ -1133,7 +1013,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 30),
                 StreamBuilder(
-                  stream: _fetchDreamCountByDate(_selectedDate),
+                  stream: FirebaseService().fetchDreamCountByDate(
+                    _selectedDate,
+                  ),
                   builder: (context, snapshot) {
                     final dreamCount = snapshot.data ?? 0;
                     return FloatingActionButton(
