@@ -61,24 +61,18 @@ class _BottomSheetContent extends StatelessWidget {
                       const SizedBox(height: 28),
                       _buildPlanCard(
                         context,
-                        title: "Premium",
-                        price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
-                        gradientColors: [
-                          Colors.deepPurple.shade800,
-                          Colors.deepPurple.shade600,
-                        ],
+                        title: "Basic",
+                        price: "GRATIS",
+                        gradientColors: [Colors.grey, Colors.indigo.shade600],
                         textColor: Colors.white,
-                        buttonColor: Colors.deepPurpleAccent.shade200,
-                        buttonText: "Explorar Premium",
+                        buttonColor: Colors.indigoAccent.shade200,
+                        buttonText: "Plan actual",
                         features: const [
-                          "Registro ilimitado",
-                          "Análisis avanzado",
-                          "Estadísticas detalladas",
-                          "Resumen mensual por correo",
-                          "Comparte tu sueño y/o análisis",
-                          "Etiquetas avanzadas",
+                          "Registro limitado",
+                          "Análisis limitado",
+                          "Estadísticas limitadas",
+                          "Etiquetas simples",
                           "Backup en la nube",
-                          "Sin Ads",
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -103,23 +97,29 @@ class _BottomSheetContent extends StatelessWidget {
                         ],
                         isRecommended: true,
                       ),
-                      /*const SizedBox(height: 20),
-                  _buildPlanCard(
-                    context,
-                    title: "Freemium",
-                    price: "Gratis",
-                    gradientColors: [Colors.grey.shade800, Colors.grey.shade700],
-                    textColor: Colors.white,
-                    buttonColor: Colors.grey.shade600,
-                    buttonText: "Comenzar",
-                    features: const [
-                      "Registro ilimitado",
-                      "Análisis básico",
-                      "Estadísticas mensuales",
-                      "Etiquetas simples",
-                    ],
-                  ),
-                  const SizedBox(height: 40),*/
+                      const SizedBox(height: 20),
+                      _buildPlanCard(
+                        context,
+                        title: "Premium",
+                        price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
+                        gradientColors: [
+                          Colors.deepPurple.shade800,
+                          Colors.deepPurple.shade600,
+                        ],
+                        textColor: Colors.white,
+                        buttonColor: Colors.deepPurpleAccent.shade200,
+                        buttonText: "Explorar Premium",
+                        features: const [
+                          "Registro ilimitado",
+                          "Análisis avanzado",
+                          "Estadísticas detalladas",
+                          "Resumen mensual por correo",
+                          "Comparte tu sueño y/o análisis",
+                          "Etiquetas avanzadas",
+                          "Backup en la nube",
+                          "Sin Ads",
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -155,7 +155,6 @@ class _BottomSheetContent extends StatelessWidget {
       },
       child: Stack(
         children: [
-          // Glassmorphism effect
           ClipRRect(
             borderRadius: BorderRadius.circular(28),
             child: BackdropFilter(
@@ -261,7 +260,9 @@ class _BottomSheetContent extends StatelessWidget {
                             child: Icon(
                               title.toLowerCase().contains('premium')
                                   ? Icons.workspace_premium_rounded
-                                  : Icons.star_rounded,
+                                  : title.toLowerCase().contains('plus')
+                                  ? Icons.star_rounded
+                                  : Iconsax.like,
                               color: Colors.white,
                               size: 28,
                             ),
@@ -384,24 +385,13 @@ class _BottomSheetContent extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildFeatureList(List<String> features) {
-    return features
-        .map(
-          (feature) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: _feature(feature),
-          ),
-        )
-        .toList();
-  }
-
   Widget _feature(String text) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: Icon(Icons.star_rounded, size: 18, color: Colors.amber),
+          child: Icon(Icons.check_box, size: 18, color: Colors.lightGreen),
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -409,7 +399,7 @@ class _BottomSheetContent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 2),
             child: Text(
               text,
-              style: RobotoTextStyle.small2TextStyle(Colors.white70),
+              style: RobotoTextStyle.smallTextStyle(Colors.white70),
             ),
           ),
         ),

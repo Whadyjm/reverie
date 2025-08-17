@@ -4,13 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/screens/favorite_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
-import 'package:reverie/services/emotion_service.dart';
 import 'package:reverie/widgets/drawer_head.dart';
 import 'package:reverie/widgets/select_gender_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -159,9 +157,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     if (!mounted) return;
     if (isButtonEnabled) {
-      btnProvider.disableButton();
-    } else {
       btnProvider.enableButton();
+    } else {
+      btnProvider.disableButton();
     }
   }
 
@@ -833,7 +831,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               ? FadeIn(
                                 duration: Duration(milliseconds: 800),
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    final can = await Haptics.canVibrate();
+
+                                    if (!can) {
+                                      return;
+                                    }
+
+                                    await Haptics.vibrate(HapticsType.success);
                                     SubscriptionBottomSheet.show(context);
                                   },
                                   child: Padding(
