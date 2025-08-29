@@ -36,13 +36,13 @@ class _DreamCountDotState extends State<DreamCountDot> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [Colors.purple.shade300, Colors.indigo],
+                    colors: [Colors.indigo.shade300, Colors.indigo],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.purple.shade100,
+                      color: Colors.indigo.shade100,
                       offset: Offset(-2, -2),
                       blurRadius: 5,
                     ),

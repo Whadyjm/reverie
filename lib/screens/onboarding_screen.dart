@@ -183,10 +183,12 @@ class _OnboardingPageState extends State<OnboardingPage>
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF0D0D1A),
-                  Color(0xFF1B0033),
-                  Color(0xFF2B0A45),
-                  Color(0xFF3A0CA3),
+                  Color(
+                    0xFF0D0D1A,
+                  ), // Un negro azulado muy profundo, casi imperceptible.
+                  Color(0xFF1B0033), // Púrpura oscuro
+                  Color(0xFF2E2D64), // Un índigo profundo y misterioso
+                  Color(0xFF3A0CA3), // Azul violeta vibrante
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -325,7 +327,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                                 boxShadow: [
                                   BoxShadow(
                                     color: const Color(
-                                      0xFFB39DDB,
+                                      0xFF1B0033,
                                     ).withOpacity(0.6),
                                     blurRadius: 20,
                                     spreadRadius: 1,

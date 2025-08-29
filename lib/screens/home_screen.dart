@@ -1234,11 +1234,7 @@ void _feedback(BuildContext context) {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Iconsax.message,
-                    color: Colors.purple.shade400,
-                    size: 28,
-                  ),
+                  Icon(Iconsax.message, color: Colors.indigo, size: 28),
                   const SizedBox(width: 10),
                   Text(
                     '¡Queremos escucharte!',
@@ -1272,16 +1268,16 @@ void _feedback(BuildContext context) {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.purple.shade100),
+                    borderSide: BorderSide(color: Colors.indigo.shade100),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.purple.shade100),
+                    borderSide: BorderSide(color: Colors.indigo.shade100),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
-                      color: Colors.purple.shade300,
+                      color: Colors.indigo.shade300,
                       width: 2,
                     ),
                   ),
@@ -1297,7 +1293,7 @@ void _feedback(BuildContext context) {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        side: BorderSide(color: Colors.purple.shade100),
+                        side: BorderSide(color: Colors.indigo.shade100),
                       ),
                       onPressed: () => Navigator.pop(context),
                       child: Text(
@@ -1313,7 +1309,7 @@ void _feedback(BuildContext context) {
                     child: FilledButton(
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: Colors.purple.shade400,
+                        backgroundColor: Colors.indigo.shade400,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -1332,7 +1328,7 @@ void _feedback(BuildContext context) {
                                   title: Text(
                                     'Campo vacío',
                                     style: TextStyle(
-                                      color: Colors.purple.shade400,
+                                      color: Colors.indigo.shade400,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1348,7 +1344,7 @@ void _feedback(BuildContext context) {
                                       child: Text(
                                         'OK',
                                         style: TextStyle(
-                                          color: Colors.purple.shade400,
+                                          color: Colors.indigo.shade400,
                                         ),
                                       ),
                                     ),
@@ -1374,7 +1370,7 @@ void _feedback(BuildContext context) {
                                 title: Text(
                                   '¡Gracias!',
                                   style: TextStyle(
-                                    color: Colors.purple.shade400,
+                                    color: Colors.indigo.shade400,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -1388,7 +1384,7 @@ void _feedback(BuildContext context) {
                                     child: Text(
                                       'Cerrar',
                                       style: TextStyle(
-                                        color: Colors.purple.shade400,
+                                        color: Colors.indigo.shade400,
                                       ),
                                     ),
                                   ),
@@ -1524,7 +1520,7 @@ void _logout(BuildContext context) {
                       child: FilledButton(
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: Colors.purple.shade300,
+                          backgroundColor: Colors.indigo,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -1575,7 +1571,7 @@ Widget _analysisStyleContainer(
         child: Card(
           color:
               analysisStyleProvider.analysisStyle == analysisStyle
-                  ? Colors.purple.shade100
+                  ? Colors.indigo.shade100
                   : Colors.white,
           elevation: 4,
           margin: const EdgeInsets.only(bottom: 12),
@@ -1617,7 +1613,7 @@ Widget _analysisStyleContainer(
               width: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.deepPurple.shade700,
+                color: Colors.indigo,
               ),
               child: Center(
                 child: Text(

@@ -120,7 +120,7 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                         width: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: Colors.deepPurple.shade700,
+                          color: Colors.indigo,
                         ),
                         child: Center(
                           child: Text(

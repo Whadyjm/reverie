@@ -563,7 +563,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                     color:
                         btnProvider.isButtonEnabled
                             ? Colors.black.withAlpha(20)
-                            : Colors.grey.shade300,
+                            : Colors.indigo.shade300,
                     blurRadius: 5,
                     offset: Offset(0, 2),
                   ),
@@ -576,16 +576,33 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 ],
                 gradient:
                     isSelected
-                        ? LinearGradient(
-                          colors: [
-                            Colors.grey.shade200.withAlpha(80),
-                            Colors.purple.shade200.withAlpha(80),
-                            Colors.purple.shade200.withAlpha(80),
-                            Colors.indigo.shade300.withAlpha(80),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
+                        ? btnProvider.isButtonEnabled
+                            ? LinearGradient(
+                              colors: [
+                                // Original: Color(0xFFE4F1F4), // Misty morning blue
+                                Color(0xFF2E3B5C), // Deep twilight blue
+                                // Original: Color(0xFFB7D3F6), // Sky blue tranquility
+                                Color(0xFF4A5A8E), // Midnight horizon
+                                // Original: Color(0xFF8DA3F7), // Soft cloud violet
+                                Color(0xFF6B6FA4), // Darkened cloud violet
+                                // Original: Color(0xFF7A68E0), // Gentle lavender
+                                Color(0xFF5A4C9C), // Rich indigo
+                                // Original: Color(0xFF6D4FDB), // Lilac blossom
+                                Color(0xFF4C3E8A), // Velvet purple
+                                // Original: Color(0xFF8A6CF2), // Dreamy morning pink
+                                Color(0xFF6948B5), // Dusky mauve
+                                // Original: Color(0xFF9C7DEB), // Whispering dawn
+                                Color(0xFF7A61C2), // Faded amethyst
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                            : LinearGradient(
+                              colors: [
+                                Colors.indigo.withAlpha(50),
+                                Colors.deepPurple.withAlpha(200),
+                              ],
+                            )
                         : LinearGradient(
                           colors: [
                             Colors.white.withAlpha(80),
