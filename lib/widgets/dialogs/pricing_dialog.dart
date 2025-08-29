@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import '../../style/text_style.dart';
+import 'package:reverie/style/text_style.dart';
 
 class SubscriptionBottomSheet {
   static void show(BuildContext context) {
@@ -9,122 +9,229 @@ class SubscriptionBottomSheet {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) => const _BottomSheetContent(),
+      builder: (context) => const _SubscriptionPaywall(),
     );
   }
 }
 
-class _BottomSheetContent extends StatelessWidget {
-  const _BottomSheetContent();
+class _SubscriptionPaywall extends StatelessWidget {
+  const _SubscriptionPaywall();
 
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.9,
+      minChildSize: 0.8,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (context, scrollController) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          child: Stack(
+            children: [
+              _PaywallBackground(),
+              _PaywallContent(scrollController: scrollController),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PaywallBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade900.withAlpha(90),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: Stack(
+        children: [
+          Image.asset(
+            'assets/paywall.png',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
           ),
-          child: DraggableScrollableSheet(
-            expand: false,
-            initialChildSize: 0.85,
-            minChildSize: 0.4,
-            maxChildSize: 0.95,
-            builder:
-                (_, controller) => SingleChildScrollView(
-                  controller: controller,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 24,
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 5,
-                        width: 50,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade700,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      Text(
-                        "Elige tu plan de suscripción",
-                        style: RobotoTextStyle.titleStyle(Colors.white),
-                      ),
-                      const SizedBox(height: 28),
-                      _buildPlanCard(
-                        context,
-                        title: "Basic",
-                        price: "GRATIS",
-                        gradientColors: [Colors.grey, Colors.indigo.shade600],
-                        textColor: Colors.white,
-                        buttonColor: Colors.indigoAccent.shade200,
-                        buttonText: "Plan actual",
-                        features: const [
-                          "Registro limitado",
-                          "Análisis limitado",
-                          "Estadísticas limitadas",
-                          "Etiquetas simples",
-                          "Backup en la nube",
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      _buildPlanCard(
-                        context,
-                        title: "Plus",
-                        price: "\$2.99/mes · \$14.99/año",
-                        gradientColors: [
-                          Colors.indigo.shade800,
-                          Colors.indigo.shade600,
-                        ],
-                        textColor: Colors.white,
-                        buttonColor: Colors.indigoAccent.shade200,
-                        buttonText: "Prueba 7 días",
-                        features: const [
-                          "Registro ilimitado",
-                          "Análisis limitado",
-                          "Estadísticas limitadas",
-                          "Etiquetas simples",
-                          "Backup en la nube",
-                          "Sin Ads",
-                        ],
-                        isRecommended: true,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildPlanCard(
-                        context,
-                        title: "Premium",
-                        price: "\$4.99/mes · \$25.99/año · \$49.99 Vitalicio",
-                        gradientColors: [
-                          Colors.deepPurple.shade800,
-                          Colors.deepPurple.shade600,
-                        ],
-                        textColor: Colors.white,
-                        buttonColor: Colors.deepPurpleAccent.shade200,
-                        buttonText: "Explorar Premium",
-                        features: const [
-                          "Registro ilimitado",
-                          "Análisis avanzado",
-                          "Estadísticas detalladas",
-                          "Resumen mensual por correo",
-                          "Comparte tu sueño y/o análisis",
-                          "Etiquetas avanzadas",
-                          "Backup en la nube",
-                          "Sin Ads",
-                        ],
-                      ),
-                    ],
-                  ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.0),
+                    Colors.black.withOpacity(0.6),
+                    Colors.black,
+                  ],
+                  stops: const [0.0, 0.5, 1.0],
                 ),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.55,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PaywallContent extends StatelessWidget {
+  final ScrollController scrollController;
+
+  const _PaywallContent({required this.scrollController});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: scrollController,
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _PaywallHeader(),
+          const SizedBox(height: 16),
+          _SubscriptionPlanList(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
+class _PaywallHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        Container(
+          height: 5,
+          width: 50,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade700,
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
+        const SizedBox(height: 24),
+        Text(
+          "Elige tu plan de suscripción",
+          style: AppTextStyle.titleStyle(Colors.white).copyWith(fontSize: 28),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            "Desbloquea contenido exclusivo y disfruta de una experiencia sin límites.",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SubscriptionPlanList extends StatefulWidget {
+  @override
+  State<_SubscriptionPlanList> createState() => _SubscriptionPlanListState();
+}
+
+class _SubscriptionPlanListState extends State<_SubscriptionPlanList> {
+  int? _selectedIndex;
+
+  final plans = [
+    {
+      'title': 'BÁSICO',
+      'price': '€4.99 / mes',
+      'gradientColors': [Colors.blue.shade800, Colors.blue.shade600],
+      'textColor': Colors.white,
+      'buttonColor': Colors.blue.shade700,
+      'buttonText': 'Elegir Plan Básico',
+      'features': [
+        'Acceso a contenido estándar.',
+        'Soporte limitado.',
+        'Sin anuncios.',
+      ],
+      'isRecommended': false,
+    },
+    {
+      'title': 'PRO',
+      'price': '€9.99 / mes',
+      'gradientColors': [Colors.deepPurple.shade800, Colors.purple.shade600],
+      'textColor': Colors.white,
+      'buttonColor': Colors.deepPurple.shade700,
+      'buttonText': 'Elegir Plan Pro',
+      'features': [
+        'Todo lo del plan Básico.',
+        'Acceso ilimitado a todo el contenido.',
+        'Soporte prioritario 24/7.',
+        'Nuevas funciones cada mes.',
+      ],
+      'isRecommended': true,
+    },
+    {
+      'title': 'ANUAL',
+      'price': '€99.99 / año',
+      'gradientColors': [Colors.green.shade800, Colors.green.shade600],
+      'textColor': Colors.white,
+      'buttonColor': Colors.green.shade700,
+      'buttonText': 'Elegir Plan Anual',
+      'features': [
+        'Todo lo del plan Pro.',
+        'Ahorra un 15%.',
+        'Acceso VIP a eventos y betas.',
+      ],
+      'isRecommended': false,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: List.generate(plans.length, (index) {
+          final plan = plans[index];
+          final isSelected = _selectedIndex == index;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeIn,
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(1),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                border:
+                    isSelected
+                        ? Border.all(color: Colors.white, width: 2)
+                        : null,
+              ),
+              child: _buildPlanCard(
+                context,
+                title: plan['title'] as String,
+                price: plan['price'] as String,
+                gradientColors: plan['gradientColors'] as List<Color>,
+                textColor: plan['textColor'] as Color,
+                buttonColor: plan['buttonColor'] as Color,
+                buttonText: plan['buttonText'] as String,
+                features: plan['features'] as List<String>,
+                isRecommended: plan['isRecommended'] as bool,
+                isSelected: isSelected,
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -139,271 +246,233 @@ class _BottomSheetContent extends StatelessWidget {
     required String buttonText,
     required List<String> features,
     bool isRecommended = false,
+    required bool isSelected,
   }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    gradientColors.first.withOpacity(0.6),
+                    gradientColors.last.withOpacity(0.6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.1),
+                  width: 1.2,
+                ),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        title.toLowerCase().contains('pro')
+                            ? Iconsax.star_1_copy
+                            : title.toLowerCase().contains('anual')
+                            ? Iconsax.calendar_1_copy
+                            : Iconsax.crown_copy,
+                        color: textColor,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title.toUpperCase(),
+                              style: TextStyle(
+                                color: textColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              price,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ...features
+                      .asMap()
+                      .entries
+                      .map(
+                        (entry) => _PaywallFeature(
+                          text: entry.value,
+                          delay: entry.key * 70,
+                        ),
+                      )
+                      .toList(),
+                  const SizedBox(height: 20),
+                  if (isSelected)
+                    _ActionButton(
+                      buttonColor: buttonColor,
+                      buttonText: buttonText,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (isRecommended)
+          Positioned(
+            top: -10,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.amber.shade400, Colors.orange.shade600],
+                ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.orange.withAlpha(60),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: const [
+                  Icon(Icons.star_rounded, color: Colors.black, size: 16),
+                  SizedBox(width: 6),
+                  Text(
+                    "Recomendado",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _PaywallFeature extends StatelessWidget {
+  final String text;
+  final int delay;
+
+  const _PaywallFeature({required this.text, required this.delay});
+
+  @override
+  Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 320 + delay),
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Opacity(
           opacity: value,
           child: Transform.translate(
-            offset: Offset(0, 40 * (1 - value)),
+            offset: Offset(0, 10 * (1 - value)),
             child: child,
           ),
         );
       },
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(28),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      gradientColors.first.withOpacity(0.85),
-                      gradientColors.last.withOpacity(0.85),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: buttonColor.withAlpha(60),
-                      blurRadius: 32,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 12),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.08),
-                    width: 1.2,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isRecommended)
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 7,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.amber.shade400,
-                                  Colors.orange.shade600,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(18),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.orange.withAlpha(60),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(
-                                  Icons.star_rounded,
-                                  color: Colors.black,
-                                  size: 16,
-                                ),
-                                SizedBox(width: 6),
-                                Text(
-                                  "Recomendado",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 18),
-                      Row(
-                        children: [
-                          // Plan icon
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: [
-                                  buttonColor.withOpacity(0.7),
-                                  buttonColor.withOpacity(0.95),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: buttonColor.withAlpha(80),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: Icon(
-                              title.toLowerCase().contains('premium')
-                                  ? Icons.workspace_premium_rounded
-                                  : title.toLowerCase().contains('plus')
-                                  ? Icons.star_rounded
-                                  : Iconsax.like,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  title.toUpperCase(),
-                                  style: RobotoTextStyle.titleStyle(
-                                    textColor,
-                                  ).copyWith(
-                                    letterSpacing: 1.5,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  price,
-                                  style: RobotoTextStyle.subtitleStyle(
-                                    Colors.grey.shade200,
-                                  ).copyWith(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 22),
-                      ...features
-                          .asMap()
-                          .entries
-                          .map(
-                            (entry) => TweenAnimationBuilder<double>(
-                              tween: Tween(begin: 0, end: 1),
-                              duration: Duration(
-                                milliseconds: 320 + entry.key * 70,
-                              ),
-                              builder: (context, value, child) {
-                                return Opacity(
-                                  opacity: value,
-                                  child: Transform.translate(
-                                    offset: Offset(0, 10 * (1 - value)),
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: _feature(entry.value),
-                            ),
-                          )
-                          .toList(),
-                      const SizedBox(height: 32),
-                      Center(
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(36),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 38,
-                              vertical: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  buttonColor.withOpacity(0.95),
-                                  buttonColor.withOpacity(0.7),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(36),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: buttonColor.withAlpha(80),
-                                  blurRadius: 18,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  buttonText,
-                                  style: RobotoTextStyle.smallTextStyle(
-                                    Colors.white,
-                                  ).copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                const Icon(
-                                  Icons.arrow_forward_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Icon(
+              Icons.check_circle_outline,
+              size: 18,
+              color: Colors.lightGreen,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.white70, fontSize: 13),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _feature(String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 2),
-          child: Icon(Icons.check_box, size: 18, color: Colors.lightGreen),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Text(
-              text,
-              style: RobotoTextStyle.smallTextStyle(Colors.white70),
-            ),
+class _ActionButton extends StatelessWidget {
+  final Color buttonColor;
+  final String buttonText;
+
+  const _ActionButton({required this.buttonColor, required this.buttonText});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(36),
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              buttonColor.withOpacity(0.95),
+              buttonColor.withOpacity(0.7),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
+          borderRadius: BorderRadius.circular(36),
+          boxShadow: [
+            BoxShadow(
+              color: buttonColor.withAlpha(80),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-      ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              buttonText,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

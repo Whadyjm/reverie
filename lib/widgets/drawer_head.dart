@@ -42,7 +42,12 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
       child: DrawerHeader(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.purple.shade700, Colors.deepPurple.shade400],
+            colors: [
+              // Azul Índigo Profundo
+              Colors.indigo.shade400,
+              // Un toque más oscuro al final para profundidad
+              Colors.indigo.shade800,
+            ],
           ),
         ),
         child: Column(

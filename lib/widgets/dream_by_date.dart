@@ -69,9 +69,7 @@ class _DreamByDateState extends State<DreamByDate> {
                       Text(
                         '¿Que soñaste hoy?',
                         style: AppTextStyle.titleStyle(
-                          btnProvider.isButtonEnabled
-                              ? Colors.white.withAlpha(250)
-                              : Colors.grey.shade700,
+                          Colors.white.withAlpha(250),
                         ),
                       ),
                       Image.asset(

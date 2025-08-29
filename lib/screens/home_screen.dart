@@ -443,6 +443,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           endDrawerEnableOpenDragGesture: false,
           endDrawer: Drawer(
             width: MediaQuery.of(context).size.width * 0.6,
@@ -530,7 +531,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           Switch(
-                            activeColor: Colors.purple.shade300,
+                            activeColor: Colors.indigo.shade300,
                             value: btnProvider.isButtonEnabled,
                             onChanged: (value) async {
                               final can = await Haptics.canVibrate();
@@ -574,7 +575,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           Switch(
-                            activeColor: Colors.purple.shade300,
+                            activeColor: Colors.indigo.shade300,
                             value: pinProvider.isPinActive,
                             onChanged: (value2) async {
                               final can = await Haptics.canVibrate();
@@ -851,7 +852,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       width: 120,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: Colors.deepPurple,
+                                        color: Colors.indigo.shade400,
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.white.withOpacity(
@@ -999,9 +1000,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
                         colors: [
-                          Colors.purple.shade400,
-                          Colors.purple.shade600,
+                          // Azul Índigo Profundo
                           Colors.indigo.shade400,
+                          // Un toque más oscuro al final para profundidad
+                          Colors.indigo.shade800,
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -1137,9 +1139,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           borderRadius: BorderRadius.circular(12),
                           gradient: LinearGradient(
                             colors: [
-                              Colors.purple.shade400,
-                              Colors.purple.shade600,
+                              // Azul Índigo Profundo
                               Colors.indigo.shade400,
+                              // Un toque más oscuro al final para profundidad
+                              Colors.indigo.shade800,
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
