@@ -132,8 +132,8 @@ class _DreamCardState extends State<DreamCard> {
                       ),
                       backgroundColor:
                           widget.dream['classification'] == 'Pesadilla'
-                              ? Colors.indigo.shade700
-                              : Colors.indigo.shade400,
+                              ? Colors.purple.shade700
+                              : Colors.purple.shade400,
                       avatar: Icon(
                         widget.dream['classification'] == 'Pesadilla'
                             ? Iconsax.emoji_sad

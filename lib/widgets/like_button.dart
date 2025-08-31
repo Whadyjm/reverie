@@ -84,7 +84,7 @@ class _LikeButtonState extends State<LikeButton> {
           child: Icon(
             widget.isLiked ? Iconsax.heart : Iconsax.heart_copy,
             key: ValueKey<bool>(liked),
-            color: Colors.indigo,
+            color: Colors.purple,
           ),
         ),
       ),

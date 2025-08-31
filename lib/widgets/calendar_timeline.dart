@@ -423,31 +423,21 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                   Icon(
                     Icons.calendar_today_rounded,
                     size: 16,
-                    color:
-                        btnProvider.isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade700,
+                    color: Colors.white,
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () => _showCustomCalendar(context, date),
                     child: Text(
                       DateFormat('MMMM y', 'es_ES').format(date),
-                      style: RobotoTextStyle.small2TextStyle(
-                        btnProvider.isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade700,
-                      ),
+                      style: RobotoTextStyle.small2TextStyle(Colors.white),
                     ),
                   ),
                   const SizedBox(width: 4),
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 16,
-                    color:
-                        btnProvider.isButtonEnabled
-                            ? Colors.white
-                            : Colors.grey.shade700,
+                    color: Colors.white,
                   ),
                   const Spacer(),
                   StreamBuilder(
@@ -467,9 +457,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                                 child: Text(
                                   'Panel de sueños',
                                   style: RobotoTextStyle.small2TextStyle(
-                                    btnProvider.isButtonEnabled
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
+                                    Colors.white,
                                   ),
                                 ),
                               ),
@@ -520,10 +508,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                                       : Icon(
                                         Icons.keyboard_arrow_down_rounded,
                                         size: 16,
-                                        color:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white
-                                                : Colors.grey.shade700,
+                                        color: Colors.white,
                                       );
                                 },
                               ),
@@ -560,10 +545,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 border: Border.all(color: Colors.white.withAlpha(20), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        btnProvider.isButtonEnabled
-                            ? Colors.black.withAlpha(20)
-                            : Colors.indigo.shade300,
+                    color: Colors.black.withAlpha(20),
                     blurRadius: 5,
                     offset: Offset(0, 2),
                   ),
@@ -579,29 +561,15 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                         ? btnProvider.isButtonEnabled
                             ? LinearGradient(
                               colors: [
-                                // Original: Color(0xFFE4F1F4), // Misty morning blue
-                                Color(0xFF2E3B5C), // Deep twilight blue
-                                // Original: Color(0xFFB7D3F6), // Sky blue tranquility
-                                Color(0xFF4A5A8E), // Midnight horizon
-                                // Original: Color(0xFF8DA3F7), // Soft cloud violet
-                                Color(0xFF6B6FA4), // Darkened cloud violet
-                                // Original: Color(0xFF7A68E0), // Gentle lavender
-                                Color(0xFF5A4C9C), // Rich indigo
-                                // Original: Color(0xFF6D4FDB), // Lilac blossom
-                                Color(0xFF4C3E8A), // Velvet purple
-                                // Original: Color(0xFF8A6CF2), // Dreamy morning pink
-                                Color(0xFF6948B5), // Dusky mauve
-                                // Original: Color(0xFF9C7DEB), // Whispering dawn
-                                Color(0xFF7A61C2), // Faded amethyst
+                                Color(0xFF1A003F),
+                                Color(0xFF2E1A5E),
+                                Color(0xFF4A3A7C),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             )
                             : LinearGradient(
-                              colors: [
-                                Colors.indigo.withAlpha(50),
-                                Colors.deepPurple.withAlpha(200),
-                              ],
+                              colors: [Color(0xFF0D1B2A), Color(0xFF5D3A9B)],
                             )
                         : LinearGradient(
                           colors: [
@@ -620,7 +588,9 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                         DateFormat('EEEE', 'es_ES').format(date),
                         style: TextStyle(
                           color:
-                              isSelected ? Colors.white : Colors.grey.shade700,
+                              isSelected
+                                  ? Colors.white
+                                  : Colors.white.withAlpha(100),
                           fontFamily: 'roboto',
                           fontWeight: FontWeight.w800,
                           fontSize: 13,
@@ -631,7 +601,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                   Text(
                     '${date.day}',
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                      color:
+                          isSelected
+                              ? Colors.white
+                              : Colors.white.withAlpha(100),
                       fontFamily: 'roboto',
                       fontWeight: FontWeight.w800,
                       fontSize: 30,

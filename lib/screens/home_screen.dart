@@ -531,7 +531,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           Switch(
-                            activeColor: Colors.indigo.shade300,
+                            activeColor: Colors.purple.shade300,
                             value: btnProvider.isButtonEnabled,
                             onChanged: (value) async {
                               final can = await Haptics.canVibrate();
@@ -575,7 +575,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           Switch(
-                            activeColor: Colors.indigo.shade300,
+                            activeColor: Colors.purple.shade300,
                             value: pinProvider.isPinActive,
                             onChanged: (value2) async {
                               final can = await Haptics.canVibrate();
@@ -821,9 +821,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               Text(
                                 'Reverie',
                                 style: AppTextStyle.logoTitleStyle(
-                                  btnProvider.isButtonEnabled
-                                      ? Colors.white
-                                      : Colors.grey.shade800,
+                                  Colors.white,
                                 ),
                               ),
                             ],
@@ -852,7 +850,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       width: 120,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: Colors.indigo.shade400,
+                                        color: const Color(0xFF5D3A9B),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.white.withOpacity(
@@ -1000,10 +998,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
                         colors: [
-                          // Azul Índigo Profundo
+                          Colors.purple.shade600,
                           Colors.indigo.shade400,
-                          // Un toque más oscuro al final para profundidad
-                          Colors.indigo.shade800,
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -1139,10 +1135,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           borderRadius: BorderRadius.circular(12),
                           gradient: LinearGradient(
                             colors: [
-                              // Azul Índigo Profundo
+                              Colors.purple.shade600,
                               Colors.indigo.shade400,
-                              // Un toque más oscuro al final para profundidad
-                              Colors.indigo.shade800,
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -1234,7 +1228,7 @@ void _feedback(BuildContext context) {
             children: [
               Row(
                 children: [
-                  Icon(Iconsax.message, color: Colors.indigo, size: 28),
+                  Icon(Iconsax.message, color: Colors.purple, size: 28),
                   const SizedBox(width: 10),
                   Text(
                     '¡Queremos escucharte!',
@@ -1268,16 +1262,16 @@ void _feedback(BuildContext context) {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.indigo.shade100),
+                    borderSide: BorderSide(color: Colors.purple.shade100),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.indigo.shade100),
+                    borderSide: BorderSide(color: Colors.purple.shade100),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(
-                      color: Colors.indigo.shade300,
+                      color: Colors.purple.shade300,
                       width: 2,
                     ),
                   ),
@@ -1293,7 +1287,7 @@ void _feedback(BuildContext context) {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        side: BorderSide(color: Colors.indigo.shade100),
+                        side: BorderSide(color: Colors.purple.shade100),
                       ),
                       onPressed: () => Navigator.pop(context),
                       child: Text(
@@ -1309,7 +1303,7 @@ void _feedback(BuildContext context) {
                     child: FilledButton(
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: Colors.indigo.shade400,
+                        backgroundColor: Colors.purple.shade400,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -1328,7 +1322,7 @@ void _feedback(BuildContext context) {
                                   title: Text(
                                     'Campo vacío',
                                     style: TextStyle(
-                                      color: Colors.indigo.shade400,
+                                      color: Colors.purple.shade400,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1344,7 +1338,7 @@ void _feedback(BuildContext context) {
                                       child: Text(
                                         'OK',
                                         style: TextStyle(
-                                          color: Colors.indigo.shade400,
+                                          color: Colors.purple.shade400,
                                         ),
                                       ),
                                     ),
@@ -1370,7 +1364,7 @@ void _feedback(BuildContext context) {
                                 title: Text(
                                   '¡Gracias!',
                                   style: TextStyle(
-                                    color: Colors.indigo.shade400,
+                                    color: Colors.purple.shade400,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -1384,7 +1378,7 @@ void _feedback(BuildContext context) {
                                     child: Text(
                                       'Cerrar',
                                       style: TextStyle(
-                                        color: Colors.indigo.shade400,
+                                        color: Colors.purple.shade400,
                                       ),
                                     ),
                                   ),
@@ -1520,7 +1514,7 @@ void _logout(BuildContext context) {
                       child: FilledButton(
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: Colors.indigo,
+                          backgroundColor: Colors.purple,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -1571,7 +1565,7 @@ Widget _analysisStyleContainer(
         child: Card(
           color:
               analysisStyleProvider.analysisStyle == analysisStyle
-                  ? Colors.indigo.shade100
+                  ? Colors.purple.shade100
                   : Colors.white,
           elevation: 4,
           margin: const EdgeInsets.only(bottom: 12),
@@ -1613,7 +1607,7 @@ Widget _analysisStyleContainer(
               width: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.indigo,
+                color: Colors.purple,
               ),
               child: Center(
                 child: Text(
