@@ -1,8 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:reverie/provider/button_provider.dart';
 import 'package:reverie/widgets/modal_sheets/forgot_password_modal_sheet.dart';
 import 'package:reverie/widgets/modal_sheets/register_modal_sheet.dart';
+import 'package:reverie/widgets/threedotsloading.dart';
 import '../auth/auth_process.dart';
 import '../style/gradients.dart';
 import '../style/text_style.dart';
@@ -26,15 +29,24 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoadingGoogle = false;
 
   Future<void> _handleLogin() async {
-    setState(() => isLoading = true);
-    await AuthProcess.login(
+    final btnProvider = Provider.of<ButtonProvider>(
+                        context,
+                        listen: false,
+                      );
+    try{
+      btnProvider.setLoading(true);
+      await AuthProcess.login(
       context,
       emailController,
       passwordController,
       setState,
       isLoading,
     );
-    if (mounted) setState(() => isLoading = false);
+    }catch(e){}
+    finally{
+      btnProvider.setLoading(false);
+    }
+    
   }
 
   Future<void> _handleGoogleSignIn() async {
@@ -77,6 +89,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoginCard() {
+    
+    final btnProvider = Provider.of<ButtonProvider>(context);
     return Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20.0),
@@ -141,17 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 10),
 
-                isLoading
-                    ? const SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 4,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.purple,
-                        ),
-                      ),
-                    )
+                btnProvider.isLoading
+                    ? SizedBox(
+                                  width: 40,
+                                  height: 25,
+                                  child: ThreeDotsLoading(color: Colors.white),
+                                )
                     : CustomButton(
                       text: 'Iniciar sesión',
                       onPressed: _handleLogin,

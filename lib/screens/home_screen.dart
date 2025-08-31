@@ -11,6 +11,7 @@ import 'package:reverie/screens/favorite_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
 import 'package:reverie/widgets/drawer_head.dart';
 import 'package:reverie/widgets/select_gender_dialog.dart';
+import 'package:reverie/widgets/threedotsloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/button_provider.dart';
 import '../provider/calendar_provider.dart';
@@ -1866,7 +1867,7 @@ Widget _dreamTextField(
                                 ? SizedBox(
                                   width: 40,
                                   height: 25,
-                                  child: _ThreeDotsLoading(color: Colors.white),
+                                  child: ThreeDotsLoading(color: Colors.white),
                                 )
                                 : Text(
                                   'Guardar',
@@ -1909,69 +1910,4 @@ Widget _dreamTextField(
       ),
     ),
   );
-}
-
-class _ThreeDotsLoading extends StatefulWidget {
-  final Color color;
-  const _ThreeDotsLoading({Key? key, required this.color}) : super(key: key);
-
-  @override
-  State<_ThreeDotsLoading> createState() => _ThreeDotsLoadingState();
-}
-
-class _ThreeDotsLoadingState extends State<_ThreeDotsLoading>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late List<Animation<double>> _animations;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat();
-    _animations = List.generate(3, (i) {
-      return Tween<double>(begin: 0.3, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _controller,
-          curve: Interval(i * 0.2, 1.0, curve: Curves.easeInOut),
-        ),
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (i) {
-        return AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Opacity(
-              opacity: _animations[i].value,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                child: Container(
-                  width: 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: widget.color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      }),
-    );
-  }
 }
