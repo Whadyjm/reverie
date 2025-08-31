@@ -41,12 +41,8 @@ class _DreamCountDotState extends State<DreamCountDot> {
                     end: Alignment.bottomRight,
                   ),
                   boxShadow: [
-                    BoxShadow(color: Colors.purple.shade200, blurRadius: 2),
-                    BoxShadow(
-                      color: Colors.indigo.shade400,
-                      offset: Offset(2, 2),
-                      blurRadius: 2,
-                    ),
+                    BoxShadow(color: Colors.purple.shade200, blurRadius: 1),
+                    BoxShadow(color: Colors.indigo.shade400, blurRadius: 1),
                   ],
                 ),
               ),

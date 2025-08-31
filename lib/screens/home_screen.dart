@@ -850,7 +850,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                       width: 120,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: const Color(0xFF5D3A9B),
+                                        color: const Color.fromARGB(
+                                          255,
+                                          38,
+                                          26,
+                                          84,
+                                        ),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.white.withOpacity(
