@@ -223,20 +223,18 @@ class _OnboardingPageState extends State<OnboardingPage>
                     ),
                   );
                 }),
-
-                Positioned(
-                  top: 40,
-                  left: 90,
-                  child: Text(
-                    'Reverie',
-                    style: AppTextStyle.biggerTitleStyle(Colors.white),
-                  ),
-                ),
-
                 SafeArea(
                   child: Column(
                     children: [
                       Expanded(
+                        flex: 4,
+                        child: Text(
+                          'Reverie',
+                          style: AppTextStyle.biggerTitleStyle(Colors.white),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 14,
                         child: PageView.builder(
                           controller: _controller,
                           onPageChanged:

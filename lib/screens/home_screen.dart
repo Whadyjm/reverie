@@ -869,7 +869,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'Obtén PLUS ✨',
+                                          'Obtén PRO ✨',
                                           style: RobotoTextStyle.smallTextStyle(
                                             Colors.white,
                                           ),
@@ -1617,7 +1617,7 @@ Widget _analysisStyleContainer(
               ),
               child: Center(
                 child: Text(
-                  'Plus',
+                  'PRO',
                   style: RobotoTextStyle.smallTextStyle(Colors.white),
                 ),
               ),
