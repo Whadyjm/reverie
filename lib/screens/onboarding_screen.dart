@@ -248,7 +248,6 @@ class _OnboardingPageState extends State<OnboardingPage>
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const SizedBox(height: 100),
                                     _buildVisual(index),
                                     const SizedBox(height: 24),
                                     Text(
