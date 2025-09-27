@@ -13,6 +13,4 @@ class CalendarProvider with ChangeNotifier {
     _selectedDate = date;
     notifyListeners();
   }
-
-
 }

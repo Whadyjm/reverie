@@ -9,6 +9,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/screens/favorite_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
+import 'package:reverie/screens/profile_screen.dart';
 import 'package:reverie/widgets/drawer_head.dart';
 import 'package:reverie/widgets/select_gender_dialog.dart';
 import 'package:reverie/widgets/threedotsloading.dart';
@@ -1414,28 +1415,39 @@ class UserAvatarDrawer extends StatelessWidget {
   final AsyncSnapshot snapshot;
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(25),
-      child:
-          snapshot.data?.photoURL != null
-              ? Image.network(
-                snapshot.data!.photoURL!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.person, color: Colors.grey, size: 20);
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return CircularProgressIndicator(
-                    value:
-                        loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                  );
-                },
-              )
-              : Icon(Icons.person, color: Colors.grey, size: 20),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context); // Cerrar drawer
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(userId: snapshot.data!.uid),
+          ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
+        child:
+            snapshot.data?.photoURL != null
+                ? Image.network(
+                  snapshot.data!.photoURL!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.person, color: Colors.grey, size: 20);
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return CircularProgressIndicator(
+                      value:
+                          loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                    );
+                  },
+                )
+                : Icon(Icons.person, color: Colors.grey, size: 20),
+      ),
     );
   }
 }

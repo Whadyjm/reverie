@@ -2,21 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:reverie/model/user_model.dart';
 import '../screens/home_screen.dart';
 import '../screens/secret_pin.dart';
 import '../services/auth_service.dart';
 import '../widgets/show_dialogs.dart';
 
 class AuthProcess {
-  static void register(
+  static Future<void> register(
     BuildContext context,
     TextEditingController nameController,
     TextEditingController emailController,
     TextEditingController passwordController,
     String? selectedGender,
-    setState,
-    isLoading,
+    Function(void Function()) setState,
+    bool isLoading,
   ) async {
     if (nameController.text.trim().isEmpty ||
         emailController.text.trim().isEmpty ||
@@ -25,7 +25,7 @@ class AuthProcess {
         context: context,
         builder:
             (context) => AlertDialog(
-              title: Text(
+              title: const Text(
                 'Por favor, complete todos los campos',
                 style: TextStyle(color: Colors.white, fontSize: 15),
               ),
@@ -37,10 +37,13 @@ class AuthProcess {
       );
       return;
     }
+
     try {
       setState(() {
         isLoading = true;
       });
+
+      //Crear usuario en FirebaseAuth
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
@@ -48,25 +51,38 @@ class AuthProcess {
 
       final user = FirebaseAuth.instance.currentUser;
 
-      var doc = FirebaseFirestore.instance.collection('users').doc(user!.uid);
-      await doc.set({
-        'analysisStyle': '',
-        'name': nameController.text.trim(),
-        'photoUrl': '',
-        'email': emailController.text.trim(),
-        'userId': user.uid,
-        'userSince': FieldValue.serverTimestamp(),
-        'pinCreated': true,
-        'selectedGender': selectedGender ?? '',
-        'suscription': 'free',
-      });
+      if (user == null)
+        throw Exception("Usuario no encontrado tras el registro");
 
+      //Construir UserModel
+      final newUser = UserModel(
+        userId: user.uid,
+        email: emailController.text.trim(),
+        name: nameController.text.trim(),
+        photoUrl: '',
+        userSince: Timestamp.now(),
+        suscription: 'free',
+        selectedGender: selectedGender ?? '',
+        analysisStyle: '',
+        pin: '',
+        pinCreatedAt: Timestamp.now(),
+        pinCreated: false,
+      );
+
+      //Guardar en Firestore usando toJson
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set(newUser.toJson());
+
+      //Revisar si tiene PIN
       String userPin = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .get()
           .then((value) => value.data()?['pin'] ?? '');
 
+      //Redirigir según el pin
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -86,10 +102,10 @@ class AuthProcess {
       } else if (e.code == 'invalid-email') {
         ShowDialogs.invalidEmail(context);
       } else {
-        print("Error: ${e.code}");
+        debugPrint("Error Auth: ${e.code}");
       }
     } catch (e) {
-      print("Unexpected error: $e");
+      debugPrint("Unexpected error: $e");
     } finally {
       setState(() {
         isLoading = false;
@@ -101,198 +117,205 @@ class AuthProcess {
     BuildContext context,
     TextEditingController emailController,
     TextEditingController passwordController,
-    setState,
-    isLoading,
+    Function(void Function()) setState,
+    bool isLoading,
   ) async {
-    {
-      if (emailController.text.trim().isEmpty ||
-          passwordController.text
-              .trim()
-              .isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Por favor, complete todos los campos',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            backgroundColor:
-            Colors.grey.shade900,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(12),
-            ),
+    if (emailController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Por favor, complete todos los campos',
+            style: TextStyle(color: Colors.white),
           ),
-        );
-        return;
-      }
-      try {
-        setState(() {
-          isLoading = true;
-        });
+          backgroundColor: Colors.grey.shade900,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
 
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-        final user = FirebaseAuth.instance.currentUser;
-        String? userUid = user?.uid;
-
-        String userPin =
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userUid).get().then((value) => value.data()?['pin']);
-
-        bool pinCreated = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userUid)
-            .get()
-            .then((value) => value.data()?['pinCreated']);
-
-        print('----------$userPin-----------');
-
-        bool userHasPin = userPin.isEmpty ? false : true;
-
-        if (userCredential.user != null) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) =>
-              userPin.isNotEmpty
-                  ? SecretPin(
-                userUid: userUid!,
-                userHasPin: userHasPin,
-                userPin: userPin,
-                pinCreated: pinCreated,
-              )
-                  : MyHomePage(),
-            ),
-                (route) => false,
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
           );
-        }
-      } on FirebaseAuthException catch (e) {
-        String errorMessage;
-        switch (e.code) {
-          case 'invalid-email':
-            errorMessage = 'El correo electrónico y/o contraseña no es válido.';
-            break;
-          case 'user-not-found':
-            errorMessage = 'No se encontró un usuario con este correo.';
-            break;
-          case 'wrong-password':
-            errorMessage = 'La contraseña es incorrecta.';
-            break;
-          case 'network-request-failed':
-            errorMessage = 'Error de red. Verifica tu conexión.';
-            break;
-          default:
-            errorMessage = 'El correo electrónico y/o contraseña no es válido.';
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage, style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.grey.shade900,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
-        return;
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
+
+      final user = userCredential.user;
+      if (user == null) throw Exception("Usuario no encontrado");
+
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+      if (!doc.exists) throw Exception("El usuario no existe en Firestore");
+
+      final loggedUser = UserModel.fromJson(doc.data()!);
+
+      final userPin = loggedUser.pin;
+      final pinCreated = loggedUser.pinCreated;
+      final userHasPin = userPin.isNotEmpty;
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  userHasPin
+                      ? SecretPin(
+                        userUid: loggedUser.userId,
+                        userHasPin: userHasPin,
+                        userPin: userPin,
+                        pinCreated: pinCreated,
+                      )
+                      : MyHomePage(),
+        ),
+        (route) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'El correo electrónico y/o contraseña no es válido.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No se encontró un usuario con este correo.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'La contraseña es incorrecta.';
+          break;
+        case 'network-request-failed':
+          errorMessage = 'Error de red. Verifica tu conexión.';
+          break;
+        default:
+          errorMessage = 'El correo electrónico y/o contraseña no es válido.';
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            errorMessage,
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.grey.shade900,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error inesperado en login: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error al iniciar sesión, intente de nuevo'),
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  static Future<void> googleSignIn (
+  static Future<void> googleSignIn(
     BuildContext context,
-    setState,
-    isLoading,
+    Function(void Function()) setState,
+    bool isLoading,
   ) async {
-    {
-      try {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder:
-              (context) => Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(
-                  strokeWidth: 4,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.purple.shade300,
+    try {
+      // 🔹 Loading Dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 4,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.purple.shade300,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
+      );
 
-        final userCred = await AuthService().signInWithGoogle();
+      //Inicio de sesion con Google
+      final userCred = await AuthService().signInWithGoogle();
 
-        if (userCred != null) {
-          final user = userCred.user!;
-          final doc = FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid);
-          final docSnapshot = await doc.get();
+      if (userCred != null) {
+        final user = userCred.user!;
+        final docRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid);
+        final docSnapshot = await docRef.get();
 
-          if (!docSnapshot.exists) {
-            await doc.set({
-              'name': user.displayName,
-              'photoUrl': user.photoURL,
-              'email': user.email,
-              'userId': user.uid,
-              'userSince': FieldValue.serverTimestamp(),
-              'pinCreated': true,
-              'pin': '',
-              'selectedGender': '',
-              'suscription': 'free',
-            });
-          }
-
-          final userData = await doc.get();
-          final userPin = userData.data()?['pin'] ?? '';
-          final pinCreated = userData.data()?['pinCreated'] ?? false;
-          bool userHasPin = userPin.isEmpty ? false : true;
-
-          Navigator.of(context).pop();
-
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder:
-                  (context) => SecretPin(
-                userUid: user.uid,
-                userHasPin: userHasPin,
-                userPin: userPin,
-                pinCreated: pinCreated,
-              ),
-            ),
-                (route) => false,
+        //Si no existe el documento, se crea un nuevo UserModel
+        if (!docSnapshot.exists) {
+          final newUser = UserModel(
+            userId: user.uid,
+            email: user.email ?? '',
+            name: user.displayName ?? '',
+            photoUrl: user.photoURL ?? '',
+            userSince: Timestamp.now(),
+            suscription: 'free',
+            selectedGender: '',
+            analysisStyle: '',
+            pin: '',
+            pinCreatedAt: Timestamp.now(),
+            pinCreated: false,
           );
+
+          await docRef.set(newUser.toJson());
         }
-      } catch (e) {
+
+        //Obtener datos del usuario
+        final userData = await docRef.get();
+        final data = userData.data() ?? {};
+
+        final userPin = data['pin'] ?? '';
+        final pinCreated = data['pinCreated'] ?? false;
+        final userHasPin = userPin.isNotEmpty;
+
+        //Cerrar el dialogo de carga
         Navigator.of(context).pop();
-        print("Error during Google Sign-In: $e");
-        ScaffoldMessenger.of(
+
+        //Redirigir
+        Navigator.pushAndRemoveUntil(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error, intente de nuevo')));
+          MaterialPageRoute(
+            builder:
+                (context) => SecretPin(
+                  userUid: user.uid,
+                  userHasPin: userHasPin,
+                  userPin: userPin,
+                  pinCreated: pinCreated,
+                ),
+          ),
+          (route) => false,
+        );
       }
+    } catch (e) {
+      Navigator.of(context).pop();
+      debugPrint("Error during Google Sign-In: $e");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error, intente de nuevo')));
     }
   }
 }

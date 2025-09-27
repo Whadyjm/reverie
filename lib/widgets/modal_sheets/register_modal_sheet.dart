@@ -16,7 +16,6 @@ class RegisterModalSheet {
     Function setState,
     bool isLoading,
   ) {
-
     String? selectedGender;
 
     showModalBottomSheet(
@@ -29,15 +28,14 @@ class RegisterModalSheet {
       builder: (context) {
         return StatefulBuilder(
           builder: (
-              BuildContext context,
-              void Function(void Function()) setState,
-              ) {
-
+            BuildContext context,
+            void Function(void Function()) setState,
+          ) {
             return Padding(
               padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 40,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -112,32 +110,32 @@ class RegisterModalSheet {
                   const SizedBox(height: 20),
                   isLoading
                       ? SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 4,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.purple.shade300,
-                      ),
-                    ),
-                  )
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 4,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.purple.shade300,
+                          ),
+                        ),
+                      )
                       : CustomButton(
-                    text: 'Registrar',
-                    onPressed: () async {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      AuthProcess.register(
-                        context,
-                        nameController,
-                        emailController,
-                        passwordController,
-                        selectedGender,
-                        setState,
-                        isLoading,
-                      );
-                    },
-                  ),
+                        text: 'Registrar',
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          AuthProcess.register(
+                            context,
+                            nameController,
+                            emailController,
+                            passwordController,
+                            selectedGender,
+                            setState,
+                            isLoading,
+                          );
+                        },
+                      ),
                 ],
               ),
             );
@@ -165,9 +163,7 @@ class RegisterModalSheet {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 30, color: iconColor),
-          ],
+          children: [Icon(icon, size: 30, color: iconColor)],
         ),
       ),
     );

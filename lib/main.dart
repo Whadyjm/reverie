@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:reverie/provider/button_provider.dart';
 import 'package:reverie/provider/calendar_provider.dart';
 import 'package:reverie/provider/dream_provider.dart';
+import 'package:reverie/provider/user_provider.dart';
 import 'package:reverie/screens/home_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
 import 'package:reverie/screens/onboarding_screen.dart';
@@ -106,6 +107,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CalendarProvider()),
         ChangeNotifierProvider(create: (context) => ButtonProvider()),
         ChangeNotifierProvider(create: (context) => DreamProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
