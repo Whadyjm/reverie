@@ -1416,7 +1416,7 @@ class UserAvatarDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      /*onTap: () {
         Navigator.pop(context); // Cerrar drawer
         Navigator.push(
           context,
@@ -1424,7 +1424,7 @@ class UserAvatarDrawer extends StatelessWidget {
             builder: (context) => ProfileScreen(userId: snapshot.data!.uid),
           ),
         );
-      },
+      },*/
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
         child:

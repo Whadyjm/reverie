@@ -2,10 +2,11 @@ import 'dart:ui';
 
 class Gradients {
   static const List<Color> loginBackground = [
-    Color(0xFF0D0D1A),
-    Color(0xFF1B0033),
-    Color(0xFF2B0A45),
-    Color(0xFF3A0CA3),
+    Color(0xFF5D3A9B),
+    Color(0xFFFF6B9D),
+    Color(0xFFFF9E5E),
+    Color(0xFF512DA8),
+    Color.fromARGB(255, 13, 8, 19),
   ];
   static const List<Color> favoriteBackground = [
     Color(0xFF1A003F),
