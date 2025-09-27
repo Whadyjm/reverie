@@ -454,14 +454,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: DrawerHeadWidget(
-                    btnProvider: btnProvider,
-                    dontShowAgain: dontShowAgain,
-                    user: user,
                     dreamCount: dreamCount,
-                    name: name,
-                    selectedGender: selectedGender!,
-                    userEmail: userEmail,
-                    userName: userName,
+                    dontShowAgain: dontShowAgain,
                   ),
                 ),
                 Expanded(
@@ -1409,49 +1403,6 @@ void _feedback(BuildContext context) {
   );
 }
 
-class UserAvatarDrawer extends StatelessWidget {
-  const UserAvatarDrawer({super.key, required this.snapshot});
-
-  final AsyncSnapshot snapshot;
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      /*onTap: () {
-        Navigator.pop(context); // Cerrar drawer
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(userId: snapshot.data!.uid),
-          ),
-        );
-      },*/
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(25),
-        child:
-            snapshot.data?.photoURL != null
-                ? Image.network(
-                  snapshot.data!.photoURL!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.person, color: Colors.grey, size: 20);
-                  },
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return CircularProgressIndicator(
-                      value:
-                          loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                    );
-                  },
-                )
-                : Icon(Icons.person, color: Colors.grey, size: 20),
-      ),
-    );
-  }
-}
-
 Widget _buildDrawerItem({
   required IconData icon,
   required String title,
@@ -1539,8 +1490,8 @@ void _logout(BuildContext context) {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pop(ctx); // Cerrar diálogo
-                          Navigator.pop(context); // Cerrar drawer
+                          Navigator.pop(ctx);
+                          Navigator.pop(context);
                           AuthService().signOut();
                           Navigator.pushAndRemoveUntil(
                             context,
@@ -1700,7 +1651,7 @@ Widget _dreamTextField(
       left: 16.0,
       right: 16.0,
       top: 16.0,
-      bottom: MediaQuery.of(context).viewInsets.bottom,
+      bottom: MediaQuery.of(context).viewInsets.bottom + 40,
     ),
     child: SingleChildScrollView(
       child: Column(
