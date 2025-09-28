@@ -81,7 +81,7 @@ class _OnboardingPageState extends State<OnboardingPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _chatBubble(
-              "🌙 Anoche soñé que flotaba en un mar de estrellas...",
+              "Anoche soñé que flotaba en un mar de estrellas...",
               isUser: true,
             ),
             const SizedBox(height: 12),
@@ -155,19 +155,74 @@ class _OnboardingPageState extends State<OnboardingPage>
   Widget _chatBubble(String text, {required bool isUser}) {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        constraints: const BoxConstraints(maxWidth: 300),
-        decoration: BoxDecoration(
-          color:
-              isUser
-                  ? Colors.white24
-                  : Colors.deepPurple.shade600.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          text,
-          style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
+      child: Transform.rotate(
+        angle: isUser ? 3 * 3.1416 / 180 : -3 * 3.1416 / 180, // subtle tilt
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          constraints: const BoxConstraints(maxWidth: 280),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors:
+                  isUser
+                      ? [Colors.purple.shade600, Colors.purple.shade300]
+                      : [
+                        Colors.deepPurple.shade800,
+                        Colors.deepPurple.shade500,
+                      ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 6,
+                offset: const Offset(2, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment:
+                isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isUser) ...[
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipOval(
+                      child: Image.asset(
+                        'assets/avatar_onboarding.png',
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Tú",
+                      style: GoogleFonts.poppins(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+              Text(
+                text,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 15,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 6),
+            ],
+          ),
         ),
       ),
     );
