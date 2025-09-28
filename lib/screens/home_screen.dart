@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:haptic_feedback/haptic_feedback.dart';
@@ -10,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:reverie/screens/favorite_screen.dart';
 import 'package:reverie/screens/login_screen.dart';
 import 'package:reverie/screens/profile_screen.dart';
+import 'package:reverie/widgets/dialogs/analysis_options.dart';
 import 'package:reverie/widgets/drawer_head.dart';
 import 'package:reverie/widgets/select_gender_dialog.dart';
 import 'package:reverie/widgets/threedotsloading.dart';
@@ -49,86 +49,67 @@ class _MyHomePageState extends State<MyHomePage> {
   int dreamCount = 0;
   String emotionResult = "";
 
-  late ConfettiController _confettiController;
-
   @override
   void initState() {
     super.initState();
     firebaseService = FirebaseService();
-    final now = DateTime.now();
-    final tomorrow = now.add(const Duration(days: 1));
-    final isLastDayOfMonth = now.month != tomorrow.month;
-    _confettiController = ConfettiController(
-      duration: const Duration(seconds: 1),
-    );
+
     _checkPreferences();
     initializeButtonState();
 
-    firebaseService.getDreamCountByUser().then((count) {
-      if (mounted) {
-        setState(() {
-          dreamCount = count;
-        });
-      }
-      print('-----------------Dream count: $count-----------------');
-    });
-
-    firebaseService.getUserSelectedGender().then((gender) {
-      if (mounted) {
-        setState(() {
-          selectedGender = gender;
-        });
-      }
-      print('-----------------selected gender: $gender-----------------');
-    });
-    firebaseService.getUserSuscription().then((suscript) {
-      if (mounted) {
-        setState(() {
-          suscription = suscript;
-        });
-      }
-      print('-----------------suscription: $suscript-----------------');
-    });
-    firebaseService.getUserName().then((user) {
-      if (mounted) {
-        setState(() {
-          name = user;
-        });
-      }
-      print('-----------------name: $user-----------------');
-    });
-    firebaseService.getAnalysisStyle().then((style) {
-      if (mounted) {
-        setState(() {
-          analysisStyle = style;
-        });
-      }
-      print('-----------------analysisStyle: $style-----------------');
-    });
-    firebaseService.getAPIKeyFromFirestore().then((api) {
-      if (mounted) {
-        setState(() {
-          apiKey = api;
-        });
-      }
-      print('-----------------apiKey: $api-----------------');
-    });
-
-    if (isLastDayOfMonth) {
-      firebaseService.generateMonthlyEmotion().then((emotion) {
-        if (mounted) {
-          setState(() {
-            emotionResult = emotion;
-          });
-        }
-        print('-----------------Monthly Emotion: $emotion-----------------');
-      });
-    }
+    _initUserData();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ButtonProvider>(context, listen: false).loadPinStatus();
       Provider.of<DreamProvider>(context, listen: false).loadAnalysisStyle();
     });
+  }
+
+  /// Maneja todas las llamadas a Firebase de manera centralizada
+  Future<void> _initUserData() async {
+    try {
+      final now = DateTime.now();
+      final tomorrow = now.add(const Duration(days: 1));
+      final isLastDayOfMonth = now.month != tomorrow.month;
+
+      final results = await Future.wait([
+        firebaseService.getDreamCountByUser(),
+        firebaseService.getUserSelectedGender(),
+        firebaseService.getUserSuscription(),
+        firebaseService.getUserName(),
+        firebaseService.getAnalysisStyle(),
+        firebaseService.getAPIKeyFromFirestore(),
+        if (isLastDayOfMonth) firebaseService.generateMonthlyEmotion(),
+      ]);
+
+      if (!mounted) return;
+
+      setState(() {
+        dreamCount = results[0] as int;
+        selectedGender = results[1] as String?;
+        suscription = results[2] as String?;
+        name = results[3] as String;
+        analysisStyle = results[4] as String;
+        apiKey = results[5] as String;
+        if (isLastDayOfMonth) {
+          emotionResult = results[6] as String;
+        }
+      });
+
+      debugPrint('-----------------User Data Loaded-----------------');
+      debugPrint('Dream count: $dreamCount');
+      debugPrint('Selected gender: $selectedGender');
+      debugPrint('Subscription: $suscription');
+      debugPrint('Name: $name');
+      debugPrint('Analysis style: $analysisStyle');
+      debugPrint('ApiKey: $apiKey');
+      if (isLastDayOfMonth) {
+        debugPrint('Monthly Emotion: $emotionResult');
+      }
+      debugPrint('--------------------------------------------------');
+    } catch (e, st) {
+      debugPrint('Error loading user data: $e\n$st');
+    }
   }
 
   @override
@@ -139,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _dreamController.dispose();
-    _confettiController.dispose();
     super.dispose();
   }
 
@@ -165,253 +145,25 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _showPsychologicalSchools(BuildContext context) {
-    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
-    final isDarkMode = btnProvider.isButtonEnabled;
-    final textColor = isDarkMode ? Colors.white : Colors.grey.shade900;
-
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
-            title: Text(
-              'Escuelas Psicológicas',
-              style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: Text('Freudiano', style: TextStyle(color: textColor)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  title: Text('Junguiano', style: TextStyle(color: textColor)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  title: Text('Gestalt', style: TextStyle(color: textColor)),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ),
+  void _dragAction(details) {
+    final calendarProvider = Provider.of<CalendarProvider>(
+      context,
+      listen: false,
     );
-  }
-
-  Widget _buildAnalysisCard(
-    BuildContext context, {
-    required String icon,
-    required String title,
-    required String description,
-    String? idealFor,
-    String? styles,
-    required String buttonText,
-    required Color textColor,
-    required Color cardColor,
-    required VoidCallback onPressed,
-    bool showDetails = true,
-  }) {
-    return Card(
-      color: cardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(icon, style: TextStyle(fontSize: 24)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: TextStyle(fontSize: 14, color: textColor.withOpacity(0.8)),
-            ),
-            if (idealFor != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Ideal para:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              Text(
-                idealFor,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: textColor.withOpacity(0.8),
-                ),
-              ),
-            ],
-            if (styles != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Estilos:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              Text(
-                styles,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: textColor.withOpacity(0.8),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  void showAnalysisOptionsDialog(BuildContext context) {
-    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
-    final isDarkMode = btnProvider.isButtonEnabled;
-    final textColor = isDarkMode ? Colors.white : Colors.grey.shade900;
-    final cardColor = isDarkMode ? Colors.grey.shade800 : Colors.grey.shade100;
-
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '✨ Métodos de análisis',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Elige el enfoque que mejor se adapte a tus necesidades',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: textColor.withOpacity(0.8),
-                  ),
-                ),
-              ],
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildAnalysisCard(
-                    context,
-                    icon: '🧬',
-                    title: 'Exploración Científica',
-                    description:
-                        'Observa tu sueño a través de la neurociencia. Explora cómo las emociones, recuerdos y experiencias se entrelazan mientras duermes.',
-                    idealFor:
-                        'Autoconocimiento basado en la ciencia, patrones de sueño y bienestar mental.',
-                    styles:
-                        'Análisis neurocognitivo, patrones REM, interpretación basada en contexto de vida.',
-                    buttonText: 'Interpretación Científica',
-                    textColor: textColor,
-                    cardColor: cardColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _showPsychologicalSchools(context);
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-                  // Psychological Option
-                  _buildAnalysisCard(
-                    context,
-                    icon: '🧠',
-                    title: 'Exploración Psicológica',
-                    description:
-                        'Conecta tu sueño con emociones, partes de ti mismo y símbolos internos.',
-                    idealFor:
-                        'Comprensión personal, crecimiento interior, análisis emocional',
-                    styles: 'Introspectivo, simbólico, terapéutico',
-                    buttonText: 'Interpretación Psicológica',
-                    textColor: textColor,
-                    cardColor: cardColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _showPsychologicalSchools(context);
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Mystical Option
-                  _buildAnalysisCard(
-                    context,
-                    icon: '🔮',
-                    title: 'Exploración Mística',
-                    description:
-                        'Descubre si tu sueño trae un mensaje del alma, una señal del universo o una energía especial.',
-                    idealFor:
-                        'Guía espiritual, significados ocultos, sincronías',
-                    styles:
-                        'Simbolología ancestral, tarot, energías, astrología',
-                    buttonText: 'Interpretación Mística',
-                    textColor: textColor,
-                    cardColor: cardColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Add mystical interpretation logic
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Hybrid Option
-                  _buildAnalysisCard(
-                    context,
-                    icon: '🌀',
-                    title: 'Ambas cosas (Híbrido)',
-                    description:
-                        '¿Y si los sueños fueran espejo de tu interior y mensajeros del universo? Combina ambos enfoques para una visión más completa.',
-                    buttonText: 'Exploración Completa',
-                    textColor: textColor,
-                    cardColor: cardColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Add hybrid interpretation logic
-                    },
-                    showDetails: false,
-                  ),
-                ],
-              ),
-            ),
-          ),
-    );
+    final currentDate = calendarProvider.selectedDate;
+    final currentDay = calendarProvider.selectedDate.day;
+    final today = DateTime.now().day;
+    if (details.primaryVelocity != null) {
+      if (details.primaryVelocity! < 0 && currentDay != today) {
+        calendarProvider.setSelectedDate(
+          currentDate.add(const Duration(days: 1)),
+        );
+      } else if (details.primaryVelocity! > 0) {
+        calendarProvider.setSelectedDate(
+          currentDate.subtract(const Duration(days: 1)),
+        );
+      }
+    }
   }
 
   @override
@@ -423,13 +175,9 @@ class _MyHomePageState extends State<MyHomePage> {
         Provider.of<DreamProvider>(context).analysisSelected;
     final _selectedDate = Provider.of<CalendarProvider>(context).selectedDate;
     final userName = FirebaseAuth.instance.currentUser?.displayName;
-    final userEmail = FirebaseAuth.instance.currentUser?.email;
 
-    final analysisStyleProvider = Provider.of<DreamProvider>(
-      context,
-      listen: false,
-    );
-    analysisStyleProvider.analysisStyle = analysisStyle;
+    final analysisStyleProvider = Provider.of<DreamProvider>(context);
+    //analysisStyleProvider.analysisStyle = analysisStyle;
     return WillPopScope(
       onWillPop: () async {
         User? currentUser = FirebaseAuth.instance.currentUser;
@@ -447,342 +195,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           endDrawerEnableOpenDragGesture: false,
-          endDrawer: Drawer(
-            width: MediaQuery.of(context).size.width * 0.6,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: DrawerHeadWidget(
-                    dreamCount: dreamCount,
-                    dontShowAgain: dontShowAgain,
-                  ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () => SubscriptionBottomSheet.show(context),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Premium',
-                                style: RobotoTextStyle.smallTextStyle(
-                                  Colors.grey.shade800,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Icon(Icons.star_rounded, color: Colors.amber),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 20, thickness: 1),
-                      InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return FavoriteDreamsScreen();
-                              },
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Favoritos',
-                                style: RobotoTextStyle.smallTextStyle(
-                                  Colors.grey.shade800,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 20, thickness: 1),
-                      // Modo Claro / Oscuro
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Text(
-                                  btnProvider.isButtonEnabled
-                                      ? 'Modo Claro'
-                                      : 'Modo Oscuro',
-                                  style: RobotoTextStyle.smallTextStyle(
-                                    Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Switch(
-                            activeColor: Colors.purple.shade300,
-                            value: btnProvider.isButtonEnabled,
-                            onChanged: (value) async {
-                              final can = await Haptics.canVibrate();
-
-                              if (!can) {
-                                return;
-                              }
-                              await Haptics.vibrate(HapticsType.success);
-                              setState(() {
-                                if (value) {
-                                  btnProvider.enableButton();
-                                } else {
-                                  btnProvider.disableButton();
-                                }
-                              });
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setBool('isButtonEnabled', value);
-                            },
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Pin activo / inactivo
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Text(
-                                  pinProvider.isPinActive
-                                      ? 'Pin activo'
-                                      : 'Pin inactivo',
-                                  style: RobotoTextStyle.smallTextStyle(
-                                    Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Switch(
-                            activeColor: Colors.purple.shade300,
-                            value: pinProvider.isPinActive,
-                            onChanged: (value2) async {
-                              final can = await Haptics.canVibrate();
-
-                              if (!can) {
-                                return;
-                              }
-                              await Haptics.vibrate(HapticsType.success);
-                              setState(() {
-                                if (value2) {
-                                  pinProvider.enablePin();
-                                } else {
-                                  pinProvider.disablePin();
-                                }
-                              });
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setBool('isPinActive', value2);
-                            },
-                          ),
-                        ],
-                      ),
-
-                      const Divider(height: 20, thickness: 1),
-
-                      // Cards Section
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Modos de Análisis',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey.shade800,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              showAnalysisOptionsDialog(context);
-                            },
-                            child: Icon(
-                              Iconsax.info_circle,
-                              color: Colors.grey.shade800,
-                              size: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _analysisStyleContainer(
-                        '🧬 Científico',
-                        'Analiza sueños desde la neurociencia',
-                        'cientifico',
-                        _confettiController,
-                        context,
-                        () async {
-                          final can = await Haptics.canVibrate();
-
-                          if (!can) {
-                            return;
-                          }
-                          await Haptics.vibrate(HapticsType.success);
-                          SubscriptionBottomSheet.show(context);
-                        },
-                        analysisStyleProvider,
-                        true,
-                        Alignment.topCenter,
-                      ),
-
-                      _analysisStyleContainer(
-                        '🧠 Psicológico',
-                        'Explora emociones y símbolos internos',
-                        'psicologico',
-                        _confettiController,
-                        context,
-                        () async {
-                          final can = await Haptics.canVibrate();
-
-                          if (!can) {
-                            return;
-                          }
-                          await Haptics.vibrate(HapticsType.success);
-                          _confettiController.play();
-                          setState(() {
-                            analysisStyle = 'psicologico';
-                            analysisStyleProvider.analysisStyle = 'psicologico';
-                          });
-                          final user = FirebaseAuth.instance.currentUser;
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.uid)
-                              .update({'analysisStyle': 'psicologico'});
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('analysisStyle', 'psicologico');
-                        },
-                        analysisStyleProvider,
-                        false,
-                        Alignment.center,
-                      ),
-
-                      _analysisStyleContainer(
-                        '🔮 Místico',
-                        'Interpreta señales y mensajes espirituales',
-                        'mistico',
-                        _confettiController,
-                        context,
-                        () async {
-                          final can = await Haptics.canVibrate();
-
-                          if (!can) {
-                            return;
-                          }
-                          await Haptics.vibrate(HapticsType.success);
-                          _confettiController.play();
-                          setState(() {
-                            analysisStyle = 'mistico';
-                            analysisStyleProvider.analysisStyle = 'mistico';
-                          });
-                          final user = FirebaseAuth.instance.currentUser;
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.uid)
-                              .update({'analysisStyle': 'mistico'});
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('analysisStyle', 'mistico');
-                        },
-                        analysisStyleProvider,
-                        false,
-                        Alignment.center,
-                      ),
-
-                      _analysisStyleContainer(
-                        '🌀 Híbrido',
-                        'Combina  psicología y misticismo',
-                        'hibrido',
-                        _confettiController,
-                        context,
-                        () async {
-                          final can = await Haptics.canVibrate();
-
-                          if (!can) {
-                            return;
-                          }
-                          await Haptics.vibrate(HapticsType.success);
-                          _confettiController.play();
-                          setState(() {
-                            analysisStyle = 'hibrido';
-                            analysisStyleProvider.analysisStyle = 'hibrido';
-                          });
-                          final user = FirebaseAuth.instance.currentUser;
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.uid)
-                              .update({'analysisStyle': 'hibrido'});
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('analysisStyle', 'hibrido');
-                        },
-                        analysisStyleProvider,
-                        false,
-                        Alignment.bottomCenter,
-                      ),
-
-                      const Divider(height: 20, thickness: 1),
-                      _buildDrawerItem(
-                        icon: Iconsax.message,
-                        title: 'Feedback',
-                        onTap: () => _feedback(context),
-                        color: Colors.grey.shade800,
-                      ),
-                      _buildDrawerItem(
-                        icon: Iconsax.logout,
-                        title: 'Cerrar sesión',
-                        onTap: () => _logout(context),
-                        color: Colors.grey.shade800,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'App Version 1.0.0',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
-              ],
-            ),
+          endDrawer: _drawer(
+            context,
+            dreamCount,
+            dontShowAgain,
+            btnProvider,
+            setState,
+            pinProvider,
+            analysisStyle,
+            analysisStyleProvider,
           ),
           body: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              final calendarProvider = Provider.of<CalendarProvider>(
-                context,
-                listen: false,
-              );
-              final currentDate = calendarProvider.selectedDate;
-              final currentDay = calendarProvider.selectedDate.day;
-              final today = DateTime.now().day;
-              if (details.primaryVelocity != null) {
-                if (details.primaryVelocity! < 0 && currentDay != today) {
-                  calendarProvider.setSelectedDate(
-                    currentDate.add(const Duration(days: 1)),
-                  );
-                } else if (details.primaryVelocity! > 0) {
-                  calendarProvider.setSelectedDate(
-                    currentDate.subtract(const Duration(days: 1)),
-                  );
-                }
-              }
-            },
+            onHorizontalDragEnd: (details) => _dragAction(details),
             child: Container(
               decoration: BoxDecoration(
                 gradient:
@@ -802,179 +226,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(height: 12),
-                  SizedBox(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 15, right: 15),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Reverie',
-                                style: AppTextStyle.logoTitleStyle(
-                                  Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          suscription == 'free'
-                              ? FadeIn(
-                                duration: Duration(milliseconds: 800),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    final can = await Haptics.canVibrate();
-
-                                    if (!can) {
-                                      return;
-                                    }
-
-                                    await Haptics.vibrate(HapticsType.success);
-                                    SubscriptionBottomSheet.show(context);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 25,
-                                      top: 16.0,
-                                    ),
-                                    child: Container(
-                                      height: 30,
-                                      width: 120,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: const Color.fromARGB(
-                                          255,
-                                          38,
-                                          26,
-                                          84,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.white.withOpacity(
-                                              0.5,
-                                            ),
-                                            blurRadius: 10,
-                                            offset: Offset(0, 0),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Obtén PRO ✨',
-                                          style: RobotoTextStyle.smallTextStyle(
-                                            Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                              : const SizedBox.shrink(),
-                          SizedBox(
-                            width: MediaQuery.sizeOf(context).width - 350,
-                          ),
-                          user != null
-                              ? Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: Builder(
-                                  builder: (context) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          Scaffold.of(context).openEndDrawer();
-                                          FocusScope.of(context).unfocus();
-                                        });
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 18,
-                                        backgroundColor:
-                                            btnProvider.isButtonEnabled
-                                                ? Colors.white.withOpacity(0.2)
-                                                : Colors.grey.shade200,
-                                        child: StreamBuilder<User?>(
-                                          stream: user,
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData &&
-                                                snapshot.data != null) {
-                                              return ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(25),
-                                                child:
-                                                    snapshot.data?.photoURL !=
-                                                            null
-                                                        ? Image.network(
-                                                          snapshot
-                                                              .data!
-                                                              .photoURL!,
-                                                          fit: BoxFit.cover,
-                                                          errorBuilder: (
-                                                            context,
-                                                            error,
-                                                            stackTrace,
-                                                          ) {
-                                                            return Icon(
-                                                              Icons.person,
-                                                              color:
-                                                                  Colors.grey,
-                                                              size: 20,
-                                                            );
-                                                          },
-                                                          loadingBuilder: (
-                                                            context,
-                                                            child,
-                                                            loadingProgress,
-                                                          ) {
-                                                            if (loadingProgress ==
-                                                                null)
-                                                              return child;
-                                                            return CircularProgressIndicator(
-                                                              value:
-                                                                  loadingProgress
-                                                                              .expectedTotalBytes !=
-                                                                          null
-                                                                      ? loadingProgress
-                                                                              .cumulativeBytesLoaded /
-                                                                          loadingProgress
-                                                                              .expectedTotalBytes!
-                                                                      : null,
-                                                            );
-                                                          },
-                                                        )
-                                                        : Icon(
-                                                          Icons.person,
-                                                          color: Colors.grey,
-                                                          size: 20,
-                                                        ),
-                                              );
-                                            } else {
-                                              return CircleAvatar(
-                                                backgroundColor:
-                                                    btnProvider.isButtonEnabled
-                                                        ? Colors.white
-                                                            .withOpacity(0.2)
-                                                        : Colors.grey.shade200,
-                                                child: Icon(
-                                                  Icons.person,
-                                                  color: Colors.grey,
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                              : const SizedBox.shrink(),
-                        ],
-                      ),
-                    ),
+                  _homeScreenHeader(
+                    context,
+                    suscription,
+                    user,
+                    setState,
+                    btnProvider,
                   ),
                   CalendarTimeline(emotionResult: emotionResult),
                   DreamByDate(suscription: suscription),
@@ -1056,8 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                           );
                         }
-                        if (analysisStyleProvider.analysisStyle.isEmpty &&
-                            analysisSelected == false) {
+                        if (analysisStyle == '' && analysisSelected == false) {
                           await showDialog(
                             barrierDismissible: false,
                             context: context,
@@ -1520,7 +776,6 @@ Widget _analysisStyleContainer(
   String title,
   String description,
   String analysisStyle,
-  ConfettiController _confettiController,
   BuildContext context,
   void Function()? onTap,
   DreamProvider analysisStyleProvider,
@@ -1549,7 +804,7 @@ Widget _analysisStyleContainer(
                 Row(
                   children: [
                     Text(
-                      title, //'🔮 Místico',
+                      title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -1560,7 +815,7 @@ Widget _analysisStyleContainer(
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  description, //'Interpreta señales y mensajes espirituales',
+                  description,
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
                 ),
               ],
@@ -1587,50 +842,8 @@ Widget _analysisStyleContainer(
             ),
           )
           : const SizedBox.shrink(),
-      Align(
-        alignment: alignment,
-        child: ConfettiWidget(
-          confettiController: _confettiController,
-          blastDirectionality: BlastDirectionality.explosive,
-          shouldLoop: false,
-          colors: const [Colors.purple, Colors.purpleAccent, Colors.white],
-          createParticlePath: drawShape,
-        ),
-      ),
     ],
   );
-}
-
-Path drawShape(Size size) {
-  double degToRad(double deg) => deg * (pi / 180.0);
-  const petals = 6;
-  final center = Offset(size.width / 2, size.height / 2);
-  final outerRadius = size.width / 2;
-  final innerRadius = outerRadius * 0.55;
-  final path = Path();
-  for (int i = 0; i < petals; i++) {
-    final angle = degToRad(60.0 * i - 90);
-    final nextAngle = degToRad(60.0 * (i + 1) - 90);
-    final controlAngle = degToRad(60.0 * i + 30 - 90);
-    final p1 = Offset(
-      center.dx + outerRadius * cos(angle),
-      center.dy + outerRadius * sin(angle),
-    );
-    final p2 = Offset(
-      center.dx + outerRadius * cos(nextAngle),
-      center.dy + outerRadius * sin(nextAngle),
-    );
-    final control = Offset(
-      center.dx + innerRadius * cos(controlAngle),
-      center.dy + innerRadius * sin(controlAngle),
-    );
-    if (i == 0) {
-      path.moveTo(p1.dx, p1.dy);
-    }
-    path.quadraticBezierTo(control.dx, control.dy, p2.dx, p2.dy);
-  }
-  path.close();
-  return path;
 }
 
 Widget _dreamTextField(
@@ -1869,6 +1082,478 @@ Widget _dreamTextField(
               ),
             ],
           ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _drawer(
+  context,
+  dreamCount,
+  dontShowAgain,
+  btnProvider,
+  setState,
+  pinProvider,
+  analysisStyle,
+  analysisStyleProvider,
+) {
+  return Drawer(
+    width: MediaQuery.of(context).size.width * 0.6,
+    child: Column(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: DrawerHeadWidget(
+            dreamCount: dreamCount,
+            dontShowAgain: dontShowAgain,
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => SubscriptionBottomSheet.show(context),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Premium',
+                        style: RobotoTextStyle.smallTextStyle(
+                          Colors.grey.shade800,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(Icons.star_rounded, color: Colors.amber),
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(height: 20, thickness: 1),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return FavoriteDreamsScreen();
+                      },
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Favoritos',
+                        style: RobotoTextStyle.smallTextStyle(
+                          Colors.grey.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(height: 20, thickness: 1),
+              // Modo Claro / Oscuro
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          btnProvider.isButtonEnabled
+                              ? 'Modo Claro'
+                              : 'Modo Oscuro',
+                          style: RobotoTextStyle.smallTextStyle(
+                            Colors.grey.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    activeColor: Colors.purple.shade300,
+                    value: btnProvider.isButtonEnabled,
+                    onChanged: (value) async {
+                      final can = await Haptics.canVibrate();
+
+                      if (!can) {
+                        return;
+                      }
+                      await Haptics.vibrate(HapticsType.success);
+                      setState(() {
+                        if (value) {
+                          btnProvider.enableButton();
+                        } else {
+                          btnProvider.disableButton();
+                        }
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('isButtonEnabled', value);
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              // Pin activo / inactivo
+              Row(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          pinProvider.isPinActive
+                              ? 'Pin activo'
+                              : 'Pin inactivo',
+                          style: RobotoTextStyle.smallTextStyle(
+                            Colors.grey.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    activeColor: Colors.purple.shade300,
+                    value: pinProvider.isPinActive,
+                    onChanged: (value2) async {
+                      final can = await Haptics.canVibrate();
+
+                      if (!can) {
+                        return;
+                      }
+                      await Haptics.vibrate(HapticsType.success);
+                      setState(() {
+                        if (value2) {
+                          pinProvider.enablePin();
+                        } else {
+                          pinProvider.disablePin();
+                        }
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('isPinActive', value2);
+                    },
+                  ),
+                ],
+              ),
+
+              const Divider(height: 20, thickness: 1),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Modos de Análisis',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      AnalysisOptions().showAnalysisOptionsDialog(context);
+                    },
+                    child: Icon(
+                      Iconsax.info_circle,
+                      color: Colors.grey.shade800,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _analysisStyleContainer(
+                '🧬 Científico',
+                'Analiza sueños desde la neurociencia',
+                'cientifico',
+                context,
+                () async {
+                  final can = await Haptics.canVibrate();
+
+                  if (!can) {
+                    return;
+                  }
+                  await Haptics.vibrate(HapticsType.success);
+                  SubscriptionBottomSheet.show(context);
+                },
+                analysisStyleProvider,
+                true,
+                Alignment.topCenter,
+              ),
+
+              _analysisStyleContainer(
+                '🧠 Psicológico',
+                'Explora emociones y símbolos internos',
+                'psicologico',
+                context,
+                () async {
+                  final can = await Haptics.canVibrate();
+
+                  if (!can) {
+                    return;
+                  }
+                  await Haptics.vibrate(HapticsType.success);
+                  setState(() {
+                    analysisStyle = 'psicologico';
+                    analysisStyleProvider.analysisStyle = 'psicologico';
+                  });
+                  final user = FirebaseAuth.instance.currentUser;
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user!.uid)
+                      .update({'analysisStyle': 'psicologico'});
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('analysisStyle', 'psicologico');
+                },
+                analysisStyleProvider,
+                false,
+                Alignment.center,
+              ),
+
+              _analysisStyleContainer(
+                '🔮 Místico',
+                'Interpreta señales y mensajes espirituales',
+                'mistico',
+                context,
+                () async {
+                  final can = await Haptics.canVibrate();
+
+                  if (!can) {
+                    return;
+                  }
+                  await Haptics.vibrate(HapticsType.success);
+                  setState(() {
+                    analysisStyle = 'mistico';
+                    analysisStyleProvider.analysisStyle = 'mistico';
+                  });
+                  final user = FirebaseAuth.instance.currentUser;
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user!.uid)
+                      .update({'analysisStyle': 'mistico'});
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('analysisStyle', 'mistico');
+                },
+                analysisStyleProvider,
+                false,
+                Alignment.center,
+              ),
+
+              _analysisStyleContainer(
+                '🌀 Híbrido',
+                'Combina  psicología y misticismo',
+                'hibrido',
+                context,
+                () async {
+                  final can = await Haptics.canVibrate();
+
+                  if (!can) {
+                    return;
+                  }
+                  await Haptics.vibrate(HapticsType.success);
+                  setState(() {
+                    analysisStyle = 'hibrido';
+                    analysisStyleProvider.analysisStyle = 'hibrido';
+                  });
+                  final user = FirebaseAuth.instance.currentUser;
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(user!.uid)
+                      .update({'analysisStyle': 'hibrido'});
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('analysisStyle', 'hibrido');
+                },
+                analysisStyleProvider,
+                false,
+                Alignment.bottomCenter,
+              ),
+
+              const Divider(height: 20, thickness: 1),
+              _buildDrawerItem(
+                icon: Iconsax.message,
+                title: 'Feedback',
+                onTap: () => _feedback(context),
+                color: Colors.grey.shade800,
+              ),
+              _buildDrawerItem(
+                icon: Iconsax.logout,
+                title: 'Cerrar sesión',
+                onTap: () => _logout(context),
+                color: Colors.grey.shade800,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'App Version 1.0.0',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _plusButton(BuildContext context) {
+  return FadeIn(
+    duration: Duration(milliseconds: 800),
+    child: GestureDetector(
+      onTap: () async {
+        final can = await Haptics.canVibrate();
+
+        if (!can) {
+          return;
+        }
+
+        await Haptics.vibrate(HapticsType.success);
+        SubscriptionBottomSheet.show(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 25, top: 16.0),
+        child: Container(
+          height: 30,
+          width: 120,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: const Color.fromARGB(255, 38, 26, 84),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withOpacity(0.5),
+                blurRadius: 10,
+                offset: Offset(0, 0),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              'Obtén PRO ✨',
+              style: RobotoTextStyle.smallTextStyle(Colors.white),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _homeScreenHeader(
+  BuildContext context,
+  suscription,
+  user,
+  setState,
+  btnProvider,
+) {
+  return SizedBox(
+    height: 60,
+    width: MediaQuery.of(context).size.width,
+    child: Padding(
+      padding: const EdgeInsets.only(left: 15, right: 15),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Reverie', style: AppTextStyle.logoTitleStyle(Colors.white)),
+            ],
+          ),
+          suscription == 'free'
+              ? _plusButton(context)
+              : const SizedBox.shrink(),
+          SizedBox(width: MediaQuery.sizeOf(context).width - 350),
+          user != null
+              ? Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Builder(
+                  builder: (context) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          Scaffold.of(context).openEndDrawer();
+                          FocusScope.of(context).unfocus();
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor:
+                            btnProvider.isButtonEnabled
+                                ? Colors.white.withOpacity(0.2)
+                                : Colors.grey.shade200,
+                        child: StreamBuilder<User?>(
+                          stream: user,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child:
+                                    snapshot.data?.photoURL != null
+                                        ? Image.network(
+                                          snapshot.data!.photoURL!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (
+                                            context,
+                                            error,
+                                            stackTrace,
+                                          ) {
+                                            return Icon(
+                                              Icons.person,
+                                              color: Colors.grey,
+                                              size: 20,
+                                            );
+                                          },
+                                          loadingBuilder: (
+                                            context,
+                                            child,
+                                            loadingProgress,
+                                          ) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                            );
+                                          },
+                                        )
+                                        : Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundColor:
+                                    btnProvider.isButtonEnabled
+                                        ? Colors.white.withOpacity(0.2)
+                                        : Colors.grey.shade200,
+                                child: Icon(Icons.person, color: Colors.grey),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+              : const SizedBox.shrink(),
         ],
       ),
     ),
