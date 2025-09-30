@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -629,87 +631,173 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
               : selectedDate,
       itemExtent: 80,
       itemBuilder: (context, date, isSelected, isDisabled, isToday, onTap) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 6, bottom: 6),
-          child: InkResponse(
-            onTap: onTap,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withAlpha(20), width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(20),
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                  BoxShadow(
-                    color: Colors.white.withAlpha(20),
-                    blurRadius: 5,
-                    offset: Offset(0, 0),
-                    spreadRadius: 1,
-                  ),
-                ],
-                gradient:
-                    isSelected
-                        ? btnProvider.isButtonEnabled
-                            ? LinearGradient(
-                              colors: [
-                                Color(0xFF1A003F),
-                                Color(0xFF2E1A5E),
-                                Color(0xFF4A3A7C),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )
-                            : LinearGradient(
-                              colors: [Color(0xFF0D1B2A), Color(0xFF5D3A9B)],
-                            )
-                        : LinearGradient(
-                          colors: [
-                            Colors.white.withAlpha(80),
-                            Colors.white.withAlpha(80),
-                          ],
+        return StreamBuilder(
+          stream: fetchDreamCountByDate(date),
+          builder: (context, snapshot) {
+            final countDate = snapshot.data;
+            return countDate == 0
+                ? Padding(
+                  padding: const EdgeInsets.only(top: 6, bottom: 6),
+                  child: InkResponse(
+                    onTap: null,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withAlpha(20),
+                          width: 1,
                         ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Center(
-                      child: Text(
-                        DateFormat('EEEE', 'es_ES').format(date),
-                        style: TextStyle(
-                          color:
-                              isSelected
-                                  ? Colors.white
-                                  : Colors.white.withAlpha(100),
-                          fontFamily: 'roboto',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 13,
-                        ),
+                        gradient:
+                            isSelected
+                                ? btnProvider.isButtonEnabled
+                                    ? LinearGradient(
+                                      colors: [
+                                        Color(0xFF1A003F),
+                                        Color(0xFF2E1A5E),
+                                        Color(0xFF4A3A7C),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    )
+                                    : LinearGradient(
+                                      colors: [
+                                        Color(0xFF0D1B2A),
+                                        Color(0xFF5D3A9B),
+                                      ],
+                                    )
+                                : LinearGradient(
+                                  colors: [
+                                    Colors.white.withAlpha(50),
+                                    Colors.white.withAlpha(50),
+                                  ],
+                                ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Center(
+                              child: Text(
+                                DateFormat('EEEE', 'es_ES').format(date),
+                                style: TextStyle(
+                                  color:
+                                      isSelected
+                                          ? Colors.white
+                                          : Colors.white.withAlpha(100),
+                                  fontFamily: 'roboto',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${date.day}',
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? Colors.white
+                                      : Colors.white.withAlpha(100),
+                              fontFamily: 'roboto',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Text(
-                    '${date.day}',
-                    style: TextStyle(
-                      color:
-                          isSelected
-                              ? Colors.white
-                              : Colors.white.withAlpha(100),
-                      fontFamily: 'roboto',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 30,
+                )
+                : Padding(
+                  padding: const EdgeInsets.only(top: 6, bottom: 6),
+                  child: InkResponse(
+                    onTap: onTap,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withAlpha(20),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(20),
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                          ),
+                          BoxShadow(
+                            color: Colors.white.withAlpha(20),
+                            blurRadius: 5,
+                            offset: Offset(0, 0),
+                            spreadRadius: 1,
+                          ),
+                        ],
+                        gradient:
+                            isSelected
+                                ? btnProvider.isButtonEnabled
+                                    ? LinearGradient(
+                                      colors: [
+                                        Color(0xFF1A003F),
+                                        Color(0xFF2E1A5E),
+                                        Color(0xFF4A3A7C),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    )
+                                    : LinearGradient(
+                                      colors: [
+                                        Color(0xFF0D1B2A),
+                                        Color(0xFF5D3A9B),
+                                      ],
+                                    )
+                                : LinearGradient(
+                                  colors: [
+                                    Colors.white.withAlpha(80),
+                                    Colors.white.withAlpha(80),
+                                  ],
+                                ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: Center(
+                              child: Text(
+                                DateFormat('EEEE', 'es_ES').format(date),
+                                style: TextStyle(
+                                  color:
+                                      isSelected
+                                          ? Colors.white
+                                          : Colors.white.withAlpha(100),
+                                  fontFamily: 'roboto',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${date.day}',
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? Colors.white
+                                      : Colors.white.withAlpha(100),
+                              fontFamily: 'roboto',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 30,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          DreamCountDot(stream: fetchDreamCountByDate(date)),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 3),
-                  DreamCountDot(stream: fetchDreamCountByDate(date)),
-                ],
-              ),
-            ),
-          ),
+                );
+          },
         );
       },
       onDateChange: (date) {
@@ -734,7 +822,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
       barrierDismissible: true,
       barrierLabel: 'Sueños',
       barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (_, __, ___) => const SizedBox.shrink(),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         final curved = CurvedAnimation(
@@ -746,143 +834,228 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
         return FadeTransition(
           opacity: curved,
           child: ScaleTransition(
-            scale: Tween<double>(begin: 0.95, end: 1.0).animate(curved),
+            scale: Tween<double>(begin: 0.9, end: 1.0).animate(curved),
             child: Dialog(
               backgroundColor: Colors.transparent,
               insetPadding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 40,
+                horizontal: 20,
+                vertical: 32,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient:
-                        isDark
-                            ? const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFF1A1124),
-                                Color(0xFF1C1733),
-                                Color(0xFF222222),
-                              ],
-                            )
-                            : const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFFF5F3FF), // lavanda muy suave
-                                Color(0xFFEDE9FE), // gris perla
-                                Color(0xFFFFFFFF), // blanco puro
-                              ],
-                            ),
-                    boxShadow: [
-                      if (!isDark)
-                        BoxShadow(
-                          color: Colors.black.withAlpha(8),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '🌘 Panel de sueños',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              isDark ? Colors.white : const Color(0xFF3B2E5A),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // ✨ Glow background (soft aura behind the dialog)
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          colors: [
+                            Colors.deepPurple.withOpacity(0.15),
+                            Colors.transparent,
+                          ],
+                          radius: 1.2,
+                          center: Alignment.topCenter,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        DateFormat(
-                          'MMMM y',
-                          'es_ES',
-                        ).format(_currentDisplayedMonth),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color:
+                    ),
+                  ),
+
+                  // ✨ Main dialog with glassmorphism
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      child: Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(
+                              0.08,
+                            ), // glass border
+                            width: 1.2,
+                          ),
+                          gradient:
                               isDark
-                                  ? Colors.grey.shade300
-                                  : const Color(0xFF6B5E7A),
+                                  ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1A29).withOpacity(0.92),
+                                      const Color(0xFF2A2340).withOpacity(0.88),
+                                      const Color(0xFF141218).withOpacity(0.94),
+                                    ],
+                                  )
+                                  : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(
+                                        0xFFFFFFFF,
+                                      ).withOpacity(0.85), // base white
+                                      const Color(
+                                        0xFFDAD6FF,
+                                      ).withOpacity(0.9), // soft violet glow
+                                      const Color(
+                                        0xFFE3F0FF,
+                                      ).withOpacity(0.95), // icy blue tint
+                                    ],
+                                  ),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  isDark
+                                      ? Colors.black.withOpacity(0.45)
+                                      : Colors.deepPurple.withOpacity(0.12),
+                              blurRadius: 30,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title
+                            Row(
+                              children: [
+                                Text(
+                                  '🌘 Panel de sueños',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                    color:
+                                        isDark
+                                            ? Colors.white
+                                            : const Color(0xFF3B2E5A),
+                                  ),
+                                ),
+                                const Spacer(),
+                                // Close button
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close_rounded,
+                                    color:
+                                        isDark
+                                            ? Colors.white70
+                                            : const Color(0xFF5E4C7A),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                              ],
+                            ),
+
+                            // Subtitle
+                            Text(
+                              DateFormat(
+                                'MMMM y',
+                                'es_ES',
+                              ).format(_currentDisplayedMonth).toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 13,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    isDark
+                                        ? Colors.grey.shade400
+                                        : const Color(0xFF7D6C92),
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+                            const Divider(thickness: 0.6, height: 1),
+
+                            const SizedBox(height: 20),
+
+                            // Dream count
+                            StreamBuilder<int>(
+                              stream: getDreamCountByMonth(
+                                _currentDisplayedMonth,
+                              ),
+                              builder: (context, snapshot) {
+                                final dreamCount = snapshot.data ?? 0;
+                                if (dreamCount == 0)
+                                  return const SizedBox.shrink();
+                                return Row(
+                                  children: [
+                                    const Text(
+                                      '🌙 ',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    Text(
+                                      '$dreamCount ${dreamCount == 1 ? "sueño registrado" : "sueños registrados"}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            isDark
+                                                ? Colors.grey.shade100
+                                                : const Color(0xFF4A3B6A),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            // Emotion of the month
+                            StreamBuilder(
+                              stream: monthlyEmotion(
+                                _currentDisplayedMonth.month,
+                              ),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Skeletonizer(
+                                  effect: const ShimmerEffect(
+                                    baseColor: Colors.grey,
+                                    highlightColor: Colors.white,
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                  enabled: snapshot.hasData ? false : true,
+                                  child:
+                                      snapshot.data != ''
+                                          ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                '🎭 ',
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  'Emoción del mes: ${snapshot.data}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color:
+                                                        isDark
+                                                            ? Colors
+                                                                .grey
+                                                                .shade100
+                                                            : const Color(
+                                                              0xFF4A3B6A,
+                                                            ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                          : const SizedBox.shrink(),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      StreamBuilder<int>(
-                        stream: getDreamCountByMonth(_currentDisplayedMonth),
-                        builder: (context, snapshot) {
-                          final dreamCount = snapshot.data ?? 0;
-                          if (dreamCount == 0) return const SizedBox.shrink();
-                          return Row(
-                            children: [
-                              const Text('🌙 ', style: TextStyle(fontSize: 18)),
-                              Text(
-                                '$dreamCount ${dreamCount == 1 ? "sueño registrado" : "sueños registrados"}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color:
-                                      isDark
-                                          ? Colors.grey.shade100
-                                          : const Color(0xFF4A3B6A),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      //if (widget.emotionResult?.isNotEmpty == true)
-                      StreamBuilder(
-                        stream: monthlyEmotion(_currentDisplayedMonth.month),
-                        builder: (context, Snapshot) {
-                          if (Snapshot.hasError) {
-                            return Text('');
-                          }
-                          return Skeletonizer(
-                            effect: const ShimmerEffect(
-                              baseColor: Colors.grey,
-                              highlightColor: Colors.white,
-                              duration: Duration(seconds: 1),
-                            ),
-                            enabled: Snapshot.hasData ? false : true,
-                            child:
-                                Snapshot.data != ''
-                                    ? Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          '🎭 ',
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            'Emoción del mes: ${Snapshot.data}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color:
-                                                  isDark
-                                                      ? Colors.grey.shade100
-                                                      : const Color(0xFF4A3B6A),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                    : const SizedBox.shrink(),
-                          );
-                        },
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
