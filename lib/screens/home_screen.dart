@@ -324,6 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           analysisStyle = analysisStyleProvider.analysisStyle;
                           await Future.delayed(Duration(milliseconds: 300));
                           showModalBottomSheet(
+                            //TODO: corregir seleccion de estilo de analisis al iniciar sesion con usuario registrado y al agregar un sueño
                             context: context,
                             isScrollControlled: true,
                             shape: RoundedRectangleBorder(

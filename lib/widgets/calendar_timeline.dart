@@ -28,6 +28,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   DateTime _currentDisplayedMonth = DateTime.now();
   bool _isMonthSelection = false;
   bool openDreamPanel = false;
+
   Stream<int> getDreamCountByMonth(DateTime month) {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -250,65 +251,104 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
     final currentYear = now.year;
     final currentMonth = now.month;
 
-    return GridView.count(
+    return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      children: List.generate(12, (index) {
+      itemCount: 12,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+      ),
+      itemBuilder: (context, index) {
         final monthDate = DateTime(selectedDate.year, index + 1, 1);
         final isSelected = selectedDate.month == index + 1;
         final isFutureMonth =
             selectedDate.year > currentYear ||
             (selectedDate.year == currentYear && (index + 1) > currentMonth);
+        final isCurrentMonth =
+            (selectedDate.year == currentYear && (index + 1) == currentMonth);
 
-        return Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(8),
-            onTap: isFutureMonth ? null : () => onMonthSelected(monthDate),
-            child: Container(
-              decoration: BoxDecoration(
-                color:
-                    isSelected
-                        ? (btnProvider.isButtonEnabled
-                            ? Colors.purple.shade400
-                            : Colors.purple.shade300)
-                        : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color:
-                      isSelected
-                          ? Colors.transparent
-                          : (btnProvider.isButtonEnabled
-                              ? Colors.white.withOpacity(0.2)
-                              : Colors.grey.withOpacity(0.2)),
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Opacity(
-                opacity: isFutureMonth ? 0.5 : 1.0,
-                child: Text(
-                  DateFormat('MMM', 'es_ES').format(monthDate),
-                  style: TextStyle(
-                    color:
+        return TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 1, end: isSelected ? 1.05 : 1),
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutBack,
+          builder: (context, scale, child) {
+            return GestureDetector(
+              onTap: isFutureMonth ? null : () => onMonthSelected(monthDate),
+              child: Transform.scale(
+                scale: scale,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient:
                         isSelected
-                            ? (btnProvider.isButtonEnabled
-                                ? Colors.black
-                                : Colors.white)
-                            : (isFutureMonth
-                                ? Colors.grey
-                                : (btnProvider.isButtonEnabled
-                                    ? Colors.white
-                                    : Colors.grey.shade800)),
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                            ? LinearGradient(
+                              colors: [
+                                Colors.purple.shade400,
+                                Colors.purple.shade600,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                            : null,
+                    color: !isSelected ? Colors.white.withOpacity(0.08) : null,
+                    border: Border.all(
+                      color:
+                          isSelected
+                              ? Colors.transparent
+                              : (isCurrentMonth
+                                  ? Colors.purpleAccent.withOpacity(0.7)
+                                  : Colors.white.withOpacity(0.1)),
+                      width: isCurrentMonth ? 2 : 1,
+                    ),
+                    boxShadow:
+                        isSelected
+                            ? [
+                              BoxShadow(
+                                color: Colors.purple.withOpacity(0.5),
+                                blurRadius: 14,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                            : [],
+                    backgroundBlendMode: isSelected ? null : BlendMode.overlay,
+                  ),
+                  alignment: Alignment.center,
+                  child: Opacity(
+                    opacity: isFutureMonth ? 0.35 : 1,
+                    child: AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w500,
+                        letterSpacing: 1.3,
+                        color:
+                            isSelected
+                                ? Colors.white
+                                : (isFutureMonth
+                                    ? Colors.grey.shade500
+                                    : Colors.purple.shade200),
+                      ),
+                      child: Text(
+                        DateFormat(
+                          'MMM',
+                          'es_ES',
+                        ).format(monthDate).toUpperCase(),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
-      }),
+      },
     );
   }
 
