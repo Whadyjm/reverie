@@ -979,9 +979,7 @@ Widget _dreamTextField(
                         final analysis = await GeminiService().generateAnalysis(
                           _dreamController.text,
                           apiKey,
-                          analysisStyle == ''
-                              ? analysisStyleProvider.analysisStyle
-                              : analysisStyle,
+                          analysisStyleProvider.analysisStyle,
                           selectedGender!,
                           userName!,
                           suscription!,
@@ -1002,9 +1000,7 @@ Widget _dreamTextField(
                           analysis,
                           tag,
                           emotions,
-                          analysisStyle == ''
-                              ? analysisStyleProvider.analysisStyle
-                              : analysisStyle,
+                          analysisStyleProvider.analysisStyle,
                         );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
