@@ -442,7 +442,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8.0),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color:
                     btnProvider.isButtonEnabled
@@ -457,107 +457,161 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                   width: 0.5,
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.calendar_today_rounded,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: () => _showCustomCalendar(context, date),
-                    child: Text(
-                      DateFormat('MMMM y', 'es_ES').format(date),
-                      style: RobotoTextStyle.small2TextStyle(Colors.white),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _showCustomCalendar(context, date),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white.withOpacity(0.08),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.15),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 14,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              DateFormat(
+                                'MMMM y',
+                                'es_ES',
+                              ).format(date).toUpperCase(),
+                              style: RobotoTextStyle.small2TextStyle(
+                                Colors.white,
+                              ).copyWith(
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            AnimatedRotation(
+                              duration: const Duration(milliseconds: 250),
+                              turns: openDreamPanel ? 0.5 : 0,
+                              child: Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 18,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  const Spacer(),
-                  StreamBuilder(
-                    stream: getDreamCountByMonth(_currentDisplayedMonth),
-                    builder: (context, snapshot) {
-                      int dreamCount = snapshot.data ?? 0;
-                      return (dreamCount != 0)
-                          ? Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    openDreamPanel = true;
-                                  });
-                                  _showPanelDreams(context);
-                                },
-                                child: Text(
-                                  'Panel de sueños',
-                                  style: RobotoTextStyle.small2TextStyle(
-                                    Colors.white,
+
+                    StreamBuilder(
+                      stream: getDreamCountByMonth(_currentDisplayedMonth),
+                      builder: (context, snapshot) {
+                        int dreamCount = snapshot.data ?? 0;
+                        if (dreamCount == 0) return const SizedBox.shrink();
+
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() => openDreamPanel = true);
+                                _showPanelDreams(context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white.withOpacity(0.08),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.15),
+                                  ),
+                                ),
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: Text(
+                                    'PANEL DE SUEÑOS',
+                                    style: RobotoTextStyle.small2TextStyle(
+                                      Colors.white,
+                                    ).copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.1,
+                                    ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              StreamBuilder(
-                                stream: monthlyEmotion(
-                                  _currentDisplayedMonth.month,
-                                ),
-                                builder: (
-                                  BuildContext context,
-                                  AsyncSnapshot<dynamic> snapshot,
-                                ) {
-                                  final now = DateTime.now();
-                                  final tomorrow = now.add(
-                                    const Duration(days: 1),
-                                  );
-                                  final isLastDayOfMonth =
-                                      now.month != tomorrow.month;
+                            ),
 
-                                  return (snapshot.hasData &&
-                                          !openDreamPanel &&
-                                          isLastDayOfMonth)
-                                      ? Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 8.0,
+                            const SizedBox(width: 12),
+
+                            StreamBuilder(
+                              stream: monthlyEmotion(
+                                _currentDisplayedMonth.month,
+                              ),
+                              builder: (context, snapshot) {
+                                final now = DateTime.now();
+                                final tomorrow = now.add(
+                                  const Duration(days: 1),
+                                );
+                                final isLastDayOfMonth =
+                                    now.month != tomorrow.month;
+
+                                if (snapshot.hasData &&
+                                    !openDreamPanel &&
+                                    isLastDayOfMonth) {
+                                  return AnimatedScale(
+                                    scale: 1.05,
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOutBack,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.purpleAccent.shade200,
+                                            Colors.deepPurple.shade600,
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
                                         ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            50,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.purpleAccent
+                                                .withOpacity(0.6),
+                                            blurRadius: 12,
+                                            spreadRadius: 1,
                                           ),
-                                          child: Shimmer(
-                                            duration: const Duration(
-                                              seconds: 1,
-                                            ),
-                                            child: Badge(
-                                              padding: EdgeInsets.all(5),
-                                              backgroundColor:
-                                                  Colors.deepPurple,
-                                              label: Icon(
-                                                Iconsax.notification,
-                                                size: 15,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      : Icon(
-                                        Icons.keyboard_arrow_down_rounded,
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.all(7),
+                                      child: const Icon(
+                                        Iconsax.notification,
                                         size: 16,
                                         color: Colors.white,
-                                      );
-                                },
-                              ),
-                            ],
-                          )
-                          : const SizedBox.shrink();
-                    },
-                  ),
-                ],
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           );
