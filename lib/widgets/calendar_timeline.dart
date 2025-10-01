@@ -520,93 +520,43 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       builder: (context, snapshot) {
                         int dreamCount = snapshot.data ?? 0;
                         if (dreamCount == 0) return const SizedBox.shrink();
-
-                        return Row(
+                        return Stack(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() => openDreamPanel = true);
-                                _showPanelDreams(context);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white.withOpacity(0.08),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.15),
-                                  ),
-                                ),
-                                child: MouseRegion(
-                                  cursor: SystemMouseCursors.click,
-                                  child: Text(
-                                    'PANEL DE SUEÑOS',
-                                    style: RobotoTextStyle.small2TextStyle(
-                                      Colors.white,
-                                    ).copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.1,
+                            _badgeIcon(),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() => openDreamPanel = true);
+                                    _showPanelDreams(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 6,
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(width: 12),
-
-                            StreamBuilder(
-                              stream: monthlyEmotion(
-                                _currentDisplayedMonth.month,
-                              ),
-                              builder: (context, snapshot) {
-                                final now = DateTime.now();
-                                final tomorrow = now.add(
-                                  const Duration(days: 1),
-                                );
-                                final isLastDayOfMonth =
-                                    now.month != tomorrow.month;
-
-                                if (snapshot.hasData &&
-                                    !openDreamPanel &&
-                                    isLastDayOfMonth) {
-                                  return AnimatedScale(
-                                    scale: 1.05,
-                                    duration: const Duration(milliseconds: 400),
-                                    curve: Curves.easeOutBack,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.purpleAccent.shade200,
-                                            Colors.deepPurple.shade600,
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white.withOpacity(0.08),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.15),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        'PANEL DE SUEÑOS',
+                                        style: RobotoTextStyle.small2TextStyle(
+                                          Colors.white,
+                                        ).copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.1,
                                         ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.purpleAccent
-                                                .withOpacity(0.6),
-                                            blurRadius: 12,
-                                            spreadRadius: 1,
-                                          ),
-                                        ],
-                                      ),
-                                      padding: const EdgeInsets.all(7),
-                                      child: const Icon(
-                                        Iconsax.notification,
-                                        size: 16,
-                                        color: Colors.white,
                                       ),
                                     ),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         );
@@ -639,7 +589,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 ? Padding(
                   padding: const EdgeInsets.only(top: 6, bottom: 6),
                   child: InkResponse(
-                    onTap: null,
+                    onTap: onTap,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
@@ -1060,6 +1010,52 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
             ),
           ),
         );
+      },
+    );
+  }
+
+  Widget _badgeIcon() {
+    return StreamBuilder(
+      stream: monthlyEmotion(_currentDisplayedMonth.month),
+      builder: (context, snapshot) {
+        final now = DateTime.now();
+        final tomorrow = now.add(const Duration(days: 1));
+        final isLastDayOfMonth = now.month != tomorrow.month;
+
+        if (snapshot.hasData && !openDreamPanel && isLastDayOfMonth) {
+          return AnimatedScale(
+            scale: 1.05,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutBack,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.purpleAccent.shade200.withAlpha(50),
+                    Colors.deepPurple.shade600,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.purpleAccent.withOpacity(0.6),
+                    blurRadius: 12,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(7),
+              child: const Icon(
+                Iconsax.notification,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
       },
     );
   }
