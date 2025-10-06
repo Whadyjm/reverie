@@ -155,8 +155,7 @@ class _SubscriptionPlanListState extends State<_SubscriptionPlanList> {
       'buttonText': 'Elegir Plan Básico',
       'features': [
         'Registro ilimitado de sueños.',
-        'Reporte de emociones.',
-        'Sin anuncios.',
+        'Reporte de emoción mensual.',
       ],
       'isRecommended': false,
     },

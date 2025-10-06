@@ -49,7 +49,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
           color:
               widget.btnProvider.isButtonEnabled
                   ? Colors.grey.shade900
-                  : Colors.white,
+                  : Colors.white.withAlpha(220),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         ),
         child: SingleChildScrollView(
@@ -107,7 +107,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
     final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Allows the sheet to take more space
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -116,161 +116,188 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
               ? Colors.grey.shade900
               : Theme.of(context).colorScheme.surface,
       builder: (BuildContext context) {
-        return AnimatedPadding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+        return Container(
+          height: 700,
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+          decoration: BoxDecoration(
+            color:
+                widget.btnProvider.isButtonEnabled
+                    ? Colors.grey.shade900
+                    : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color:
+                  widget.btnProvider.isButtonEnabled
+                      ? Colors.grey.shade700
+                      : Colors.grey.shade300,
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color:
+                    widget.btnProvider.isButtonEnabled
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.25),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          duration: const Duration(milliseconds: 100),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Draggable handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Handle superior
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color:
+                        widget.btnProvider.isButtonEnabled
+                            ? Colors.grey.shade700
+                            : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Header con título y botón de cerrar
+              Row(
+                children: [
+                  Text(
+                    'Análisis del sueño',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color:
                           widget.btnProvider.isButtonEnabled
-                              ? Colors.grey.shade700
-                              : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(2),
+                              ? Colors.white
+                              : Colors.grey.shade800,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color:
+                          widget.btnProvider.isButtonEnabled
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    splashRadius: 20,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              Divider(
+                color:
+                    widget.btnProvider.isButtonEnabled
+                        ? Colors.grey.shade700
+                        : Colors.grey.shade300,
+                height: 1,
+              ),
+              const SizedBox(height: 16),
+
+              // Contenido del análisis
+              Expanded(
+                flex: 4,
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Text(
+                    widget.dream['analysis'],
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(
+                      color:
+                          widget.btnProvider.isButtonEnabled
+                              ? Colors.white.withOpacity(0.95)
+                              : Colors.grey.shade800,
+                      fontSize: 16,
+                      height: 1.6,
+                      letterSpacing: 0.3,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Text(
-                      'Análisis del sueño',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color:
-                            widget.btnProvider.isButtonEnabled
-                                ? Colors.white
-                                : Colors.grey.shade800,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color:
-                            widget.btnProvider.isButtonEnabled
-                                ? Colors.grey.shade400
-                                : Colors.grey.shade600,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      splashRadius: 20,
-                    ),
-                  ],
-                ),
+              ),
 
-                const SizedBox(height: 8),
-                Divider(
-                  color:
-                      widget.btnProvider.isButtonEnabled
-                          ? Colors.grey.shade800
-                          : Colors.grey.shade300,
-                  height: 1,
+              // Botón de análisis detallado (solo para versión free)
+              /*if (widget.suscription == 'free') ...[
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.shade500,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.deepPurple.shade300,
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.deepPurple.withOpacity(0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      btnProvider.setLoading(true);
+                      try {
+                        SubscriptionBottomSheet.show(context);
+                      } catch (e) {
+                      } finally {
+                        btnProvider.setLoading(false);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child:
+                        btnProvider.isLoading
+                            ? SizedBox(
+                              width: 40,
+                              height: 25,
+                              child: ThreeDotsLoading(color: Colors.white),
+                            )
+                            : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Iconsax.magic_star,
+                                  color: Colors.amber,
+                                  size: 22,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Análisis detallado',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                  ),
                 ),
                 const SizedBox(height: 16),
+              ],*/
 
-                // Analysis content with smooth scrolling
-                Flexible(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Text(
-                      widget.dream['analysis'],
-                      style: TextStyle(
-                        color:
-                            widget.btnProvider.isButtonEnabled
-                                ? Colors.white
-                                : Colors.grey.shade800,
-                        fontSize: 16,
-                        height: 1.6,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                if (widget.suscription == 'free') ...[
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: 56,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.purple.shade400,
-                          Colors.purple.shade600,
-                          Colors.indigo.shade400,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.purple.shade200.withAlpha(40),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        btnProvider.setLoading(true);
-                        try {
-                          SubscriptionBottomSheet.show(context);
-                        } catch (e) {
-                        } finally {
-                          btnProvider.setLoading(false);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child:
-                          btnProvider.isLoading
-                              ? SizedBox(
-                                width: 40,
-                                height: 25,
-                                child: ThreeDotsLoading(color: Colors.white),
-                              )
-                              : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Iconsax.magic_star,
-                                    color: Colors.amber,
-                                    size: 22,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Análisis detallado',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-                Row(
+              // Botones inferiores
+              Expanded(
+                flex: 1,
+                child: Row(
                   children: [
+                    // Botón compartir
                     Expanded(
                       child: OutlinedButton.icon(
                         icon: Icon(
@@ -278,7 +305,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                           color:
                               widget.btnProvider.isButtonEnabled
                                   ? Colors.white
-                                  : Colors.purple.shade600,
+                                  : Colors.deepPurple.shade600,
                         ),
                         label: Text(
                           'Compartir',
@@ -286,7 +313,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                             color:
                                 widget.btnProvider.isButtonEnabled
                                     ? Colors.white
-                                    : Colors.purple.shade600,
+                                    : Colors.deepPurple.shade600,
                           ),
                         ),
                         onPressed: () => null,
@@ -295,7 +322,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                             color:
                                 widget.btnProvider.isButtonEnabled
                                     ? Colors.grey.shade700
-                                    : Colors.purple.shade400,
+                                    : Colors.deepPurple.shade400,
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -305,15 +332,24 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                       ),
                     ),
                     const SizedBox(width: 16),
+
+                    // Calificación
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        height: 60,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color:
                               widget.btnProvider.isButtonEnabled
                                   ? Colors.grey.shade800
                                   : Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color:
+                                widget.btnProvider.isButtonEnabled
+                                    ? Colors.grey.shade600
+                                    : Colors.grey.shade300,
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -364,8 +400,8 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -373,41 +409,57 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
   }
 
   Widget _dreamText() {
-    return Text(
-      widget.dream['text'],
-      style: TextStyle(
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
         color:
             widget.btnProvider.isButtonEnabled
-                ? Colors.white
-                : Colors.grey.shade800,
-        fontFamily: 'roboto',
-        fontSize: 16,
+                ? Colors.grey.shade800
+                : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color:
+              widget.btnProvider.isButtonEnabled
+                  ? Colors.grey.shade600
+                  : Colors.grey.shade300,
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color:
+                widget.btnProvider.isButtonEnabled
+                    ? Colors.black.withOpacity(0.25)
+                    : Colors.grey.withOpacity(0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Text(
+        widget.dream['text'],
+        textAlign: TextAlign.justify,
+        style: TextStyle(
+          color:
+              widget.btnProvider.isButtonEnabled
+                  ? Colors.white
+                  : Colors.grey.shade800,
+          fontFamily: 'Roboto',
+          fontSize: 17,
+          height: 1.5,
+          letterSpacing: 0.3,
+        ),
       ),
     );
   }
 
   Widget _dreamEmotionsContainer() {
     final btnProvider = Provider.of<ButtonProvider>(context);
-    return Material(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        width: 500,
-        decoration: BoxDecoration(
-          color:
-              btnProvider.isButtonEnabled ? Colors.grey.shade800 : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  btnProvider.isButtonEnabled
-                      ? Colors.black.withOpacity(0.4)
-                      : Colors.grey.withOpacity(0.3),
-              blurRadius: 8,
-              spreadRadius: 1,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+
+    return Align(
+      alignment: Alignment.center,
+      child: Material(
+        color: Colors.transparent,
         child: Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -423,18 +475,28 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                           btnProvider.isButtonEnabled
                               ? Colors.white
                               : Colors.grey.shade800,
-                        ).copyWith(fontWeight: FontWeight.w600),
+                        ).copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
                       ),
                       backgroundColor:
                           btnProvider.isButtonEnabled
                               ? Colors.grey.shade700
-                              : Colors.grey.shade200,
+                              : Colors.grey.shade100,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: 10,
+                        vertical: 6,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color:
+                              btnProvider.isButtonEnabled
+                                  ? Colors.grey.shade500
+                                  : Colors.grey.shade400,
+                          width: 1,
+                        ),
                       ),
                     ),
                   )
