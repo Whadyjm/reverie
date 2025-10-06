@@ -170,8 +170,7 @@ class GeminiService {
                     "$dreamText Detecta y nombra las emociones predominantes presentes en el siguiente sueño."
                     "Sé específico y directo. Solo nombra 3 palabras que representen el sueño. Responde SOLO con las palabras, ningún otro texto antes o después."
                     "Tampoco utilices comas, puntos ni asteriscos o cualquier otro signo"
-                    "Muestra cada palabra con su icono como prefijo, una al lado de la otra separadas por dos espacios"
-                    "Agrega ademas un icono unicode com prefijo relacionado con cada palabra.",
+                    "una al lado de la otra separadas por dos espacios.",
               },
             ],
           },

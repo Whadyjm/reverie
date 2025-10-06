@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/style/text_style.dart';
 import '../provider/button_provider.dart';
@@ -90,6 +91,12 @@ class _DreamByDateState extends State<DreamByDate> {
 
                     return GestureDetector(
                       onLongPress: () async {
+                        final can = await Haptics.canVibrate();
+
+                        if (!can) {
+                          return;
+                        }
+                        await Haptics.vibrate(HapticsType.success);
                         setState(() {
                           isLongPress = !isLongPress;
                         });

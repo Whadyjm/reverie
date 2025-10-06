@@ -462,107 +462,8 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => _showCustomCalendar(context, date),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.white.withOpacity(0.08),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.15),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.calendar_today_rounded,
-                              size: 14,
-                              color: Colors.white.withOpacity(0.9),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              DateFormat(
-                                'MMMM y',
-                                'es_ES',
-                              ).format(date).toUpperCase(),
-                              style: RobotoTextStyle.small2TextStyle(
-                                Colors.white,
-                              ).copyWith(
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            AnimatedRotation(
-                              duration: const Duration(milliseconds: 250),
-                              turns: openDreamPanel ? 0.5 : 0,
-                              child: Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 18,
-                                color: Colors.white.withOpacity(0.9),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    StreamBuilder(
-                      stream: getDreamCountByMonth(_currentDisplayedMonth),
-                      builder: (context, snapshot) {
-                        int dreamCount = snapshot.data ?? 0;
-                        if (dreamCount == 0) return const SizedBox.shrink();
-                        return Stack(
-                          children: [
-                            _badgeIcon(),
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() => openDreamPanel = true);
-                                    _showPanelDreams(context);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Colors.white.withOpacity(0.08),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.15),
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        'PANEL DE SUEÑOS',
-                                        style: RobotoTextStyle.small2TextStyle(
-                                          Colors.white,
-                                        ).copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 1.1,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [_monthGrid(date), _dreamPanel()],
                 ),
               ),
             ),
@@ -1009,6 +910,91 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _monthGrid(date) {
+    return GestureDetector(
+      onTap: () => _showCustomCalendar(context, date),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white.withOpacity(0.08),
+          border: Border.all(color: Colors.white.withOpacity(0.15)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.calendar_today_rounded,
+              size: 14,
+              color: Colors.white.withOpacity(0.9),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              DateFormat('MMMM y', 'es_ES').format(date).toUpperCase(),
+              style: RobotoTextStyle.small3TextStyle(
+                Colors.white,
+              ).copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.1),
+            ),
+            const SizedBox(width: 6),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 18,
+              color: Colors.white.withOpacity(0.9),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dreamPanel() {
+    return StreamBuilder(
+      stream: getDreamCountByMonth(_currentDisplayedMonth),
+      builder: (context, snapshot) {
+        int dreamCount = snapshot.data ?? 0;
+        if (dreamCount == 0) return const SizedBox.shrink();
+        return Stack(
+          children: [
+            _badgeIcon(),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() => openDreamPanel = true);
+                    _showPanelDreams(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white.withOpacity(0.08),
+                      border: Border.all(color: Colors.white.withOpacity(0.15)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        'PANEL DE SUEÑOS',
+                        style: RobotoTextStyle.small3TextStyle(
+                          Colors.white,
+                        ).copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         );
       },
     );
