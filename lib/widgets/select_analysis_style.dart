@@ -124,7 +124,7 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                         ),
                         child: Center(
                           child: Text(
-                            'Plus',
+                            'Pro',
                             style: RobotoTextStyle.smallTextStyle(Colors.white),
                           ),
                         ),

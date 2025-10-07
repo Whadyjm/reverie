@@ -282,7 +282,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                   child: Column(
                     children: [
                       Expanded(
-                        flex: 4,
+                        flex: 3,
                         child: Text(
                           'Reverie',
                           style: AppTextStyle.biggerTitleStyle(Colors.white),
