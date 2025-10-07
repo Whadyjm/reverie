@@ -196,7 +196,7 @@ class _SecretPinState extends State<SecretPin> {
               Visibility(
                 visible: widget.userHasPin == true ? true : false,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 100),
+                  padding: const EdgeInsets.only(top: 60),
                   child: CustomButton(
                     text: 'Recuperar pin',
                     onPressed: () {

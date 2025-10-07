@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/model/user_model.dart';
+import 'package:reverie/provider/button_provider.dart';
 import 'package:reverie/provider/user_provider.dart';
+import 'package:reverie/services/auth_service.dart';
 import 'package:reverie/style/text_style.dart';
 import 'package:reverie/widgets/select_gender_dialog.dart';
 import 'package:reverie/widgets/threedotsloading.dart';
@@ -32,6 +34,7 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final btnProvider = Provider.of<ButtonProvider>(context);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final firebaseUser = FirebaseAuth.instance.currentUser;
 
@@ -65,13 +68,72 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.grey.shade200,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Image.network(user.photoUrl),
-                      ),
+                    StreamBuilder<User?>(
+                      stream: AuthService().userChanges,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data != null) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(25),
+                            child:
+                                snapshot.data?.photoURL != null
+                                    ? Image.network(
+                                      snapshot.data!.photoURL!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        );
+                                      },
+                                      loadingBuilder: (
+                                        context,
+                                        child,
+                                        loadingProgress,
+                                      ) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return CircularProgressIndicator(
+                                          value:
+                                              loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                        );
+                                      },
+                                    )
+                                    : CircleAvatar(
+                                      radius: 40,
+                                      backgroundColor:
+                                          btnProvider.isButtonEnabled
+                                              ? Colors.white.withOpacity(0.2)
+                                              : Colors.grey.shade200,
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.grey,
+                                        size: 40,
+                                      ),
+                                    ),
+                          );
+                        } else {
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundColor:
+                                btnProvider.isButtonEnabled
+                                    ? Colors.white.withOpacity(0.2)
+                                    : Colors.grey.shade200,
+                            child: Icon(Icons.person, color: Colors.grey),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(width: 12),
                     Padding(
