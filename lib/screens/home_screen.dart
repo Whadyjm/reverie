@@ -1118,7 +1118,7 @@ Widget _drawer(
                   child: Row(
                     children: [
                       Text(
-                        'Premium',
+                        'Actualiza tu plan',
                         style: RobotoTextStyle.smallTextStyle(
                           Colors.grey.shade800,
                         ),
@@ -1148,6 +1148,24 @@ Widget _drawer(
                     children: [
                       Text(
                         'Favoritos',
+                        style: RobotoTextStyle.smallTextStyle(
+                          Colors.grey.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(height: 20, thickness: 1),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Tus premios',
                         style: RobotoTextStyle.smallTextStyle(
                           Colors.grey.shade800,
                         ),
@@ -1386,13 +1404,6 @@ Widget _drawer(
                 color: Colors.grey.shade800,
               ),
             ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'App Version 1.0.0',
-            style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
       ],

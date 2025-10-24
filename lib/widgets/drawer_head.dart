@@ -77,6 +77,7 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
                             child:
                                 snapshot.data?.photoURL != null
                                     ? Image.network(
+                                      height: 80,
                                       snapshot.data!.photoURL!,
                                       fit: BoxFit.cover,
                                       errorBuilder: (
@@ -142,7 +143,7 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
                         widget.dreamCount != null && widget.dreamCount! > 0
                             ? '🌙 ${widget.dreamCount} Sueños'
                             : '',
-                        style: RobotoTextStyle.small2TextStyle(Colors.white),
+                        style: RobotoTextStyle.small3TextStyle(Colors.white),
                       ),
                     ),
                   ],
