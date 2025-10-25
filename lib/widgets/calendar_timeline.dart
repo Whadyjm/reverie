@@ -459,12 +459,9 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                   width: 0.5,
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [_monthGrid(date), _dreamPanel()],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [_monthGrid(date), _dreamPanel()],
               ),
             ),
           );

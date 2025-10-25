@@ -67,13 +67,18 @@ class AuthProcess {
         pin: '',
         pinCreatedAt: Timestamp.now(),
         pinCreated: false,
+        isLogedIn: true,
       );
 
-      //Guardar en Firestore usando toJson
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .set(newUser.toJson());
+      //Guardar en Firestore usando toJson (incluye isLogedIn: true)
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          ...newUser.toJson(),
+          'lastSignIn': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint('Firestore write error (register): $e');
+      }
 
       //Revisar si tiene PIN
       String userPin = await FirebaseFirestore.instance
@@ -151,6 +156,18 @@ class AuthProcess {
 
       final user = userCredential.user;
       if (user == null) throw Exception("Usuario no encontrado");
+
+      // Actualizar estado en Firestore: marcar como conectado
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'isLogedIn': true,
+          'email': user.email,
+          'displayName': user.displayName ?? '',
+          'lastSignIn': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint('Firestore update error (login): $e');
+      }
 
       final doc =
           await FirebaseFirestore.instance
@@ -279,6 +296,7 @@ class AuthProcess {
             pin: '',
             pinCreatedAt: Timestamp.now(),
             pinCreated: false,
+            isLogedIn: true,
           );
 
           await docRef.set(newUser.toJson());

@@ -34,12 +34,8 @@ class _DreamCountDotState extends State<DreamCountDot> {
                 width: 13,
                 height: 13,
                 decoration: BoxDecoration(
+                  color: Colors.indigo.shade400,
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [Colors.deepPurple],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
                   boxShadow: [
                     BoxShadow(color: Colors.purple.shade200, blurRadius: 1),
                     BoxShadow(color: Colors.indigo.shade400, blurRadius: 1),

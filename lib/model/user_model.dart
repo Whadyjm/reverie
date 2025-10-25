@@ -12,6 +12,7 @@ class UserModel {
   final String pin;
   final Timestamp pinCreatedAt;
   final bool pinCreated;
+  final bool isLogedIn;
 
   UserModel({
     required this.userId,
@@ -25,6 +26,7 @@ class UserModel {
     required this.pin,
     required this.pinCreatedAt,
     required this.pinCreated,
+    required this.isLogedIn,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class UserModel {
       pin: json['pin'],
       pinCreatedAt: json['pinCreatedAt'],
       pinCreated: json['pinCreated'],
+      isLogedIn: json['isLogedIn'],
     );
   }
 
@@ -56,6 +59,7 @@ class UserModel {
       'pin': pin,
       'pinCreatedAt': pinCreatedAt,
       'pinCreated': pinCreated,
+      'isLogedIn': isLogedIn,
     };
   }
 }
