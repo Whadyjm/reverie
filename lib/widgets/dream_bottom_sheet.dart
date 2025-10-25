@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:reverie/style/text_style.dart';
 import 'package:reverie/widgets/dialogs/pricing_dialog.dart';
 import 'package:reverie/widgets/threedotsloading.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../provider/button_provider.dart';
 
@@ -37,9 +39,98 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
     currentRating = widget.dream['rating']?.toDouble() ?? 0.0;
   }
 
+  String _composeShareText() {
+    final title = widget.dream['title'] ?? '';
+    final dreamText = widget.dream['text'] ?? '';
+    final analysis = widget.dream['analysis'] ?? '';
+    return '''$title
+
+Sueño:
+$dreamText
+
+Análisis:
+$analysis
+
+Compartido desde Reverie''';
+  }
+
+  void _showShareOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text('Compartir'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _shareDream();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.message),
+                title: const Text('WhatsApp'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _shareViaWhatsApp();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _shareDream() async {
+    final text = _composeShareText();
+    try {
+      await Share.share(text, subject: widget.dream['title'] ?? '');
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('No se pudo compartir: $e')));
+    }
+  }
+
+  Future<void> _shareViaWhatsApp() async {
+    final text = _composeShareText();
+    final uriWhatsapp = Uri.parse(
+      'whatsapp://send?text=${Uri.encodeComponent(text)}',
+    );
+    try {
+      if (await canLaunchUrl(uriWhatsapp)) {
+        await launchUrl(uriWhatsapp, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      final uriWeb = Uri.parse(
+        'https://wa.me/?text=${Uri.encodeComponent(text)}',
+      );
+      if (await canLaunchUrl(uriWeb)) {
+        await launchUrl(uriWeb, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se encontró WhatsApp instalado.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al abrir WhatsApp: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    // using widget.btnProvider directly
 
     return Padding(
       padding: const EdgeInsets.only(top: 280),
@@ -104,7 +195,6 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
   }
 
   void _analysisBottomSheet(BuildContext context) {
-    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -316,7 +406,7 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
                                     : Colors.deepPurple.shade600,
                           ),
                         ),
-                        onPressed: () => null,
+                        onPressed: () => _showShareOptions(context),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
                             color:
