@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/style/text_style.dart';
+import 'package:reverie/widgets/dialogs/pricing_dialog.dart';
 import 'package:reverie/widgets/threedotsloading.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -347,7 +348,11 @@ Analiza tus sueños gratis con IA en Reverie.
                                     : Colors.deepPurple.shade600,
                           ),
                         ),
-                        onPressed: () => _shareDream(),
+                        onPressed:
+                            () =>
+                                widget.suscription == 'free'
+                                    ? SubscriptionBottomSheet.show(context)
+                                    : _shareDream(),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
                             color:
