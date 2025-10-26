@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:reverie/style/text_style.dart';
-import 'package:reverie/widgets/dialogs/pricing_dialog.dart';
 import 'package:reverie/widgets/threedotsloading.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -43,49 +42,22 @@ class _DreamBottomSheetState extends State<DreamBottomSheet> {
     final title = widget.dream['title'] ?? '';
     final dreamText = widget.dream['text'] ?? '';
     final analysis = widget.dream['analysis'] ?? '';
-    return '''$title
 
-Sueño:
-$dreamText
+    const appLink = 'https://linktr.ee/reverieapp';
 
-Análisis:
-$analysis
+    return '''
+🔮 ¡Mira qué genial análisis obtuve con *Reverie*!
 
-Compartido desde Reverie''';
-  }
+💭 Sueño: ${dreamText}
 
-  void _showShareOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.share),
-                title: const Text('Compartir'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _shareDream();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.message),
-                title: const Text('WhatsApp'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _shareViaWhatsApp();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+✨ Análisis:
+${analysis}
+
+¡Descubre el significado de tus propios sueños! 🌌
+Analiza tus sueños gratis con IA en Reverie.
+
+👉 Descarga la app aquí: $appLink 
+''';
   }
 
   Future<void> _shareDream() async {
@@ -99,39 +71,8 @@ Compartido desde Reverie''';
     }
   }
 
-  Future<void> _shareViaWhatsApp() async {
-    final text = _composeShareText();
-    final uriWhatsapp = Uri.parse(
-      'whatsapp://send?text=${Uri.encodeComponent(text)}',
-    );
-    try {
-      if (await canLaunchUrl(uriWhatsapp)) {
-        await launchUrl(uriWhatsapp, mode: LaunchMode.externalApplication);
-        return;
-      }
-
-      final uriWeb = Uri.parse(
-        'https://wa.me/?text=${Uri.encodeComponent(text)}',
-      );
-      if (await canLaunchUrl(uriWeb)) {
-        await launchUrl(uriWeb, mode: LaunchMode.externalApplication);
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se encontró WhatsApp instalado.')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error al abrir WhatsApp: $e')));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // using widget.btnProvider directly
-
     return Padding(
       padding: const EdgeInsets.only(top: 280),
       child: Container(
@@ -406,7 +347,7 @@ Compartido desde Reverie''';
                                     : Colors.deepPurple.shade600,
                           ),
                         ),
-                        onPressed: () => _showShareOptions(context),
+                        onPressed: () => _shareDream(),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
                             color:
