@@ -72,57 +72,107 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
                       stream: AuthService().userChanges,
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data != null) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(25),
-                            child:
-                                snapshot.data?.photoURL != null
-                                    ? Image.network(
-                                      height: 80,
-                                      snapshot.data!.photoURL!,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (
-                                        context,
-                                        error,
-                                        stackTrace,
-                                      ) {
-                                        return Icon(
-                                          Icons.person,
-                                          color: Colors.grey,
-                                          size: 20,
-                                        );
-                                      },
-                                      loadingBuilder: (
-                                        context,
-                                        child,
-                                        loadingProgress,
-                                      ) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return CircularProgressIndicator(
-                                          value:
-                                              loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                          .cumulativeBytesLoaded /
-                                                      loadingProgress
-                                                          .expectedTotalBytes!
-                                                  : null,
-                                        );
-                                      },
-                                    )
-                                    : CircleAvatar(
-                                      radius: 40,
-                                      backgroundColor:
-                                          btnProvider.isButtonEnabled
-                                              ? Colors.white.withOpacity(0.2)
-                                              : Colors.grey.shade200,
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Colors.grey,
-                                        size: 40,
-                                      ),
-                                    ),
+                          final int dreams = widget.dreamCount ?? 0;
+                          final String badgeAsset;
+                          if (dreams == 0) {
+                            badgeAsset = 'assets/welcomeBadge.png';
+                          } else if (dreams >= 100) {
+                            badgeAsset = 'assets/100Badge.png';
+                          } else if (dreams >= 50) {
+                            badgeAsset = 'assets/50Badge.png';
+                          } else if (dreams >= 25) {
+                            badgeAsset = 'assets/25Badge.png';
+                          } else if (dreams >= 1) {
+                            badgeAsset = 'assets/firstBadge.png';
+                          } else {
+                            badgeAsset = 'assets/100Badge.png';
+                          }
+
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: ClipOval(
+                                  child:
+                                      snapshot.data?.photoURL != null
+                                          ? Image.network(
+                                            snapshot.data!.photoURL!,
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (
+                                              context,
+                                              error,
+                                              stackTrace,
+                                            ) {
+                                              return Container(
+                                                width: 80,
+                                                height: 80,
+                                                alignment: Alignment.center,
+                                                child: Icon(
+                                                  Icons.person,
+                                                  color: Colors.grey,
+                                                  size: 40,
+                                                ),
+                                              );
+                                            },
+                                            loadingBuilder: (
+                                              context,
+                                              child,
+                                              loadingProgress,
+                                            ) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return SizedBox(
+                                                width: 80,
+                                                height: 80,
+                                                child: Center(
+                                                  child: CircularProgressIndicator(
+                                                    value:
+                                                        loadingProgress
+                                                                    .expectedTotalBytes !=
+                                                                null
+                                                            ? loadingProgress
+                                                                    .cumulativeBytesLoaded /
+                                                                loadingProgress
+                                                                    .expectedTotalBytes!
+                                                            : null,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                          : Container(
+                                            width: 80,
+                                            height: 80,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  btnProvider.isButtonEnabled
+                                                      ? Colors.white
+                                                          .withOpacity(0.2)
+                                                      : Colors.grey.shade200,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.person,
+                                              color: Colors.grey,
+                                              size: 40,
+                                            ),
+                                          ),
+                                ),
+                              ),
+                              Positioned(
+                                top: -30,
+                                right: -50,
+                                child: Image.asset(
+                                  badgeAsset,
+                                  width: 100,
+                                  height: 100,
+                                ),
+                              ),
+                            ],
                           );
                         } else {
                           return CircleAvatar(
@@ -136,6 +186,7 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
                         }
                       },
                     ),
+
                     const SizedBox(width: 12),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
