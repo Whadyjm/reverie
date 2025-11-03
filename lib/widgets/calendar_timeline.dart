@@ -937,7 +937,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
               const SizedBox(width: 6),
               Text(
                 DateFormat('MMMM y', 'es_ES').format(date).toUpperCase(),
-                style: RobotoTextStyle.small3TextStyle(
+                style: LexendTextStyle.small3TextStyle(
                   Colors.white,
                 ).copyWith(fontWeight: FontWeight.w600, letterSpacing: 1.1),
               ),
@@ -988,7 +988,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
                           'PANEL DE SUEÑOS',
-                          style: RobotoTextStyle.small3TextStyle(
+                          style: LexendTextStyle.small3TextStyle(
                             Colors.white,
                           ).copyWith(
                             fontWeight: FontWeight.w600,

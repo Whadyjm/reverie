@@ -127,7 +127,7 @@ class _DreamCardState extends State<DreamCard> {
                         blur: btnProvider.isTextBlurred ? 2.5 : 0,
                         child: Text(
                           widget.dream['classification'],
-                          style: RobotoTextStyle.smallTextStyle(Colors.white),
+                          style: LexendTextStyle.smallTextStyle(Colors.white),
                         ),
                       ),
                       backgroundColor:

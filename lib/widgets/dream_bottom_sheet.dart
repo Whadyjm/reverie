@@ -507,7 +507,7 @@ Analiza tus sueños gratis con IA en Reverie.
                     (word) => Chip(
                       label: Text(
                         word,
-                        style: RobotoTextStyle.smallTextStyle(
+                        style: LexendTextStyle.smallTextStyle(
                           btnProvider.isButtonEnabled
                               ? Colors.white
                               : Colors.grey.shade800,

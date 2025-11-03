@@ -116,9 +116,9 @@ flutter:
       fonts:
         - asset: fonts/InstrumentSerif-Regular.ttf
           weight: 800
-    - family: roboto
+    - family: lexend
       fonts:
-        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/LexendDeca-Regular.ttf
           weight: 800
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

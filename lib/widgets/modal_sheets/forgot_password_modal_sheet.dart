@@ -28,7 +28,7 @@ class ForgotPasswordModalSheet {
                 padding: const EdgeInsets.only(top: 20),
                 child: Text(
                   'Recuperar contraseña',
-                  style: RobotoTextStyle.titleStyle(Colors.white),
+                  style: LexendTextStyle.titleStyle(Colors.white),
                 ),
               ),
               const SizedBox(height: 20),

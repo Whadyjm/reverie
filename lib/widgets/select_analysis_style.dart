@@ -46,7 +46,7 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
           const SizedBox(height: 10),
           Text(
             'Elige el enfoque que más resuene contigo. Puedes cambiarlo luego.',
-            style: RobotoTextStyle.small2TextStyle(textColor),
+            style: LexendTextStyle.small2TextStyle(textColor),
           ),
         ],
       ),
@@ -125,7 +125,7 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                         child: Center(
                           child: Text(
                             'Pro',
-                            style: RobotoTextStyle.smallTextStyle(Colors.white),
+                            style: LexendTextStyle.smallTextStyle(Colors.white),
                           ),
                         ),
                       ),
@@ -457,7 +457,7 @@ class _SelectAnalysisStyleState extends State<SelectAnalysisStyle> {
                           alignment: Alignment.center,
                           child: Text(
                             'Confirmar',
-                            style: RobotoTextStyle.smallTextStyle(Colors.white),
+                            style: LexendTextStyle.smallTextStyle(Colors.white),
                           ),
                         ),
                       ),

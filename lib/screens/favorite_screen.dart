@@ -62,7 +62,7 @@ class FavoriteDreamsScreen extends StatelessWidget {
                   ),
                   title: Text(
                     '✨ Favoritos',
-                    style: RobotoTextStyle.titleStyle(Colors.white),
+                    style: LexendTextStyle.titleStyle(Colors.white),
                   ),
                   flexibleSpace: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -97,7 +97,7 @@ class FavoriteDreamsScreen extends StatelessWidget {
                             const SizedBox(height: 16),
                             Text(
                               'Aún no hay sueños favoritos ✨',
-                              style: RobotoTextStyle.subtitleStyle(
+                              style: LexendTextStyle.subtitleStyle(
                                 Colors.white70,
                               ),
                             ),

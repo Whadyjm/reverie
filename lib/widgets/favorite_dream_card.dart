@@ -10,7 +10,11 @@ import 'analysis_style_tag.dart';
 import 'like_button.dart';
 
 class FavoriteDreamCard extends StatelessWidget {
-  const FavoriteDreamCard({super.key, required this.btnProvider, required this.dream});
+  const FavoriteDreamCard({
+    super.key,
+    required this.btnProvider,
+    required this.dream,
+  });
 
   final ButtonProvider btnProvider;
   final QueryDocumentSnapshot<Object?> dream;
@@ -48,9 +52,7 @@ class FavoriteDreamCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         dream['title'],
-                        style: AppTextStyle.subtitleStyle(
-                          Colors.grey.shade600,
-                        ),
+                        style: AppTextStyle.subtitleStyle(Colors.grey.shade600),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -89,14 +91,17 @@ class FavoriteDreamCard extends StatelessWidget {
             bottom: -80,
             child: Row(
               children: [
-                AnalysisStyleTag(analysisStyle: analysisStyle,),
+                AnalysisStyleTag(analysisStyle: analysisStyle),
                 const SizedBox(width: 20),
-                LikeButton(isLiked: dream['isLiked'], dreamId: dream['dreamId'],),
+                LikeButton(
+                  isLiked: dream['isLiked'],
+                  dreamId: dream['dreamId'],
+                ),
                 const SizedBox(width: 20),
                 Chip(
                   label: Text(
                     dream['classification'],
-                    style: RobotoTextStyle.smallTextStyle(Colors.white),
+                    style: LexendTextStyle.smallTextStyle(Colors.white),
                   ),
                   backgroundColor:
                       dream['classification'] == 'Pesadilla'

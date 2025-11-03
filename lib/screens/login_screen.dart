@@ -29,24 +29,20 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoadingGoogle = false;
 
   Future<void> _handleLogin() async {
-    final btnProvider = Provider.of<ButtonProvider>(
-                        context,
-                        listen: false,
-                      );
-    try{
+    final btnProvider = Provider.of<ButtonProvider>(context, listen: false);
+    try {
       btnProvider.setLoading(true);
       await AuthProcess.login(
-      context,
-      emailController,
-      passwordController,
-      setState,
-      isLoading,
-    );
-    }catch(e){}
-    finally{
+        context,
+        emailController,
+        passwordController,
+        setState,
+        isLoading,
+      );
+    } catch (e) {
+    } finally {
       btnProvider.setLoading(false);
     }
-    
   }
 
   Future<void> _handleGoogleSignIn() async {
@@ -89,7 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoginCard() {
-    
     final btnProvider = Provider.of<ButtonProvider>(context);
     return Center(
       child: ClipRRect(
@@ -108,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Text(
                   'Inicia Sesión',
-                  style: RobotoTextStyle.titleStyle(Colors.white),
+                  style: LexendTextStyle.titleStyle(Colors.white),
                 ),
                 const SizedBox(height: 20),
 
@@ -148,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     child: Text(
                       'Recuperar contraseña',
-                      style: RobotoTextStyle.small2TextStyle(Colors.white),
+                      style: LexendTextStyle.small2TextStyle(Colors.white),
                     ),
                   ),
                 ),
@@ -157,10 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 btnProvider.isLoading
                     ? SizedBox(
-                                  width: 40,
-                                  height: 25,
-                                  child: ThreeDotsLoading(color: Colors.white),
-                                )
+                      width: 40,
+                      height: 25,
+                      child: ThreeDotsLoading(color: Colors.white),
+                    )
                     : CustomButton(
                       text: 'Iniciar sesión',
                       onPressed: _handleLogin,
@@ -180,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Text(
                     'Regístrate',
-                    style: RobotoTextStyle.subtitleStyle(Colors.white),
+                    style: LexendTextStyle.subtitleStyle(Colors.white),
                   ),
                 ),
 

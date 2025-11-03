@@ -154,7 +154,7 @@ class _SecretPinState extends State<SecretPin> {
                 widget.userHasPin == true
                     ? 'Ingresa tu pin'
                     : 'Establece un pin de seguridad',
-                style: RobotoTextStyle.titleStyle(Colors.white),
+                style: LexendTextStyle.titleStyle(Colors.white),
               ),
               const SizedBox(height: 40),
               Row(
@@ -214,7 +214,7 @@ class _SecretPinState extends State<SecretPin> {
                 children: [
                   Text(
                     'Este pin mantiene tus sueños a salvo',
-                    style: RobotoTextStyle.smallTextStyle(Colors.white70),
+                    style: LexendTextStyle.smallTextStyle(Colors.white70),
                   ),
                 ],
               ),
@@ -249,7 +249,7 @@ class _SecretPinState extends State<SecretPin> {
                 padding: const EdgeInsets.only(top: 20),
                 child: Text(
                   'Recuperar pin',
-                  style: RobotoTextStyle.titleStyle(Colors.white),
+                  style: LexendTextStyle.titleStyle(Colors.white),
                 ),
               ),
               const SizedBox(height: 20),

@@ -30,128 +30,127 @@ class RegisterModalSheet {
       ),
       builder: (context) {
         return StatefulBuilder(
-          builder:
-              (BuildContext context, void Function(void Function()) setState) {
-                final btnProvider = Provider.of<ButtonProvider>(
+          builder: (
+            BuildContext context,
+            void Function(void Function()) setState,
+          ) {
+            final btnProvider = Provider.of<ButtonProvider>(
+              context,
+              listen: false,
+            );
+            Future<void> _handleRegister() async {
+              final btnProvider = Provider.of<ButtonProvider>(
+                context,
+                listen: false,
+              );
+              try {
+                btnProvider.setLoading(true);
+                await AuthProcess.register(
                   context,
-                  listen: false,
+                  nameController,
+                  emailController,
+                  passwordController,
+                  selectedGender,
+                  setState,
+                  isLoading,
                 );
-                Future<void> _handleRegister() async {
-                  final btnProvider = Provider.of<ButtonProvider>(
-                    context,
-                    listen: false,
-                  );
-                  try {
-                    btnProvider.setLoading(true);
-                    await AuthProcess.register(
-                      context,
-                      nameController,
-                      emailController,
-                      passwordController,
-                      selectedGender,
-                      setState,
-                      isLoading,
-                    );
-                  } catch (e) {
-                  } finally {
-                    btnProvider.setLoading(false);
-                  }
-                }
+              } catch (e) {
+              } finally {
+                btnProvider.setLoading(false);
+              }
+            }
 
-                return Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      'Registro',
+                      style: LexendTextStyle.titleStyle(Colors.white),
+                    ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'Nombre y apellido',
+                    icon: Icons.person,
+                    obscureText: false,
+                    controller: nameController,
+                  ),
+                  const SizedBox(height: 15),
+                  CustomTextField(
+                    hintText: 'Correo electrónico',
+                    icon: Icons.email,
+                    obscureText: false,
+                    controller: emailController,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    hintText: 'Contraseña',
+                    icon: Icons.lock,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          hidePassword = !hidePassword;
+                        });
+                      },
+                      icon: Icon(
+                        hidePassword ? Iconsax.eye : Iconsax.eye_slash,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    obscureText: hidePassword,
+                    controller: passwordController,
+                  ),
+                  const SizedBox(height: 20),
+                  // Gender selection row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Text(
-                          'Registro',
-                          style: RobotoTextStyle.titleStyle(Colors.white),
-                        ),
+                      _buildGenderCard(
+                        context: context,
+                        isSelected: selectedGender == 'male',
+                        icon: Icons.male,
+                        iconColor: Colors.blue,
+                        onTap: () => setState(() => selectedGender = 'male'),
                       ),
-                      const SizedBox(height: 20),
-                      CustomTextField(
-                        hintText: 'Nombre y apellido',
-                        icon: Icons.person,
-                        obscureText: false,
-                        controller: nameController,
+                      _buildGenderCard(
+                        context: context,
+                        isSelected: selectedGender == 'female',
+                        icon: Icons.female,
+                        iconColor: Colors.pinkAccent,
+                        onTap: () => setState(() => selectedGender = 'female'),
                       ),
-                      const SizedBox(height: 15),
-                      CustomTextField(
-                        hintText: 'Correo electrónico',
-                        icon: Icons.email,
-                        obscureText: false,
-                        controller: emailController,
+                      _buildGenderCard(
+                        context: context,
+                        isSelected: selectedGender == 'other',
+                        icon: Icons.transgender,
+                        iconColor: Colors.purple,
+                        onTap: () => setState(() => selectedGender = 'other'),
                       ),
-                      const SizedBox(height: 20),
-                      CustomTextField(
-                        hintText: 'Contraseña',
-                        icon: Icons.lock,
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              hidePassword = !hidePassword;
-                            });
-                          },
-                          icon: Icon(
-                            hidePassword ? Iconsax.eye : Iconsax.eye_slash,
-                            color: Colors.white70,
-                          ),
-                        ),
-                        obscureText: hidePassword,
-                        controller: passwordController,
-                      ),
-                      const SizedBox(height: 20),
-                      // Gender selection row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildGenderCard(
-                            context: context,
-                            isSelected: selectedGender == 'male',
-                            icon: Icons.male,
-                            iconColor: Colors.blue,
-                            onTap: () =>
-                                setState(() => selectedGender = 'male'),
-                          ),
-                          _buildGenderCard(
-                            context: context,
-                            isSelected: selectedGender == 'female',
-                            icon: Icons.female,
-                            iconColor: Colors.pinkAccent,
-                            onTap: () =>
-                                setState(() => selectedGender = 'female'),
-                          ),
-                          _buildGenderCard(
-                            context: context,
-                            isSelected: selectedGender == 'other',
-                            icon: Icons.transgender,
-                            iconColor: Colors.purple,
-                            onTap: () =>
-                                setState(() => selectedGender = 'other'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      btnProvider.isLoading
-                          ? SizedBox(
-                              width: 40,
-                              height: 25,
-                              child: ThreeDotsLoading(color: Colors.white),
-                            )
-                          : CustomButton(
-                              text: 'Registrar',
-                              onPressed: _handleRegister,
-                            ),
                     ],
                   ),
-                );
-              },
+                  const SizedBox(height: 20),
+                  btnProvider.isLoading
+                      ? SizedBox(
+                        width: 40,
+                        height: 25,
+                        child: ThreeDotsLoading(color: Colors.white),
+                      )
+                      : CustomButton(
+                        text: 'Registrar',
+                        onPressed: _handleRegister,
+                      ),
+                ],
+              ),
+            );
+          },
         );
       },
     );

@@ -19,10 +19,6 @@ class _DreamCountDotState extends State<DreamCountDot> {
 
   @override
   Widget build(BuildContext context) {
-    // Use the date provided by the parent (the calendar item) rather than
-    // the globally selected date. This ensures the dot color reflects
-    // whether that specific date has any "Pesadilla" entries, regardless
-    // of which date is currently selected in the calendar.
     final targetDate = widget.date;
     FirebaseAuth auth = FirebaseAuth.instance;
     return StreamBuilder<int>(
@@ -34,10 +30,6 @@ class _DreamCountDotState extends State<DreamCountDot> {
             style: TextStyle(fontSize: 12, color: Colors.red.shade500),
           );
         }
-        // Fetch all dreams for the target date once, then build the dots
-        // so we can map each dot index to the corresponding dream's
-        // classification. This makes the number of dark dots equal the
-        // number of nightmares for that date.
         return StreamBuilder<QuerySnapshot>(
           stream:
               firestore

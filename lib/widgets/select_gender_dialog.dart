@@ -30,12 +30,12 @@ class _SelectGenderDialogState extends State<SelectGenderDialog> {
             children: [
               Text(
                 'Selecciona tu género',
-                style: RobotoTextStyle.subtitleStyle(Colors.white),
+                style: LexendTextStyle.subtitleStyle(Colors.white),
               ),
               const SizedBox(height: 8),
               Text(
                 'Esto nos permitirá personalizar tu experiencia',
-                style: RobotoTextStyle.small2TextStyle(Colors.white),
+                style: LexendTextStyle.small2TextStyle(Colors.white),
               ),
             ],
           ),

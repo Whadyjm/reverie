@@ -286,7 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             SnackBar(
                               content: Text(
                                 'Solo puedes registrar hasta 4 sueños por día.',
-                                style: RobotoTextStyle.smallTextStyle(
+                                style: LexendTextStyle.smallTextStyle(
                                   Colors.white,
                                 ),
                               ),
@@ -446,7 +446,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Text(
                     'Cerrar sesión',
-                    style: RobotoTextStyle.subtitleStyle(Colors.grey.shade700),
+                    style: LexendTextStyle.subtitleStyle(Colors.grey.shade700),
                   ),
                   IconButton(
                     onPressed: () {
@@ -490,14 +490,14 @@ void _feedback(BuildContext context) {
                   const SizedBox(width: 10),
                   Text(
                     '¡Queremos escucharte!',
-                    style: RobotoTextStyle.subtitleStyle(Colors.grey.shade800),
+                    style: LexendTextStyle.subtitleStyle(Colors.grey.shade800),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
               Text(
                 '¿Tienes sugerencias, comentarios o encontraste un problema?\nTu opinión nos ayuda a mejorar.',
-                style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700),
+                style: LexendTextStyle.smallTextStyle(Colors.grey.shade700),
               ),
               const SizedBox(height: 18),
               TextField(
@@ -550,7 +550,7 @@ void _feedback(BuildContext context) {
                       onPressed: () => Navigator.pop(context),
                       child: Text(
                         'Cancelar',
-                        style: RobotoTextStyle.smallTextStyle(
+                        style: LexendTextStyle.smallTextStyle(
                           Colors.grey.shade700,
                         ),
                       ),
@@ -646,7 +646,7 @@ void _feedback(BuildContext context) {
                       },
                       child: Text(
                         'Enviar',
-                        style: RobotoTextStyle.smallTextStyle(Colors.white),
+                        style: LexendTextStyle.smallTextStyle(Colors.white),
                       ),
                     ),
                   ),
@@ -703,13 +703,13 @@ void _logout(BuildContext context) {
               children: [
                 Text(
                   'Cerrar sesión',
-                  style: RobotoTextStyle.titleStyle(Colors.grey.shade800),
+                  style: LexendTextStyle.titleStyle(Colors.grey.shade800),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   '¿Estás seguro de que quieres cerrar tu sesión?',
                   textAlign: TextAlign.center,
-                  style: RobotoTextStyle.smallTextStyle(Colors.grey.shade700),
+                  style: LexendTextStyle.smallTextStyle(Colors.grey.shade700),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -729,7 +729,7 @@ void _logout(BuildContext context) {
                         onPressed: () => Navigator.pop(ctx),
                         child: Text(
                           'Cancelar',
-                          style: RobotoTextStyle.smallTextStyle(
+                          style: LexendTextStyle.smallTextStyle(
                             Colors.grey.shade700,
                           ),
                         ),
@@ -760,7 +760,7 @@ void _logout(BuildContext context) {
                         },
                         child: Text(
                           'Salir',
-                          style: RobotoTextStyle.smallTextStyle(Colors.white),
+                          style: LexendTextStyle.smallTextStyle(Colors.white),
                         ),
                       ),
                     ),
@@ -837,7 +837,7 @@ Widget _analysisStyleContainer(
               child: Center(
                 child: Text(
                   'PRO',
-                  style: RobotoTextStyle.smallTextStyle(Colors.white),
+                  style: LexendTextStyle.smallTextStyle(Colors.white),
                 ),
               ),
             ),
@@ -945,7 +945,7 @@ Widget _dreamTextField(
               const SizedBox(width: 5),
               Text(
                 'Tus sueños se encuentran a salvo.',
-                style: RobotoTextStyle.small2TextStyle(
+                style: LexendTextStyle.small2TextStyle(
                   btnProvider.isButtonEnabled
                       ? Colors.white38
                       : Colors.grey.shade500,
@@ -1119,7 +1119,7 @@ Widget _drawer(
                     children: [
                       Text(
                         'Actualiza tu plan',
-                        style: RobotoTextStyle.smallTextStyle(
+                        style: LexendTextStyle.smallTextStyle(
                           Colors.grey.shade800,
                         ),
                       ),
@@ -1148,7 +1148,7 @@ Widget _drawer(
                     children: [
                       Text(
                         'Favoritos',
-                        style: RobotoTextStyle.smallTextStyle(
+                        style: LexendTextStyle.smallTextStyle(
                           Colors.grey.shade800,
                         ),
                       ),
@@ -1167,7 +1167,7 @@ Widget _drawer(
                           btnProvider.isButtonEnabled
                               ? 'Modo Claro'
                               : 'Modo Oscuro',
-                          style: RobotoTextStyle.smallTextStyle(
+                          style: LexendTextStyle.smallTextStyle(
                             Colors.grey.shade800,
                           ),
                         ),
@@ -1210,7 +1210,7 @@ Widget _drawer(
                           pinProvider.isPinActive
                               ? 'Pin activo'
                               : 'Pin inactivo',
-                          style: RobotoTextStyle.smallTextStyle(
+                          style: LexendTextStyle.smallTextStyle(
                             Colors.grey.shade800,
                           ),
                         ),
@@ -1426,7 +1426,7 @@ Widget _plusButton(BuildContext context) {
           child: Center(
             child: Text(
               'Obtén PRO ✨',
-              style: RobotoTextStyle.smallTextStyle(Colors.white),
+              style: LexendTextStyle.smallTextStyle(Colors.white),
             ),
           ),
         ),

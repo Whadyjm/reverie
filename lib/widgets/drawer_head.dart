@@ -194,7 +194,7 @@ class _DrawerHeadWidgetState extends State<DrawerHeadWidget> {
                         widget.dreamCount != null && widget.dreamCount! > 0
                             ? '🌙 ${widget.dreamCount} Sueños'
                             : '',
-                        style: RobotoTextStyle.small3TextStyle(Colors.white),
+                        style: LexendTextStyle.small3TextStyle(Colors.white),
                       ),
                     ),
                   ],
