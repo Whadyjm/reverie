@@ -34,6 +34,17 @@ $joined
 ''';
   }
 
+  String _userEmotionAnalysisFromLastMonthPrompt(List<String> dreams) {
+    final joined = dreams.join("\n---\n");
+    return '''
+Crea un resumen muy breve (de solo 2 lineas) sobre la emoción predominante en los sueños escritos por un usuario en los últimos 30 días. Explica el porque de esa emoción
+No añadas simbolos, solo texto.
+`.
+Sueños:
+$joined
+''';
+  }
+
   Future<String> analyzeUserEmotions(String userId, String apikey) async {
     final dreams = await _getDreamsFromLast30Days(userId);
 
@@ -42,6 +53,44 @@ $joined
     }
 
     final prompt = _buildPrompt(dreams);
+    final apiKey = apikey;
+    final url = Uri.parse(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "contents": [
+          {
+            "parts": [
+              {"text": prompt},
+            ],
+          },
+        ],
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['candidates'][0]['content']['parts'][0]['text'];
+    } else {
+      throw Exception("Error ${response.statusCode}: ${response.body}");
+    }
+  }
+
+  Future<String> userEmotionAnalysisFromLastMonth(
+    String userId,
+    String apikey,
+  ) async {
+    final dreams = await _getDreamsFromLast30Days(userId);
+
+    if (dreams.isEmpty) {
+      return "No se encontraron sueños en los últimos 30 días.";
+    }
+
+    final prompt = _userEmotionAnalysisFromLastMonthPrompt(dreams);
     final apiKey = apikey;
     final url = Uri.parse(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey',

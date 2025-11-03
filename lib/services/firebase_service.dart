@@ -130,6 +130,34 @@ class FirebaseService {
     return '';
   }
 
+  Future<String> generateAnalysisMonthlyEmotion() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('apiKey')
+              .doc('apiKey')
+              .get();
+
+      final result = await EmotionService().userEmotionAnalysisFromLastMonth(
+        userId!,
+        doc.data()?['apiKey'] ?? '',
+      );
+
+      var monthlyEmotionCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('monthlyEmotionsAnalysis');
+
+      var documentRef = await monthlyEmotionCollection.add({
+        'emotionAnalysis': result,
+        'month': Timestamp.now().toDate().month,
+      });
+    } catch (e) {
+    } finally {}
+    return '';
+  }
+
   Stream<int> fetchDreamCountByDate(DateTime date) {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;

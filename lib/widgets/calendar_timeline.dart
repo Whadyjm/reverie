@@ -15,9 +15,10 @@ import '../provider/button_provider.dart';
 import '../style/text_style.dart';
 
 class CalendarTimeline extends StatefulWidget {
-  CalendarTimeline({super.key, this.emotionResult});
+  CalendarTimeline({super.key, this.emotionResult, this.emotionAnalysis});
 
   final String? emotionResult;
+  final String? emotionAnalysis;
 
   @override
   State<CalendarTimeline> createState() => _CalendarTimelineState();
@@ -80,6 +81,21 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
         .map((querySnapshot) {
           if (querySnapshot.docs.isNotEmpty) {
             return querySnapshot.docs.first.get('emotion');
+          }
+          return '';
+        });
+  }
+
+  Stream<String> monthlyAnalysisEmotion(int date) {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('monthlyEmotionsAnalysis')
+        .where('month', isEqualTo: date)
+        .snapshots()
+        .map((querySnapshot) {
+          if (querySnapshot.docs.isNotEmpty) {
+            return querySnapshot.docs.first.get('emotionAnalysis');
           }
           return '';
         });
@@ -851,7 +867,6 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
 
                             const SizedBox(height: 12),
 
-                            // Emotion of the month
                             StreamBuilder(
                               stream: monthlyEmotion(
                                 _currentDisplayedMonth.month,
@@ -869,30 +884,63 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                                   enabled: snapshot.hasData ? false : true,
                                   child:
                                       snapshot.data != ''
-                                          ? Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          ? Column(
                                             children: [
-                                              const Text(
-                                                '🎭 ',
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  'Emoción del mes: ${snapshot.data}',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color:
-                                                        isDark
-                                                            ? Colors
-                                                                .grey
-                                                                .shade100
-                                                            : const Color(
-                                                              0xFF4A3B6A,
-                                                            ),
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    '🎭 ',
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                    ),
                                                   ),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Emoción del mes: ${snapshot.data}',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            isDark
+                                                                ? Colors
+                                                                    .grey
+                                                                    .shade100
+                                                                : const Color(
+                                                                  0xFF4A3B6A,
+                                                                ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              StreamBuilder(
+                                                stream: monthlyAnalysisEmotion(
+                                                  _currentDisplayedMonth.month,
                                                 ),
+                                                builder: (
+                                                  context,
+                                                  asyncSnapshot,
+                                                ) {
+                                                  return Text(
+                                                    '${asyncSnapshot.data ?? ''}',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          isDark
+                                                              ? Colors
+                                                                  .grey
+                                                                  .shade100
+                                                              : const Color(
+                                                                0xFF4A3B6A,
+                                                              ),
+                                                    ),
+                                                  );
+                                                },
                                               ),
                                             ],
                                           )

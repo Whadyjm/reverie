@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool shouldShowDialog = false;
   int dreamCount = 0;
   String emotionResult = "";
+  String emotionAnalysisResult = "";
 
   @override
   void initState() {
@@ -80,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
         firebaseService.getAnalysisStyle(),
         firebaseService.getAPIKeyFromFirestore(),
         if (isLastDayOfMonth) firebaseService.generateMonthlyEmotion(),
+        if (isLastDayOfMonth) firebaseService.generateAnalysisMonthlyEmotion(),
       ]);
 
       if (!mounted) return;
@@ -94,6 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
         if (isLastDayOfMonth) {
           emotionResult = results[6] as String;
         }
+        if (isLastDayOfMonth) {
+          emotionAnalysisResult = results[7] as String;
+        }
       });
 
       debugPrint('-----------------User Data Loaded-----------------');
@@ -105,6 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
       debugPrint('ApiKey: $apiKey');
       if (isLastDayOfMonth) {
         debugPrint('Monthly Emotion: $emotionResult');
+      }
+      if (isLastDayOfMonth) {
+        debugPrint('Monthly Emotion Analysis: $emotionAnalysisResult');
       }
       debugPrint('--------------------------------------------------');
     } catch (e, st) {
@@ -233,7 +241,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState,
                     btnProvider,
                   ),
-                  CalendarTimeline(emotionResult: emotionResult),
+                  CalendarTimeline(
+                    emotionResult: emotionResult,
+                    emotionAnalysis: emotionAnalysisResult,
+                  ),
                   DreamByDate(suscription: suscription),
                   //TextAudioInput(apiKey: apiKey),
                 ],
