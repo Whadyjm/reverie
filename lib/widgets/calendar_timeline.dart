@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:reverie/provider/calendar_provider.dart';
 import 'package:reverie/widgets/dream_count_dot.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../provider/button_provider.dart';
 import '../style/text_style.dart';
@@ -639,7 +638,10 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                             ),
                           ),
                           const SizedBox(height: 3),
-                          DreamCountDot(stream: fetchDreamCountByDate(date)),
+                          DreamCountDot(
+                            stream: fetchDreamCountByDate(date),
+                            date: date,
+                          ),
                         ],
                       ),
                     ),
