@@ -125,9 +125,14 @@ class _DreamCardState extends State<DreamCard> {
                         borderRadius: BorderRadius.circular(12),
                         colorOpacity: 0.01,
                         blur: btnProvider.isTextBlurred ? 2.5 : 0,
-                        child: Text(
-                          widget.dream['classification'],
-                          style: LexendTextStyle.smallTextStyle(Colors.white),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Text(
+                            widget.dream['classification'],
+                            style: LexendTextStyle.small2TextStyle(
+                              Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                       backgroundColor:

@@ -3,6 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:haptic_feedback/haptic_feedback.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   late FirebaseService firebaseService;
   String apiKey = '';
@@ -50,10 +52,22 @@ class _MyHomePageState extends State<MyHomePage> {
   String emotionResult = "";
   String emotionAnalysisResult = "";
 
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+  bool _isExpanded = false;
+
   @override
   void initState() {
     super.initState();
     firebaseService = FirebaseService();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
     _checkPreferences();
     initializeButtonState();
@@ -128,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _dreamController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -213,216 +228,356 @@ class _MyHomePageState extends State<MyHomePage> {
             analysisStyle,
             analysisStyleProvider,
           ),
-          body: GestureDetector(
-            onHorizontalDragEnd: (details) => _dragAction(details),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient:
-                    btnProvider.isButtonEnabled
-                        ? LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: Gradients.homeScreenDarkMode,
-                        )
-                        : LinearGradient(
-                          colors: Gradients.homeScreenLightMode,
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
+          body: Stack(
+            children: [
+              GestureDetector(
+                onHorizontalDragEnd: (details) => _dragAction(details),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient:
+                        btnProvider.isButtonEnabled
+                            ? LinearGradient(
+                              begin: Alignment.bottomLeft,
+                              end: Alignment.topRight,
+                              colors: Gradients.homeScreenDarkMode,
+                            )
+                            : LinearGradient(
+                              colors: Gradients.homeScreenLightMode,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(height: 12),
+                      _homeScreenHeader(
+                        context,
+                        suscription,
+                        user,
+                        setState,
+                        btnProvider,
+                      ),
+                      CalendarTimeline(
+                        emotionResult: emotionResult,
+                        emotionAnalysis: emotionAnalysisResult,
+                      ),
+                      DreamByDate(suscription: suscription),
+                      //TextAudioInput(apiKey: apiKey),
+                    ],
+                  ),
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 12),
-                  _homeScreenHeader(
-                    context,
-                    suscription,
-                    user,
-                    setState,
-                    btnProvider,
+                  Row(
+                    children: [
+                      AnimatedBuilder(
+                        animation: _animation,
+                        builder: (context, child) {
+                          return Container(
+                            width:
+                                MediaQuery.of(context).size.width *
+                                0.4 *
+                                _animation.value,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(8),
+                                bottomRight: Radius.circular(8),
+                              ),
+                            ),
+                            child:
+                                _animation.value > 0.3
+                                    ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            HapticFeedback.mediumImpact();
+                                            btnProvider.toggleTextBlur();
+                                          },
+                                          child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: [
+                                                  Colors.deepPurple.shade400,
+                                                  Colors.deepPurple.shade600,
+                                                ],
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color:
+                                                      Colors
+                                                          .deepPurple
+                                                          .shade700,
+                                                  offset: Offset(4, 4),
+                                                  blurRadius: 8,
+                                                  spreadRadius: 1,
+                                                ),
+                                                BoxShadow(
+                                                  color:
+                                                      Colors
+                                                          .deepPurple
+                                                          .shade400,
+                                                  offset: Offset(-4, -4),
+                                                  blurRadius: 8,
+                                                  spreadRadius: 1,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Icon(
+                                              btnProvider.isTextBlurred
+                                                  ? Iconsax.eye_slash
+                                                  : Iconsax.eye,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        StreamBuilder(
+                                          stream: FirebaseService()
+                                              .fetchDreamCountByDate(
+                                                _selectedDate,
+                                              ),
+                                          builder: (context, snapshot) {
+                                            final dreamCount =
+                                                snapshot.data ?? 0;
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                if (dreamCount == 4) {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                        'Solo puedes registrar hasta 4 sueños por día.',
+                                                        style:
+                                                            LexendTextStyle.smallTextStyle(
+                                                              Colors.white,
+                                                            ),
+                                                      ),
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            58,
+                                                            42,
+                                                            106,
+                                                          ),
+                                                    ),
+                                                  );
+                                                  return;
+                                                }
+
+                                                if (selectedGender == '' &&
+                                                    shouldShowDialog) {
+                                                  await showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return SelectGenderDialog(
+                                                        selectedGender:
+                                                            selectedGender!,
+                                                        dontShowAgain:
+                                                            dontShowAgain,
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                                if (analysisStyle == '' &&
+                                                    analysisSelected == false) {
+                                                  await showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return SelectAnalysisStyle();
+                                                    },
+                                                  );
+                                                  analysisStyle =
+                                                      analysisStyleProvider
+                                                          .analysisStyle;
+                                                  await Future.delayed(
+                                                    Duration(milliseconds: 300),
+                                                  );
+                                                  showModalBottomSheet(
+                                                    //TODO: corregir seleccion de estilo de analisis al iniciar sesion con usuario registrado y al agregar un sueño
+                                                    context: context,
+                                                    isScrollControlled: true,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.vertical(
+                                                            top:
+                                                                Radius.circular(
+                                                                  12,
+                                                                ),
+                                                          ),
+                                                    ),
+                                                    backgroundColor:
+                                                        btnProvider
+                                                                .isButtonEnabled
+                                                            ? Colors
+                                                                .grey
+                                                                .shade900
+                                                            : Colors.white,
+                                                    builder: (
+                                                      BuildContext context,
+                                                    ) {
+                                                      return _dreamTextField(
+                                                        context,
+                                                        btnProvider,
+                                                        analysisStyleProvider,
+                                                        analysisStyle,
+                                                        isLoading,
+                                                        _dreamController,
+                                                        _selectedDate,
+                                                        selectedGender,
+                                                        userName,
+                                                        suscription,
+                                                        apiKey,
+                                                      );
+                                                    },
+                                                  );
+                                                } else if (analysisStyleProvider
+                                                        .analysisStyle
+                                                        .isNotEmpty ||
+                                                    analysisSelected == true) {
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    isScrollControlled: true,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.vertical(
+                                                            top:
+                                                                Radius.circular(
+                                                                  12,
+                                                                ),
+                                                          ),
+                                                    ),
+                                                    backgroundColor:
+                                                        btnProvider
+                                                                .isButtonEnabled
+                                                            ? Colors
+                                                                .grey
+                                                                .shade900
+                                                            : Colors.white,
+                                                    builder: (
+                                                      BuildContext context,
+                                                    ) {
+                                                      return _dreamTextField(
+                                                        context,
+                                                        btnProvider,
+                                                        analysisStyleProvider,
+                                                        analysisStyle,
+                                                        isLoading,
+                                                        _dreamController,
+                                                        _selectedDate,
+                                                        selectedGender,
+                                                        userName,
+                                                        suscription,
+                                                        apiKey,
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                              child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Colors
+                                                          .deepPurple
+                                                          .shade400,
+                                                      Colors
+                                                          .deepPurple
+                                                          .shade600,
+                                                    ],
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color:
+                                                          Colors
+                                                              .deepPurple
+                                                              .shade700,
+                                                      offset: Offset(4, 4),
+                                                      blurRadius: 8,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                    BoxShadow(
+                                                      color:
+                                                          Colors
+                                                              .deepPurple
+                                                              .shade400,
+                                                      offset: Offset(-4, -4),
+                                                      blurRadius: 8,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Icon(
+                                                  Iconsax.add_copy,
+                                                  color: Colors.white,
+                                                  size: 30,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                    : null,
+                          );
+                        },
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          if (_isExpanded) {
+                            _animationController.reverse();
+                          } else {
+                            _animationController.forward();
+                          }
+                          setState(() {
+                            _isExpanded = !_isExpanded;
+                          });
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 25,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                            ),
+                            color: Colors.deepPurple,
+                          ),
+                          child: Icon(
+                            _isExpanded
+                                ? Icons.arrow_back_ios_rounded
+                                : Icons.arrow_forward_ios_rounded,
+                            color: Colors.white,
+                            size: 15,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  CalendarTimeline(
-                    emotionResult: emotionResult,
-                    emotionAnalysis: emotionAnalysisResult,
-                  ),
-                  DreamByDate(suscription: suscription),
-                  //TextAudioInput(apiKey: apiKey),
                 ],
               ),
-            ),
-          ),
-          floatingActionButton: Pulse(
-            duration: Duration(milliseconds: 800),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  onPressed: () {
-                    btnProvider.toggleTextBlur();
-                  },
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.purple.shade600,
-                          Colors.indigo.shade400,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Icon(
-                      btnProvider.isTextBlurred
-                          ? Iconsax.eye_slash
-                          : Iconsax.eye,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                StreamBuilder(
-                  stream: FirebaseService().fetchDreamCountByDate(
-                    _selectedDate,
-                  ),
-                  builder: (context, snapshot) {
-                    final dreamCount = snapshot.data ?? 0;
-                    return FloatingActionButton(
-                      onPressed: () async {
-                        if (dreamCount == 4) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Solo puedes registrar hasta 4 sueños por día.',
-                                style: LexendTextStyle.smallTextStyle(
-                                  Colors.white,
-                                ),
-                              ),
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                58,
-                                42,
-                                106,
-                              ),
-                            ),
-                          );
-                          return;
-                        }
-
-                        if (selectedGender == '' && shouldShowDialog) {
-                          await showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) {
-                              return SelectGenderDialog(
-                                selectedGender: selectedGender!,
-                                dontShowAgain: dontShowAgain,
-                              );
-                            },
-                          );
-                        }
-                        if (analysisStyle == '' && analysisSelected == false) {
-                          await showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) {
-                              return SelectAnalysisStyle();
-                            },
-                          );
-                          analysisStyle = analysisStyleProvider.analysisStyle;
-                          await Future.delayed(Duration(milliseconds: 300));
-                          showModalBottomSheet(
-                            //TODO: corregir seleccion de estilo de analisis al iniciar sesion con usuario registrado y al agregar un sueño
-                            context: context,
-                            isScrollControlled: true,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                            ),
-                            backgroundColor:
-                                btnProvider.isButtonEnabled
-                                    ? Colors.grey.shade900
-                                    : Colors.white,
-                            builder: (BuildContext context) {
-                              return _dreamTextField(
-                                context,
-                                btnProvider,
-                                analysisStyleProvider,
-                                analysisStyle,
-                                isLoading,
-                                _dreamController,
-                                _selectedDate,
-                                selectedGender,
-                                userName,
-                                suscription,
-                                apiKey,
-                              );
-                            },
-                          );
-                        } else if (analysisStyleProvider
-                                .analysisStyle
-                                .isNotEmpty ||
-                            analysisSelected == true) {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                            ),
-                            backgroundColor:
-                                btnProvider.isButtonEnabled
-                                    ? Colors.grey.shade900
-                                    : Colors.white,
-                            builder: (BuildContext context) {
-                              return _dreamTextField(
-                                context,
-                                btnProvider,
-                                analysisStyleProvider,
-                                analysisStyle,
-                                isLoading,
-                                _dreamController,
-                                _selectedDate,
-                                selectedGender,
-                                userName,
-                                suscription,
-                                apiKey,
-                              );
-                            },
-                          );
-                        }
-                      },
-                      child: Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.purple.shade600,
-                              Colors.indigo.shade400,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          shape: BoxShape.rectangle,
-                        ),
-                        child: Icon(
-                          Iconsax.add_copy,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
