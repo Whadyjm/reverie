@@ -298,8 +298,16 @@ class _MyHomePageState extends State<MyHomePage>
                                           Padding(
                                             padding: const EdgeInsets.all(18.0),
                                             child: GestureDetector(
-                                              onTap: () {
-                                                HapticFeedback.mediumImpact();
+                                              onTap: () async {
+                                                final can =
+                                                    await Haptics.canVibrate();
+
+                                                if (!can) {
+                                                  return;
+                                                }
+                                                await Haptics.vibrate(
+                                                  HapticsType.success,
+                                                );
                                                 btnProvider.toggleTextBlur();
                                               },
                                               child: Container(
@@ -360,6 +368,15 @@ class _MyHomePageState extends State<MyHomePage>
                                                   snapshot.data ?? 0;
                                               return GestureDetector(
                                                 onTap: () async {
+                                                  final can =
+                                                      await Haptics.canVibrate();
+
+                                                  if (!can) {
+                                                    return;
+                                                  }
+                                                  await Haptics.vibrate(
+                                                    HapticsType.success,
+                                                  );
                                                   if (dreamCount == 4) {
                                                     ScaffoldMessenger.of(
                                                       context,
@@ -558,8 +575,13 @@ class _MyHomePageState extends State<MyHomePage>
                         },
                       ),
                       GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
+                        onTap: () async {
+                          final can = await Haptics.canVibrate();
+
+                          if (!can) {
+                            return;
+                          }
+                          await Haptics.vibrate(HapticsType.success);
                           if (_isExpanded) {
                             _animationController.reverse();
                           } else {
