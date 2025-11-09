@@ -291,202 +291,16 @@ class _MyHomePageState extends State<MyHomePage>
                             ),
                             child:
                                 _animation.value > 0.3
-                                    ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            HapticFeedback.mediumImpact();
-                                            btnProvider.toggleTextBlur();
-                                          },
-                                          child: Container(
-                                            height: 50,
-                                            width: 50,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                                colors: [
-                                                  Colors.deepPurple.shade400,
-                                                  Colors.deepPurple.shade600,
-                                                ],
-                                              ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color:
-                                                      Colors
-                                                          .deepPurple
-                                                          .shade700,
-                                                  offset: Offset(4, 4),
-                                                  blurRadius: 8,
-                                                  spreadRadius: 1,
-                                                ),
-                                                BoxShadow(
-                                                  color:
-                                                      Colors
-                                                          .deepPurple
-                                                          .shade400,
-                                                  offset: Offset(-4, -4),
-                                                  blurRadius: 8,
-                                                  spreadRadius: 1,
-                                                ),
-                                              ],
-                                            ),
-                                            child: Icon(
-                                              btnProvider.isTextBlurred
-                                                  ? Iconsax.eye_slash
-                                                  : Iconsax.eye,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        StreamBuilder(
-                                          stream: FirebaseService()
-                                              .fetchDreamCountByDate(
-                                                _selectedDate,
-                                              ),
-                                          builder: (context, snapshot) {
-                                            final dreamCount =
-                                                snapshot.data ?? 0;
-                                            return GestureDetector(
-                                              onTap: () async {
-                                                if (dreamCount == 4) {
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        'Solo puedes registrar hasta 4 sueños por día.',
-                                                        style:
-                                                            LexendTextStyle.smallTextStyle(
-                                                              Colors.white,
-                                                            ),
-                                                      ),
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                            255,
-                                                            58,
-                                                            42,
-                                                            106,
-                                                          ),
-                                                    ),
-                                                  );
-                                                  return;
-                                                }
-
-                                                if (selectedGender == '' &&
-                                                    shouldShowDialog) {
-                                                  await showDialog(
-                                                    barrierDismissible: false,
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return SelectGenderDialog(
-                                                        selectedGender:
-                                                            selectedGender!,
-                                                        dontShowAgain:
-                                                            dontShowAgain,
-                                                      );
-                                                    },
-                                                  );
-                                                }
-                                                if (analysisStyle == '' &&
-                                                    analysisSelected == false) {
-                                                  await showDialog(
-                                                    barrierDismissible: false,
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return SelectAnalysisStyle();
-                                                    },
-                                                  );
-                                                  analysisStyle =
-                                                      analysisStyleProvider
-                                                          .analysisStyle;
-                                                  await Future.delayed(
-                                                    Duration(milliseconds: 300),
-                                                  );
-                                                  showModalBottomSheet(
-                                                    //TODO: corregir seleccion de estilo de analisis al iniciar sesion con usuario registrado y al agregar un sueño
-                                                    context: context,
-                                                    isScrollControlled: true,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                            top:
-                                                                Radius.circular(
-                                                                  12,
-                                                                ),
-                                                          ),
-                                                    ),
-                                                    backgroundColor:
-                                                        btnProvider
-                                                                .isButtonEnabled
-                                                            ? Colors
-                                                                .grey
-                                                                .shade900
-                                                            : Colors.white,
-                                                    builder: (
-                                                      BuildContext context,
-                                                    ) {
-                                                      return _dreamTextField(
-                                                        context,
-                                                        btnProvider,
-                                                        analysisStyleProvider,
-                                                        analysisStyle,
-                                                        isLoading,
-                                                        _dreamController,
-                                                        _selectedDate,
-                                                        selectedGender,
-                                                        userName,
-                                                        suscription,
-                                                        apiKey,
-                                                      );
-                                                    },
-                                                  );
-                                                } else if (analysisStyleProvider
-                                                        .analysisStyle
-                                                        .isNotEmpty ||
-                                                    analysisSelected == true) {
-                                                  showModalBottomSheet(
-                                                    context: context,
-                                                    isScrollControlled: true,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.vertical(
-                                                            top:
-                                                                Radius.circular(
-                                                                  12,
-                                                                ),
-                                                          ),
-                                                    ),
-                                                    backgroundColor:
-                                                        btnProvider
-                                                                .isButtonEnabled
-                                                            ? Colors
-                                                                .grey
-                                                                .shade900
-                                                            : Colors.white,
-                                                    builder: (
-                                                      BuildContext context,
-                                                    ) {
-                                                      return _dreamTextField(
-                                                        context,
-                                                        btnProvider,
-                                                        analysisStyleProvider,
-                                                        analysisStyle,
-                                                        isLoading,
-                                                        _dreamController,
-                                                        _selectedDate,
-                                                        selectedGender,
-                                                        userName,
-                                                        suscription,
-                                                        apiKey,
-                                                      );
-                                                    },
-                                                  );
-                                                }
+                                    ? SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(18.0),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                HapticFeedback.mediumImpact();
+                                                btnProvider.toggleTextBlur();
                                               },
                                               child: Container(
                                                 height: 50,
@@ -528,15 +342,216 @@ class _MyHomePageState extends State<MyHomePage>
                                                   ],
                                                 ),
                                                 child: Icon(
-                                                  Iconsax.add_copy,
+                                                  btnProvider.isTextBlurred
+                                                      ? Iconsax.eye_slash
+                                                      : Iconsax.eye,
                                                   color: Colors.white,
-                                                  size: 30,
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
-                                      ],
+                                            ),
+                                          ),
+                                          StreamBuilder(
+                                            stream: FirebaseService()
+                                                .fetchDreamCountByDate(
+                                                  _selectedDate,
+                                                ),
+                                            builder: (context, snapshot) {
+                                              final dreamCount =
+                                                  snapshot.data ?? 0;
+                                              return GestureDetector(
+                                                onTap: () async {
+                                                  if (dreamCount == 4) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          'Solo puedes registrar hasta 4 sueños por día.',
+                                                          style:
+                                                              LexendTextStyle.smallTextStyle(
+                                                                Colors.white,
+                                                              ),
+                                                        ),
+                                                        backgroundColor:
+                                                            const Color.fromARGB(
+                                                              255,
+                                                              58,
+                                                              42,
+                                                              106,
+                                                            ),
+                                                      ),
+                                                    );
+                                                    return;
+                                                  }
+
+                                                  if (selectedGender == '' &&
+                                                      shouldShowDialog) {
+                                                    await showDialog(
+                                                      barrierDismissible: false,
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return SelectGenderDialog(
+                                                          selectedGender:
+                                                              selectedGender!,
+                                                          dontShowAgain:
+                                                              dontShowAgain,
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                  if (analysisStyle == '' &&
+                                                      analysisSelected ==
+                                                          false) {
+                                                    await showDialog(
+                                                      barrierDismissible: false,
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return SelectAnalysisStyle();
+                                                      },
+                                                    );
+                                                    analysisStyle =
+                                                        analysisStyleProvider
+                                                            .analysisStyle;
+                                                    await Future.delayed(
+                                                      Duration(
+                                                        milliseconds: 300,
+                                                      ),
+                                                    );
+                                                    showModalBottomSheet(
+                                                      //TODO: corregir seleccion de estilo de analisis al iniciar sesion con usuario registrado y al agregar un sueño
+                                                      context: context,
+                                                      isScrollControlled: true,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.vertical(
+                                                              top:
+                                                                  Radius.circular(
+                                                                    12,
+                                                                  ),
+                                                            ),
+                                                      ),
+                                                      backgroundColor:
+                                                          btnProvider
+                                                                  .isButtonEnabled
+                                                              ? Colors
+                                                                  .grey
+                                                                  .shade900
+                                                              : Colors.white,
+                                                      builder: (
+                                                        BuildContext context,
+                                                      ) {
+                                                        return _dreamTextField(
+                                                          context,
+                                                          btnProvider,
+                                                          analysisStyleProvider,
+                                                          analysisStyle,
+                                                          isLoading,
+                                                          _dreamController,
+                                                          _selectedDate,
+                                                          selectedGender,
+                                                          userName,
+                                                          suscription,
+                                                          apiKey,
+                                                        );
+                                                      },
+                                                    );
+                                                  } else if (analysisStyleProvider
+                                                          .analysisStyle
+                                                          .isNotEmpty ||
+                                                      analysisSelected ==
+                                                          true) {
+                                                    showModalBottomSheet(
+                                                      context: context,
+                                                      isScrollControlled: true,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.vertical(
+                                                              top:
+                                                                  Radius.circular(
+                                                                    12,
+                                                                  ),
+                                                            ),
+                                                      ),
+                                                      backgroundColor:
+                                                          btnProvider
+                                                                  .isButtonEnabled
+                                                              ? Colors
+                                                                  .grey
+                                                                  .shade900
+                                                              : Colors.white,
+                                                      builder: (
+                                                        BuildContext context,
+                                                      ) {
+                                                        return _dreamTextField(
+                                                          context,
+                                                          btnProvider,
+                                                          analysisStyleProvider,
+                                                          analysisStyle,
+                                                          isLoading,
+                                                          _dreamController,
+                                                          _selectedDate,
+                                                          selectedGender,
+                                                          userName,
+                                                          suscription,
+                                                          apiKey,
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                },
+                                                child: Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                      colors: [
+                                                        Colors
+                                                            .deepPurple
+                                                            .shade400,
+                                                        Colors
+                                                            .deepPurple
+                                                            .shade600,
+                                                      ],
+                                                    ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color:
+                                                            Colors
+                                                                .deepPurple
+                                                                .shade700,
+                                                        offset: Offset(4, 4),
+                                                        blurRadius: 8,
+                                                        spreadRadius: 1,
+                                                      ),
+                                                      BoxShadow(
+                                                        color:
+                                                            Colors
+                                                                .deepPurple
+                                                                .shade400,
+                                                        offset: Offset(-4, -4),
+                                                        blurRadius: 8,
+                                                        spreadRadius: 1,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Icon(
+                                                    Iconsax.add_copy,
+                                                    color: Colors.white,
+                                                    size: 30,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     )
                                     : null,
                           );
